@@ -1,0 +1,1790 @@
+# AETHER–AROS V12.0 — GLOBAL ECONOMIC INTELLIGENCE, PREDICTIVE ANALYTICS & DECISION COORDINATION
+
+**Product:** AETHER–AROS  
+**Strategic Identity:** Universal Economic Operating System  
+**Developer:** VINEXSAH TECHNOLOGIES  
+**Attribution:** Developed under VINEXSAH TECHNOLOGIES. All rights reserved.  
+**Release Target:** V12.0-GLOBAL-ECONOMIC-INTELLIGENCE  
+**Schema Target:** Version 12  
+**Deployment Anchor:** Uganda → East African Community → AfCFTA corridors → Global Economic Network  
+**Baseline:** V11.0-GLOBAL-NETWORK-SCALE  
+**Previous Schema:** Version 11  
+**Target Persistence:** Existing durable database at `data/aros_database.json`, retaining the current storage architecture unless an audited technical reason requires a safe improvement.
+
+---
+
+# MASTER ENGINEERING DIRECTIVE
+
+You are the principal systems architect, senior full-stack engineer, economic intelligence architect, data scientist, security engineer and quality assurance lead responsible for evolving AETHER–AROS from V11 into V12.
+
+Your task is to implement V12 directly into the existing AETHER–AROS repository.
+
+Do not create a disconnected demonstration, a separate application, a static prototype or a replacement platform.
+
+You must preserve and extend the existing system.
+
+V12 must transform AETHER–AROS into a **Global Economic Intelligence and Predictive Coordination Infrastructure** capable of collecting authorized economic information, understanding changing economic conditions, identifying emerging risks and opportunities, generating explainable forecasts, simulating potential economic scenarios and coordinating approved responses across the economic network.
+
+The intelligence layer must support every major economic sector, not agriculture alone.
+
+It must serve:
+
+- Individuals and households.
+- Small, medium and large businesses.
+- Manufacturers and industrial operators.
+- Farmers, cooperatives and agricultural businesses.
+- Traders, importers and exporters.
+- Financial institutions and authorized financial service providers.
+- Logistics and transport operators.
+- Employers and workers.
+- Investors and capital providers.
+- Developers and technology companies.
+- Public institutions and government-authorized entities.
+- Regional economic networks.
+- International economic institutions.
+
+AETHER–AROS must remain a neutral economic coordination infrastructure.
+
+It must not claim ownership or control over national economies, central banks, currencies, government institutions, financial institutions or independent economic networks.
+
+## NON-NEGOTIABLE ENGINEERING RULES
+
+1. Preserve all verified V1–V11 functionality.
+2. Never delete, overwrite or silently reset existing production-like data.
+3. Perform a complete repository and database audit before implementing changes.
+4. Create a verified backup before any migration.
+5. Use safe, reversible database migrations.
+6. Do not replace working architecture merely to introduce new technology.
+7. Do not fabricate economic statistics, intelligence sources, institutional connections, market prices or forecasts.
+8. Clearly distinguish observed facts, user-submitted claims, estimates, simulations and forecasts.
+9. Every forecast must disclose its data sources, assumptions, generation time, confidence and limitations.
+10. Every AI-generated recommendation must be explainable and traceable.
+11. No AI system may independently authorize regulated financial transactions, government actions or high-impact institutional decisions.
+12. Maintain jurisdictional sovereignty, tenant isolation, privacy and data ownership.
+13. Do not claim production integrations without verified credentials, authorization and successful external testing.
+14. All critical operations must be auditable.
+15. Every new feature must be connected to the real backend and existing application interface.
+16. Do not mark unfinished functionality as completed.
+17. Never fabricate passing tests, benchmark results or deployment readiness.
+
+---
+
+# PART I — V11 AUDIT AND V12 FOUNDATION
+
+## 1. Complete V11 Repository Audit
+
+Before making modifications, inspect:
+
+- Existing source-code architecture.
+- Frontend components and routing.
+- Backend services and API routes.
+- Authentication and authorization.
+- Tenant registry and tenant context.
+- Existing V1–V11 database collections.
+- Persistence and backup mechanisms.
+- Event and workflow systems.
+- Universal economic ledger.
+- Financial execution lifecycle.
+- Institutional network.
+- Marketplace and procurement.
+- Logistics and industrial capacity.
+- Developer API ecosystem.
+- AI governance and approval mechanisms.
+- Billing and commercial services.
+- Existing automated verification framework.
+
+Verify the actual implementation of:
+
+- SchemaVersion 11.
+- V1–V10 tests T01–T300.
+- V11 tests T301–T450.
+- Multi-tenant access controls.
+- Financial idempotency.
+- Settlement-proof enforcement.
+- Webhook signature verification.
+- Provider classification.
+- AI approval gates.
+- Durable persistence.
+
+The supplied V11 report states that 450 of 450 tests passed. Treat this as the reported baseline, not as proof until you execute the tests independently.
+
+### Required V11 baseline
+
+- Run the complete existing test suite.
+- Confirm the actual test count.
+- Verify database persistence across server restarts.
+- Verify tenant isolation with positive and negative authorization tests.
+- Verify existing financial execution records and reconciliation.
+- Verify that previous API contracts remain functional.
+- Record any pre-existing failures before implementing V12.
+
+If the existing test suite fails, identify and document the failure before changing code. Do not hide regressions by deleting tests.
+
+## 2. V12 Non-Destructive Migration
+
+Upgrade schemaVersion 11 to schemaVersion 12.
+
+Before migration:
+
+- Save `data/aros_database.v11.backup.json`.
+- Create a timestamped backup under `data/backups/`.
+- Validate the backup.
+- Record a migration manifest.
+- Verify collection counts and important financial totals.
+- Preserve all V1–V11 records and relationships.
+
+New collections must be introduced through controlled migration functions.
+
+Migration requirements:
+
+- Idempotent migration.
+- Rollback support.
+- Referential integrity.
+- Tenant isolation.
+- Data validation.
+- Migration logging.
+- Backup verification.
+- Recovery after interrupted migration.
+
+Do not create a second competing database.
+
+---
+
+# PART II — GLOBAL ECONOMIC INTELLIGENCE INFRASTRUCTURE
+
+## 3. Universal Economic Intelligence Engine
+
+Build a central intelligence infrastructure that can understand economic activity across the AETHER–AROS network.
+
+It must process authorized information from:
+
+- Marketplace activity.
+- Procurement and supplier networks.
+- Business operations.
+- Trade and cross-border transactions.
+- Logistics and transport.
+- Industrial production.
+- Employment and workforce activity.
+- Financial execution records.
+- Currency and indicative FX observations.
+- Commodity and product markets.
+- Institutional economic publications.
+- Public economic statistics.
+- Weather and disaster information where relevant.
+- Authorized user-submitted economic observations.
+
+Create an intelligence processing pipeline:
+
+1. Data source registration.
+2. Source authorization.
+3. Data ingestion.
+4. Format normalization.
+5. Data validation.
+6. Provenance registration.
+7. Duplicate detection.
+8. Quality scoring.
+9. Time-series storage.
+10. Feature generation.
+11. Model processing.
+12. Forecast generation.
+13. Confidence evaluation.
+14. Human review where required.
+15. Publication to authorized users.
+16. Continuous accuracy evaluation.
+
+Every data item must have:
+
+- Unique identifier.
+- Source identifier.
+- Source classification.
+- Jurisdiction.
+- Economic sector.
+- Observation period.
+- Collection timestamp.
+- Publication timestamp where applicable.
+- Data owner.
+- Authorization scope.
+- Verification status.
+- Quality score.
+- Provenance information.
+
+### Source classifications
+
+Use explicit source categories:
+
+- VERIFIED_PRIMARY_SOURCE
+- VERIFIED_INSTITUTIONAL_SOURCE
+- VERIFIED_MARKET_SOURCE
+- AUTHORIZED_PARTNER_SOURCE
+- VERIFIED_USER_OBSERVATION
+- UNVERIFIED_USER_SUBMISSION
+- THIRD_PARTY_ESTIMATE
+- MODEL_GENERATED_ESTIMATE
+- SIMULATED_DATA
+
+Never present simulated or unverified information as authoritative economic intelligence.
+
+## 4. Global Economic Data Observatory
+
+Create a Global Economic Data Observatory.
+
+It must organize economic information by:
+
+- Country.
+- Region.
+- District or local jurisdiction where supported.
+- Economic corridor.
+- Industry.
+- Economic sector.
+- Commodity.
+- Currency.
+- Business category.
+- Participant type.
+- Observation period.
+
+Create an economic indicator registry.
+
+Each indicator must include:
+
+- Indicator name.
+- Description.
+- Economic category.
+- Unit of measurement.
+- Applicable jurisdiction.
+- Data source.
+- Update frequency.
+- Historical observations.
+- Verification status.
+- Calculation methodology.
+- Effective period.
+- Confidence and limitations.
+
+Examples of indicators:
+
+- Consumer price inflation.
+- Producer price changes.
+- Commodity prices.
+- Food price movements.
+- Employment activity.
+- Import and export activity.
+- Business formation.
+- Industrial production.
+- Logistics costs.
+- Freight availability.
+- Currency movements.
+- Trade corridor congestion.
+- Procurement demand.
+- Inventory levels.
+- Energy availability.
+- Business payment delays.
+- Supply-chain disruptions.
+- Regional economic activity.
+
+Do not invent indicator values where verified data is unavailable.
+
+Display unavailable indicators as unavailable rather than filling them with fabricated values.
+
+## 5. Economic Data Source Registry
+
+Build an interface and backend registry for economic intelligence sources.
+
+Each source must contain:
+
+- Source name.
+- Source category.
+- Jurisdiction.
+- Website or API reference where applicable.
+- Access method.
+- Authentication requirements.
+- Data licensing restrictions.
+- Update frequency.
+- Last successful retrieval.
+- Last failed retrieval.
+- Verification status.
+- Source reliability assessment.
+- Administrator approval status.
+
+Support:
+
+- Authorized API integrations.
+- Secure file imports.
+- CSV imports.
+- JSON imports.
+- Institutional data feeds.
+- Approved webhooks.
+- Manual data submission.
+- Scheduled data retrieval.
+
+Do not scrape restricted services or bypass access controls.
+
+Create source monitoring to detect:
+
+- Broken integrations.
+- Expired credentials.
+- Stale observations.
+- Unexpected changes in data format.
+- Duplicate submissions.
+- Abnormal data values.
+- Missing updates.
+
+---
+
+# PART III — PREDICTIVE ECONOMIC INTELLIGENCE
+
+## 6. Global Economic Forecasting Engine
+
+Build a forecasting engine that can generate predictions from valid historical and current economic observations.
+
+Supported forecasting domains:
+
+1. Commodity prices.
+2. Food prices.
+3. Business demand.
+4. Product demand.
+5. Supply availability.
+6. Import and export activity.
+7. Freight and transport costs.
+8. Currency trends.
+9. Industrial production.
+10. Inventory requirements.
+11. Procurement demand.
+12. Employment demand.
+13. Regional economic activity.
+14. Supply-chain disruption risk.
+15. Business cash-flow scenarios using authorized business data.
+
+Forecasting methods should be modular.
+
+Support appropriate methods such as:
+
+- Historical trend analysis.
+- Moving averages.
+- Exponential smoothing.
+- Seasonal decomposition.
+- Regression.
+- Time-series forecasting.
+- Scenario-based modelling.
+- Anomaly-adjusted forecasts.
+- Machine-learning models where sufficient data exists.
+
+Do not introduce complex machine-learning systems simply for appearance.
+
+Start with reliable statistical baselines. More advanced models must outperform those baselines on documented validation data before being promoted.
+
+### Forecast output requirements
+
+Every forecast must include:
+
+- Forecast identifier.
+- Indicator.
+- Jurisdiction.
+- Economic sector.
+- Forecast horizon.
+- Generation timestamp.
+- Source observations.
+- Model identifier and version.
+- Methodology.
+- Assumptions.
+- Expected value or range.
+- Prediction interval where statistically supported.
+- Confidence classification.
+- Validation metrics.
+- Known limitations.
+- Model status.
+
+Use confidence classifications:
+
+- HIGH
+- MODERATE
+- LOW
+- INSUFFICIENT_DATA
+
+Do not confuse a model's statistical confidence with certainty about future events.
+
+### Forecast horizons
+
+Support:
+
+- Short-term: hours to 7 days where the data supports it.
+- Near-term: 8–30 days.
+- Medium-term: 1–6 months.
+- Long-term: 6–36 months where the data supports it.
+
+Do not display long-term forecasts as reliable when the available data cannot justify them.
+
+## 7. Economic Anomaly Detection
+
+Build a network-wide anomaly detection system.
+
+Identify unusual patterns such as:
+
+- Unexpected price changes.
+- Abnormal supply shortages.
+- Sudden transaction-volume changes.
+- Unusual procurement bids.
+- Repeated failed payments.
+- Abnormal inventory movement.
+- Unusual logistics delays.
+- Sudden demand spikes.
+- Duplicate economic records.
+- Suspicious business activity.
+- Data source inconsistencies.
+- Unusual currency observations.
+
+Anomaly detection must not automatically accuse a participant of fraud.
+
+Use classifications:
+
+- INFORMATIONAL_ANOMALY
+- DATA_QUALITY_ANOMALY
+- OPERATIONAL_ANOMALY
+- FINANCIAL_REVIEW_REQUIRED
+- SECURITY_REVIEW_REQUIRED
+- POTENTIAL_FRAUD_SIGNAL
+
+A human investigation must be required before adverse action against a participant.
+
+Create explainable anomaly records containing:
+
+- Detection reason.
+- Affected record.
+- Relevant historical baseline.
+- Detection method.
+- Severity.
+- Confidence.
+- Recommended investigation.
+- Review status.
+- Resolution history.
+
+## 8. Economic Early Warning System
+
+Build a Global Economic Early Warning System.
+
+It must identify emerging risks across:
+
+- Food supply.
+- Energy.
+- Agriculture.
+- Manufacturing.
+- Trade.
+- Currency and liquidity.
+- Logistics.
+- Employment.
+- Business continuity.
+- Infrastructure.
+- Climate-related disruptions.
+- Natural disasters.
+- Public health disruptions where reliable authorized data exists.
+
+Risk classifications:
+
+- NORMAL
+- WATCH
+- ELEVATED
+- HIGH
+- CRITICAL
+
+Each warning must include:
+
+- Event identifier.
+- Affected jurisdiction.
+- Affected economic sectors.
+- Evidence.
+- Source references.
+- Detection time.
+- Expected impact.
+- Potential affected participants.
+- Forecast horizon.
+- Recommended preventive action.
+- Escalation requirements.
+- Review and closure status.
+
+Do not issue public emergency warnings without sufficient evidence and appropriate authorization.
+
+Clearly distinguish a platform-generated risk signal from an official government or emergency-service warning.
+
+## 9. Economic Opportunity Intelligence
+
+Build an Opportunity Intelligence Engine.
+
+Identify potential economic opportunities such as:
+
+- Underserved markets.
+- Supplier shortages.
+- Procurement demand.
+- Export opportunities.
+- Import substitution opportunities.
+- Available industrial capacity.
+- Freight capacity.
+- Workforce demand.
+- Business partnership opportunities.
+- Regional trade opportunities.
+- Market expansion opportunities.
+- Investment information opportunities.
+
+Each opportunity must include:
+
+- Opportunity identifier.
+- Description.
+- Jurisdiction.
+- Sector.
+- Demand evidence.
+- Supply evidence.
+- Estimated market size where supported.
+- Competition indicators where supported.
+- Potential participants.
+- Source references.
+- Confidence.
+- Limitations.
+- Suggested next steps.
+
+Do not present investment predictions as guaranteed returns or personalized financial advice.
+
+---
+
+# PART IV — ECONOMIC SIMULATION AND SCENARIO MODELLING
+
+## 10. Economic Scenario Simulation Engine
+
+Create a scenario modelling engine for understanding possible future economic conditions.
+
+Users with appropriate permissions must be able to create scenarios such as:
+
+- Fuel price increases.
+- Currency depreciation.
+- Currency appreciation.
+- Transport cost increases.
+- Agricultural supply shocks.
+- Industrial production disruption.
+- Import restrictions.
+- Export demand increases.
+- Interest-rate changes.
+- Tax policy changes.
+- Regional border disruptions.
+- Natural disasters.
+- Commodity shortages.
+- Increased consumer demand.
+- Supply-chain recovery.
+
+Each simulation must define:
+
+- Scenario name.
+- Scenario description.
+- Starting conditions.
+- Assumptions.
+- Input variables.
+- Affected jurisdictions.
+- Affected sectors.
+- Time horizon.
+- Model used.
+- Resulting estimates.
+- Uncertainty ranges.
+- Limitations.
+- Comparison with baseline.
+- Creation timestamp.
+
+Provide scenario comparison.
+
+For example:
+
+Baseline: Current observed transport costs.
+
+Scenario A: Transport costs increase by 10%.
+
+Scenario B: Transport costs increase by 25%.
+
+Scenario C: Transport costs decrease by 10%.
+
+Calculate the possible impact on selected economic activities using disclosed assumptions.
+
+Simulations must never change real-world economic records or execute transactions.
+
+Clearly label every simulation as SIMULATED_SCENARIO.
+
+## 11. Business Impact Simulator
+
+Create a business-level economic impact simulator.
+
+Authorized business users should be able to model:
+
+- Changes in supplier costs.
+- Changes in product demand.
+- Currency exposure.
+- Inventory costs.
+- Transport expenses.
+- Payroll expenses.
+- Expected cash-flow pressure.
+- Procurement changes.
+- Sales scenarios.
+- Business expansion scenarios.
+
+The simulator must use tenant-authorized business records.
+
+Do not expose one tenant's private financial information to another tenant.
+
+Provide scenario results with:
+
+- Input assumptions.
+- Projected impact.
+- Best-case scenario.
+- Base-case scenario.
+- Stress scenario.
+- Uncertainty.
+- Recommended management actions.
+
+These are decision-support estimates, not guaranteed business outcomes.
+
+## 12. Regional and Global Economic Stress Testing
+
+Build regional and global economic stress-testing capabilities.
+
+Allow authorized analysts to model:
+
+- Regional trade disruptions.
+- Supply-chain shocks.
+- Currency instability.
+- Commodity-price shocks.
+- Financial liquidity stress.
+- Industrial disruptions.
+- Logistics bottlenecks.
+- Simultaneous multi-country disruptions.
+
+Create a stress-test report showing:
+
+- Affected countries.
+- Affected economic corridors.
+- Affected sectors.
+- Potential exposure.
+- Available alternative routes or suppliers.
+- Recovery scenarios.
+- Estimated recovery periods where evidence supports them.
+- Data gaps.
+- Confidence limitations.
+
+Do not imply that AETHER–AROS can control national economic policy.
+
+---
+
+# PART V — INTELLIGENT ECONOMIC COORDINATION
+
+## 13. Economic Coordination Recommendation Engine
+
+Create an engine that converts verified intelligence into recommended actions.
+
+Examples:
+
+- Notify a business of an emerging supplier shortage.
+- Recommend alternative suppliers.
+- Identify alternative freight providers.
+- Identify potential procurement opportunities.
+- Alert a cooperative about a market-demand change.
+- Recommend inventory review.
+- Identify a possible trade corridor disruption.
+- Alert an institution about a data-quality issue.
+- Suggest an operational contingency plan.
+
+Each recommendation must include:
+
+- Recommendation identifier.
+- Target participant.
+- Source intelligence.
+- Explanation.
+- Expected benefit.
+- Potential risk.
+- Required permissions.
+- Recommended action.
+- Confidence.
+- Expiry date.
+- Approval requirements.
+- Execution status.
+
+Recommendation states:
+
+- GENERATED
+- UNDER_REVIEW
+- APPROVED
+- REJECTED
+- EXPIRED
+- EXECUTION_PENDING
+- EXECUTED
+- FAILED
+
+Recommendations must not automatically become transactions.
+
+## 14. Intelligent Supplier and Market Coordination
+
+Integrate V12 intelligence with V11 marketplace, procurement and participant graph systems.
+
+Enhance supplier matching using:
+
+- Product availability.
+- Supplier qualifications.
+- Verified business information.
+- Jurisdiction.
+- Delivery capacity.
+- Price observations.
+- Historical fulfillment records.
+- Delivery performance.
+- Authorized reputation information.
+- Supply-chain risk.
+
+Matching results must be explainable.
+
+Never treat an AI score as proof of supplier reliability.
+
+Keep the existing verified-listing and participant-submitted-claim distinction.
+
+## 15. Intelligent Trade and Logistics Coordination
+
+Integrate predictive intelligence with the existing trade and logistics systems.
+
+Support:
+
+- Early detection of route disruptions.
+- Freight demand forecasts.
+- Alternative supplier discovery.
+- Alternative transport-provider discovery.
+- Estimated delivery risk.
+- Corridor performance analysis.
+- Shipment exception predictions.
+- Inventory and replenishment alerts.
+
+Any delivery-time estimates must identify whether they are:
+
+- Provider-confirmed.
+- Historical estimates.
+- Model-generated predictions.
+- User-submitted estimates.
+
+Never invent live shipment locations or transport capacity.
+
+---
+
+# PART VI — AI ECONOMIC INTELLIGENCE
+
+## 16. Global Economic Intelligence Assistant
+
+Create an AI-powered economic assistant integrated into AETHER–AROS.
+
+It must answer questions using authorized, source-attributed economic information.
+
+Example questions:
+
+- What economic opportunities are emerging in Uganda?
+- Which sectors show increasing demand?
+- Which suppliers can meet this procurement requirement?
+- What economic risks are emerging along this trade corridor?
+- How have selected commodity prices changed?
+- What are the main cost drivers for this business?
+- What alternative logistics providers are available?
+- What could happen if transport costs increase?
+- Which economic indicators are missing reliable data?
+
+The assistant must:
+
+- Cite internal source records.
+- Identify external sources when available.
+- Explain calculations.
+- Disclose uncertainty.
+- Distinguish facts from forecasts.
+- Respect tenant permissions.
+- Respect jurisdictional restrictions.
+- Refuse to invent missing information.
+- Avoid disclosing confidential economic data.
+
+When no adequate evidence exists, state that the information is unavailable.
+
+## 17. Multi-Agent Economic Intelligence Architecture
+
+Create modular intelligence agents with clearly defined responsibilities.
+
+Suggested agents:
+
+1. Global Economic Research Agent.
+2. Market Intelligence Agent.
+3. Commodity Intelligence Agent.
+4. Currency Intelligence Agent.
+5. Trade Intelligence Agent.
+6. Logistics Intelligence Agent.
+7. Industrial Intelligence Agent.
+8. Business Intelligence Agent.
+9. Procurement Intelligence Agent.
+10. Risk Intelligence Agent.
+11. Early Warning Agent.
+12. Economic Forecasting Agent.
+13. Scenario Simulation Agent.
+14. Data Quality Agent.
+15. Economic Coordination Agent.
+
+Each agent must have:
+
+- Defined purpose.
+- Authorized data scope.
+- Input schema.
+- Output schema.
+- Model or service dependency.
+- Execution limits.
+- Audit logs.
+- Error handling.
+- Human escalation rules.
+
+Agents must not bypass the platform's authorization system.
+
+## 18. Governed AI Action Architecture
+
+Preserve V11's five-level governed automation framework.
+
+Extend it with V12 intelligence-specific controls.
+
+LEVEL 1 — READ ONLY
+
+- Retrieve authorized information.
+- Summarize data.
+- Generate explanations.
+- No modifications.
+
+LEVEL 2 — ROUTINE INTELLIGENCE
+
+- Refresh approved datasets.
+- Run scheduled forecasts.
+- Detect data anomalies.
+- Generate internal alerts.
+
+LEVEL 3 — ASSISTED OPERATIONS
+
+- Recommend business actions.
+- Prepare procurement suggestions.
+- Prepare operational reports.
+- Require approval before consequential changes.
+
+LEVEL 4 — SUPERVISED EXECUTION
+
+- Perform specifically authorized reversible operations.
+- Require operator oversight.
+- Apply transaction and permission limits.
+
+LEVEL 5 — HIGH-IMPACT CONTROLLED ACTIONS
+
+- Financial execution.
+- Regulated operations.
+- Institutional actions.
+- Government-facing submissions.
+- Material changes to economic agreements.
+
+Require dual human authorization and all applicable existing approval mechanisms.
+
+AI agents must never self-authorize Level 5 operations.
+
+Maintain emergency circuit breakers and immediate suspension capabilities.
+
+---
+
+# PART VII — GLOBAL ECONOMIC INTELLIGENCE PRODUCTS
+
+## 19. Economic Intelligence Workspace
+
+Create a dedicated Global Economic Intelligence workspace.
+
+It must contain:
+
+- Global Intelligence Overview.
+- Economic Data Observatory.
+- Economic Indicators.
+- Market Intelligence.
+- Forecasting Centre.
+- Anomaly Detection.
+- Early Warning Centre.
+- Opportunity Intelligence.
+- Scenario Simulator.
+- Business Impact Simulator.
+- Regional Economic Analysis.
+- Trade Corridor Intelligence.
+- Industrial Intelligence.
+- Logistics Intelligence.
+- AI Economic Assistant.
+- Intelligence Source Registry.
+- Forecast Accuracy and Model Governance.
+
+All sections must connect to actual backend services.
+
+Do not use decorative dashboards populated with invented figures.
+
+## 20. Global Economic Intelligence Dashboard
+
+Build a high-quality overview containing:
+
+- Verified active data sources.
+- Latest observations.
+- Indicators with fresh data.
+- Stale data warnings.
+- Active forecasts.
+- Forecast confidence distribution.
+- Active economic alerts.
+- Emerging opportunities.
+- Regional economic activity.
+- Sector performance.
+- Data quality status.
+- Model performance.
+- Pending human reviews.
+
+Every displayed metric must be linked to its source or calculation.
+
+Show:
+
+- Last updated time.
+- Data coverage.
+- Verification status.
+- Jurisdiction.
+- Forecast versus observed status.
+
+Do not confuse the number of registered participants with active economic participants.
+
+## 21. Regional Intelligence Views
+
+Create regional intelligence views for:
+
+- Uganda.
+- East African Community.
+- AfCFTA economic corridors.
+- Other jurisdictions only where data and authorization exist.
+
+Regional comparisons must use consistent:
+
+- Units.
+- Reporting periods.
+- Indicator definitions.
+- Currency treatment.
+- Source classifications.
+
+Where data definitions differ, display the differences.
+
+Never present incomplete regional data as a comprehensive continental or global picture.
+
+---
+
+# PART VIII — FORECAST GOVERNANCE AND MODEL QUALITY
+
+## 22. Forecast Accuracy Evaluation
+
+Create a formal model evaluation framework.
+
+Every forecasting model must have:
+
+- Model name.
+- Version.
+- Training-data reference.
+- Validation-data reference.
+- Evaluation period.
+- Baseline model.
+- Error metrics.
+- Performance history.
+- Known weaknesses.
+- Approval status.
+- Deployment status.
+
+Support appropriate metrics such as:
+
+- MAE.
+- RMSE.
+- MAPE where appropriate.
+- Prediction interval coverage.
+- Directional accuracy where meaningful.
+
+Do not use a single metric to claim that a model is universally accurate.
+
+Compare forecasts against actual later observations.
+
+Record prediction errors.
+
+Allow models to be:
+
+- DEVELOPMENT
+- VALIDATION
+- APPROVED
+- ACTIVE
+- SUSPENDED
+- RETIRED
+
+A model must not be promoted to production simply because it generates a prediction.
+
+## 23. Model Drift and Data Quality Monitoring
+
+Detect:
+
+- Changes in input-data distributions.
+- Forecast accuracy deterioration.
+- Missing observations.
+- Data source failures.
+- Model performance degradation.
+- Unexpected model outputs.
+- Data poisoning indicators.
+
+When a model becomes unreliable:
+
+1. Mark the model as degraded.
+2. Notify authorized administrators.
+3. Suspend affected forecasts if necessary.
+4. Fall back to an approved baseline where appropriate.
+5. Preserve historical outputs.
+6. Record the incident.
+7. Require review before restoring the model.
+
+## 24. Economic Intelligence Audit Trail
+
+Maintain immutable or tamper-evident audit records for:
+
+- Data ingestion.
+- Source verification.
+- Forecast generation.
+- Model deployment.
+- Model changes.
+- Anomaly detection.
+- Early warnings.
+- Scenario creation.
+- Recommendations.
+- Human approvals.
+- Intelligence publication.
+- Data corrections.
+
+Every important output must be reproducible from its recorded inputs and model version where technically feasible.
+
+---
+
+# PART IX — V12 DATA ARCHITECTURE
+
+## 25. New V12 Collections
+
+Introduce the following logical collections, adapting names and structures to the existing repository conventions.
+
+1. `intelligenceSources`
+2. `intelligenceSourceCredentials`
+3. `intelligenceSourceHealth`
+4. `economicObservations`
+5. `economicIndicators`
+6. `economicIndicatorDefinitions`
+7. `economicTimeSeries`
+8. `economicDataQualityReports`
+9. `economicForecasts`
+10. `forecastModels`
+11. `forecastEvaluations`
+12. `forecastAccuracyHistory`
+13. `economicAnomalies`
+14. `economicEarlyWarnings`
+15. `economicOpportunities`
+16. `economicScenarios`
+17. `scenarioSimulationResults`
+18. `businessImpactSimulations`
+19. `economicRecommendations`
+20. `intelligenceAgentRuns`
+21. `intelligenceAgentPolicies`
+22. `modelDriftEvents`
+23. `intelligenceAuditEvents`
+24. `intelligenceSubscriptions`
+25. `intelligenceReports`
+26. `intelligenceReviewQueue`
+27. `intelligencePublicationRecords`
+
+Every record must support relevant:
+
+- Tenant ID.
+- Jurisdiction.
+- Source reference.
+- Creation timestamp.
+- Update timestamp.
+- Verification status.
+- Access classification.
+- Provenance.
+- Retention policy.
+
+Do not unnecessarily duplicate V1–V11 data.
+
+Use references to existing authoritative records wherever appropriate.
+
+## 26. Data Classification and Permissions
+
+Support:
+
+- PUBLIC
+- RESTRICTED
+- TENANT_PRIVATE
+- INSTITUTION_PRIVATE
+- CONFIDENTIAL
+- SOVEREIGN_RESTRICTED
+
+Apply access controls at the backend.
+
+Do not rely on hiding frontend components to protect confidential data.
+
+Implement:
+
+- Tenant-level authorization.
+- Role-based access.
+- Permission-scoped API access.
+- Jurisdictional restrictions.
+- Data-owner consent.
+- Data minimization.
+- Retention controls.
+- Secure deletion where legally permitted.
+- Audit logging.
+
+Cross-tenant intelligence must only use data that is lawfully authorized for aggregation.
+
+Where aggregate insights are provided, protect participants against re-identification.
+
+---
+
+# PART X — API AND SYSTEM INTEGRATION
+
+## 27. V12 API Endpoints
+
+Build consistent authenticated APIs using the existing server architecture.
+
+Suggested endpoints:
+
+### Intelligence Overview
+
+- `GET /api/v12/intelligence/overview`
+- `GET /api/v12/intelligence/status`
+- `GET /api/v12/intelligence/coverage`
+
+### Data Sources
+
+- `GET /api/v12/intelligence/sources`
+- `POST /api/v12/intelligence/sources`
+- `GET /api/v12/intelligence/sources/:id`
+- `POST /api/v12/intelligence/sources/:id/verify`
+- `POST /api/v12/intelligence/sources/:id/refresh`
+
+### Economic Indicators
+
+- `GET /api/v12/economy/indicators`
+- `GET /api/v12/economy/indicators/:id`
+- `GET /api/v12/economy/observations`
+- `POST /api/v12/economy/observations/import`
+
+### Forecasts
+
+- `GET /api/v12/forecasts`
+- `POST /api/v12/forecasts/generate`
+- `GET /api/v12/forecasts/:id`
+- `GET /api/v12/forecasts/:id/evaluation`
+
+### Anomalies and Warnings
+
+- `GET /api/v12/intelligence/anomalies`
+- `GET /api/v12/intelligence/warnings`
+- `POST /api/v12/intelligence/warnings/:id/review`
+
+### Opportunities
+
+- `GET /api/v12/intelligence/opportunities`
+- `GET /api/v12/intelligence/opportunities/:id`
+
+### Simulations
+
+- `POST /api/v12/simulations`
+- `GET /api/v12/simulations`
+- `GET /api/v12/simulations/:id`
+- `POST /api/v12/simulations/:id/compare`
+
+### Recommendations
+
+- `GET /api/v12/recommendations`
+- `POST /api/v12/recommendations/:id/approve`
+- `POST /api/v12/recommendations/:id/reject`
+
+### AI Agents
+
+- `GET /api/v12/agents`
+- `GET /api/v12/agents/:id/runs`
+- `POST /api/v12/agents/:id/run`
+
+### Governance
+
+- `GET /api/v12/governance/models`
+- `GET /api/v12/governance/audit`
+- `GET /api/v12/governance/data-quality`
+
+Adapt endpoints to existing authentication, API conventions and service architecture.
+
+All endpoints must validate inputs, authenticate users, enforce authorization, validate tenant context and produce structured errors.
+
+Never expose secret credentials through API responses.
+
+---
+
+# PART XI — COMMERCIAL INTELLIGENCE SERVICES
+
+## 28. Intelligence Subscription Products
+
+Integrate V12 with V11's existing tenant billing engine.
+
+Introduce optional intelligence services:
+
+### INTELLIGENCE STARTER
+
+- Basic economic indicators.
+- Limited market insights.
+- Basic alerts.
+- Standard reports.
+
+### INTELLIGENCE BUSINESS
+
+- Business-specific forecasts.
+- Market demand analysis.
+- Supplier and procurement intelligence.
+- Business scenario simulation.
+- Operational alerts.
+
+### INTELLIGENCE ENTERPRISE
+
+- Advanced forecasting.
+- Multi-location intelligence.
+- Industrial and supply-chain analysis.
+- Custom reports.
+- Advanced scenario simulation.
+- Enterprise access controls.
+
+### INTELLIGENCE INSTITUTIONAL
+
+- Authorized regional economic intelligence.
+- Institutional data integration.
+- Advanced economic observatory.
+- Custom analytical models.
+- Sovereign data controls.
+- Institutional reporting.
+
+### INTELLIGENCE DEVELOPER
+
+- Authorized intelligence APIs.
+- Data subscription management.
+- Forecast endpoints.
+- Usage metering.
+- Developer documentation.
+
+These are proposed product tiers, not existing subscriptions.
+
+Pricing must be configurable by jurisdiction, currency and billing period.
+
+Do not invent customers, subscriptions or revenue.
+
+Clearly disclose any data licensing and usage restrictions.
+
+Do not sell confidential tenant information or restricted institutional data.
+
+---
+
+# PART XII — USER EXPERIENCE AND INTERFACE
+
+## 29. V12 User Experience
+
+The V12 interface must be professional, clear, responsive and operationally useful.
+
+Maintain the existing AETHER–AROS identity:
+
+- Background: `#050505`
+- Primary surface: `#121212`
+- Secondary surface: `#181818`
+- Accent: `#D4AF37`
+- Silver: `#C0C0C0`
+- Primary text: `#F5F5F5`
+- Secondary text: `#A0A0A0`
+
+Typography:
+
+- Space Grotesk.
+- Inter.
+- Source Code Pro.
+
+Avoid unnecessary complexity.
+
+Create an intuitive navigation structure:
+
+1. Global Overview.
+2. Economic Intelligence.
+3. Market Observatory.
+4. Forecasting Centre.
+5. Early Warning Centre.
+6. Opportunity Intelligence.
+7. Scenario Simulator.
+8. Business Intelligence.
+9. Trade and Logistics Intelligence.
+10. AI Intelligence Assistant.
+11. Data Sources.
+12. Model Governance.
+13. Intelligence Reports.
+14. Administration.
+
+The workspace must be responsive on desktop, tablet and mobile.
+
+Include:
+
+- Search and filtering.
+- Jurisdiction selection.
+- Sector selection.
+- Time-range selection.
+- Export controls.
+- Report generation.
+- Data source disclosures.
+- Forecast explanations.
+- Loading states.
+- Empty states.
+- Error states.
+- Permission-denied states.
+- Stale-data warnings.
+
+Do not overload users with complex charts.
+
+Use clear explanations and accessible visualizations.
+
+---
+
+# PART XIII — SECURITY AND RESILIENCE
+
+## 30. Intelligence Security
+
+Implement:
+
+- Secure source credentials.
+- Encryption at rest where supported.
+- Encryption in transit.
+- Secret management.
+- Strong authentication.
+- Role-based permissions.
+- Tenant isolation.
+- API rate limiting.
+- Input validation.
+- Output validation.
+- Audit logging.
+- Secure file imports.
+- Malware-aware file handling where supported.
+- Prompt-injection resistance for external source content.
+- Protection against malicious imported datasets.
+- Protection against model manipulation.
+- Data exfiltration controls.
+
+External data must be treated as untrusted input.
+
+AI agents must not follow instructions embedded in imported economic documents or external source content that attempt to override platform policy.
+
+## 31. Operational Resilience
+
+Build:
+
+- Scheduled backup integration.
+- Recovery procedures.
+- Forecast job retry handling.
+- Failed ingestion queues.
+- Dead-letter handling.
+- Source health monitoring.
+- Model service health monitoring.
+- Job execution monitoring.
+- Database integrity checks.
+- Alert escalation.
+- Graceful degradation.
+
+The intelligence system must remain usable when external data sources are unavailable.
+
+Previously verified observations and approved historical reports must remain accessible subject to retention and access policies.
+
+Do not block essential V1–V11 economic workflows because an intelligence service is unavailable.
+
+---
+
+# PART XIV — PERFORMANCE AND SCALABILITY
+
+## 32. Intelligence Processing Architecture
+
+Do not perform expensive forecasting and bulk data processing inside ordinary user-facing request handlers.
+
+Use background jobs or an appropriate queue architecture compatible with the current repository.
+
+Support:
+
+- Scheduled jobs.
+- Asynchronous ingestion.
+- Batch processing.
+- Job prioritization.
+- Retry policies.
+- Idempotent processing.
+- Job cancellation.
+- Worker monitoring.
+- Backpressure controls.
+
+Add caching for frequently accessed public or properly authorized aggregate intelligence.
+
+Do not cache tenant-private information in a way that can leak across tenants.
+
+## 33. Performance Targets
+
+Establish measurable targets based on actual test infrastructure.
+
+Initial targets:
+
+- Ordinary intelligence summary API: p95 under 500 ms under a documented test load.
+- Cached indicator lookup: p95 under 300 ms under a documented test load.
+- Forecast-generation requests: asynchronous acknowledgement within 1 second under normal conditions.
+- Forecast completion: measured separately according to model complexity and dataset size.
+- No cross-tenant data leakage.
+- No silent data loss during interrupted ingestion.
+- No duplicate forecast records caused by retried jobs.
+- No unbounded background queues.
+
+These are engineering targets, not existing performance claims.
+
+Report the test environment, sample size, concurrency and measurement method.
+
+Do not claim that a one-millisecond benchmark proves global scalability.
+
+---
+
+# PART XV — TESTING AND VERIFICATION
+
+## 34. Preserve Existing Verification
+
+Execute:
+
+- V1–V10: T01–T300.
+- V11: T301–T450.
+
+Verify that all tests still exist and are genuinely executed.
+
+Do not silently alter the meaning of historical tests.
+
+## 35. Add V12 Automated Tests
+
+Create `v12IntelligenceVerificationTests.ts`.
+
+Add at least 100 meaningful tests, T451–T550.
+
+Required test categories:
+
+**T451–T465: Migration and Persistence**
+
+- Safe V11-to-V12 migration.
+- Backup creation.
+- Backup integrity.
+- Migration idempotency.
+- Interrupted migration recovery.
+- Collection preservation.
+- Referential integrity.
+- Persistence across restart.
+- Rollback.
+- Tenant record preservation.
+- Financial record preservation.
+- Historical audit preservation.
+- Schema validation.
+- Migration logging.
+- Database consistency.
+
+**T466–T480: Intelligence Data and Source Quality**
+
+- Source registration.
+- Source authorization.
+- Duplicate ingestion.
+- Invalid observation rejection.
+- Stale-data detection.
+- Provenance preservation.
+- Source classification.
+- Unauthorized source access.
+- Data quality scoring.
+- Missing data handling.
+- Secure import validation.
+- Data normalization.
+- Timestamp validation.
+- Jurisdiction validation.
+- Data licensing restrictions.
+
+**T481–T495: Forecasting and Model Governance**
+
+- Forecast generation.
+- Insufficient-data rejection.
+- Forecast provenance.
+- Confidence classification.
+- Historical baseline comparison.
+- Evaluation metrics.
+- Prediction interval validation.
+- Model version recording.
+- Model approval requirements.
+- Model suspension.
+- Model drift detection.
+- Invalid model output handling.
+- Forecast reproducibility.
+- Forecast expiration.
+- Actual-versus-forecast comparison.
+
+**T496–T510: Anomalies, Warnings and Opportunities**
+
+- Anomaly generation.
+- False-positive handling.
+- Anomaly evidence.
+- Risk classification.
+- Warning provenance.
+- Critical warning escalation.
+- Unauthorized public warning prevention.
+- Opportunity evidence.
+- Opportunity expiry.
+- Participant permission checks.
+- Fraud allegation safeguards.
+- Data quality anomaly handling.
+- Warning review.
+- Warning closure.
+- Audit history.
+
+**T511–T525: Simulations and Recommendations**
+
+- Scenario creation.
+- Scenario input validation.
+- Simulation isolation.
+- Baseline comparison.
+- Assumption disclosure.
+- Uncertainty reporting.
+- Business tenant isolation.
+- Recommendation generation.
+- Recommendation approval.
+- Recommendation rejection.
+- Recommendation expiration.
+- Prohibited financial execution prevention.
+- Human authorization enforcement.
+- Simulation reproducibility.
+- Invalid scenario rejection.
+
+**T526–T540: AI Agents and Security**
+
+- Agent authorization.
+- Prompt-injection resistance.
+- Source citation enforcement.
+- Confidential data protection.
+- Cross-tenant access denial.
+- AI action-level restrictions.
+- Level 5 dual authorization.
+- Agent run audit.
+- Agent error handling.
+- Model service unavailability.
+- Secret protection.
+- API rate limits.
+- Malicious data import handling.
+- Output validation.
+- Emergency circuit breaker.
+
+**T541–T550: UI, APIs and Performance**
+
+- Intelligence overview API.
+- Indicator API.
+- Forecast API.
+- Simulation API.
+- Warning API.
+- Recommendation API.
+- UI loading and error states.
+- Permission-denied states.
+- API concurrency tests.
+- Full end-to-end intelligence workflow.
+
+Target combined verification total: **550 meaningful passing tests**.
+
+If the repository cannot support 550 tests without duplicating trivial checks, report the limitation and prioritize meaningful coverage rather than manufacturing test count.
+
+## 36. Full System Verification
+
+Run:
+
+- `npm test`
+- `npm run build`
+- `npx tsc --noEmit`
+- Existing lint command.
+- V1–V12 verification suite.
+- API integration tests.
+- Database migration tests.
+- Tenant isolation tests.
+- Intelligence source validation.
+- Forecast evaluation tests.
+- Security tests.
+- Performance tests.
+
+Fix all newly introduced failures.
+
+Document pre-existing failures separately.
+
+Never report a test as passed unless it actually executed and passed.
+
+---
+
+# PART XVI — V12 ACCEPTANCE CRITERIA
+
+V12 is complete only when all applicable criteria below are demonstrated.
+
+1. V1–V11 functionality is preserved.
+2. SchemaVersion 12 migration is safe and reversible.
+3. Existing database records remain intact.
+4. Intelligence source registry is functional.
+5. Economic observations are stored with provenance.
+6. Economic indicators are usable through the backend.
+7. Forecasting engine generates traceable outputs.
+8. Forecast confidence and limitations are disclosed.
+9. Forecast evaluation works against subsequent observations.
+10. Anomaly detection is operational.
+11. Early warning workflows are operational.
+12. Opportunity intelligence is operational.
+13. Scenario simulation works without modifying real economic records.
+14. Business impact simulation respects tenant isolation.
+15. Recommendations are explainable and approval-controlled.
+16. AI economic assistant uses authorized information.
+17. AI agents cannot bypass governance controls.
+18. Intelligence dashboard uses actual backend data.
+19. Intelligence APIs are authenticated and authorized.
+20. Data source failures do not break core economic workflows.
+21. Audit records are maintained.
+22. Security tests pass.
+23. The existing V1–V11 test suite remains intact.
+24. V12 tests execute successfully.
+25. Build and typecheck complete successfully.
+26. No new critical security vulnerabilities are introduced.
+27. No false production integrations or economic data claims are introduced.
+28. The system provides an accurate implementation and verification report.
+
+---
+
+# PART XVII — IMPLEMENTATION PRIORITY ROADMAP
+
+Execute in this order.
+
+**PRIORITY 0 — V11 VERIFICATION**
+
+Audit and independently verify the reported 450-test baseline.
+
+**PRIORITY 1 — DATA FOUNDATION**
+
+Implement schemaVersion 12, backups, migration, data provenance and source registry.
+
+**PRIORITY 2 — ECONOMIC OBSERVATORY**
+
+Implement indicator registry, observations, normalization and data-quality monitoring.
+
+**PRIORITY 3 — FORECASTING ENGINE**
+
+Implement statistical forecasting, confidence evaluation and model governance.
+
+**PRIORITY 4 — ANOMALY AND EARLY WARNING**
+
+Implement economic anomaly detection and risk alerts.
+
+**PRIORITY 5 — OPPORTUNITY INTELLIGENCE**
+
+Connect economic demand and supply insights to the V11 marketplace and procurement network.
+
+**PRIORITY 6 — SCENARIO SIMULATION**
+
+Implement economic, regional and business impact simulation.
+
+**PRIORITY 7 — INTELLIGENT COORDINATION**
+
+Implement explainable recommendations and controlled workflows.
+
+**PRIORITY 8 — AI INTELLIGENCE**
+
+Implement the economic assistant and governed specialist agents.
+
+**PRIORITY 9 — COMMERCIAL INTELLIGENCE**
+
+Integrate intelligence subscriptions and API usage with existing billing.
+
+**PRIORITY 10 — INTERFACE AND OPERATIONS**
+
+Complete the intelligence workspace, reporting, source monitoring and operational controls.
+
+**PRIORITY 11 — SECURITY AND RELEASE CERTIFICATION**
+
+Complete testing, performance validation, recovery checks and V12 acceptance assessment.
+
+Do not skip earlier priorities to build impressive-looking AI screens.
+
+---
+
+# PART XVIII — FINAL ENGINEERING DELIVERY REPORT
+
+After implementation, produce a complete report with these headings:
+
+1. V12 Executive Summary.
+2. V11 Repository Audit.
+3. Verified V11 Baseline.
+4. V12 Architecture.
+5. SchemaVersion 12 Migration.
+6. Backup and Recovery Results.
+7. New Collections and Data Models.
+8. Economic Intelligence Engine.
+9. Data Observatory.
+10. Forecasting Engine.
+11. Forecast Accuracy and Model Governance.
+12. Anomaly Detection.
+13. Early Warning System.
+14. Opportunity Intelligence.
+15. Scenario Simulation.
+16. Business Impact Simulation.
+17. Intelligent Coordination.
+18. AI Assistant and Agent Governance.
+19. API Endpoints.
+20. Frontend and UX Implementation.
+21. Security and Data Sovereignty.
+22. Commercial Intelligence Services.
+23. Performance Measurements.
+24. Test Results.
+25. Build, Typecheck and Lint Results.
+26. Known Limitations.
+27. External Integration Status.
+28. Outstanding Work.
+29. V12 Acceptance Assessment.
+30. Recommended V13 Roadmap.
+
+For every feature, assign one truthful status:
+
+- IMPLEMENTED_AND_TESTED
+- IMPLEMENTED_NOT_FULLY_TESTED
+- PARTIALLY_IMPLEMENTED
+- SIMULATED
+- NOT_IMPLEMENTED
+
+For every external data or service connection, assign one truthful status:
+
+- NOT_CONFIGURED
+- REFERENCE_DIRECTORY
+- LOCAL_ONLY
+- SANDBOX_CONNECTED
+- PRODUCTION_CONNECTED_AND_VERIFIED
+- FAILED
+
+Never report a production connection based only on a local adapter, seeded institution, API endpoint, mock response or configuration file.
+
+For all external data, clearly disclose whether it is real, simulated, manually entered, cached or forecast.
+
+Include actual test output and actual build results.
+
+Do not invent performance measurements.
+
+If an implementation cannot be completed within the available environment, explain exactly what remains and provide the next engineering steps.
+
+---
+
+# FINAL V12 STRATEGIC DIRECTIVE
+
+AETHER–AROS must evolve beyond being a platform that merely records economic transactions and connects economic participants.
+
+It must become an intelligent infrastructure that can:
+
+- Understand economic activity.
+- Observe changing markets.
+- Detect emerging risks.
+- Predict possible economic conditions.
+- Discover opportunities.
+- Simulate alternative scenarios.
+- Recommend coordinated responses.
+- Connect participants to relevant economic opportunities.
+- Improve economic decision-making.
+- Support continuity during economic disruptions.
+
+The intelligence infrastructure must be useful to businesses, individuals, industries and institutions, while respecting the authority and sovereignty of every participating jurisdiction.
+
+The long-term objective is to make AETHER–AROS one of the most useful and trusted economic intelligence and coordination infrastructures in Africa and, eventually, the global economy.
+
+**Do not build V12 as another dashboard project. Build the intelligence infrastructure that makes the entire AETHER–AROS network smarter, more informed, more resilient and more useful.**
+
+**END OF V12 MASTER ENGINEERING DIRECTIVE**

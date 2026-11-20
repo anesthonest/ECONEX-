@@ -1,0 +1,1258 @@
+risk, repetitive and clearly defined economic processes while maintaining human control over sensitive, regulated or irreversible decisions.
+
+### 10.1 Automation categories
+
+Implement four automation categories:
+
+**A. Routine automation**
+- Invoice generation.
+- Payment reminders.
+- Subscription renewals.
+- Document expiry notifications.
+- Order status updates.
+- Inventory alerts.
+- Contract deadline notifications.
+- Reconciliation reminders.
+- Scheduled reporting.
+- Routine data synchronization.
+
+**B. Conditional automation**
+- Trigger an action when a verified business condition is satisfied.
+- Notify participants when an agreed milestone is reached.
+- Generate an invoice after an authorized delivery confirmation.
+- Escalate unresolved transactions.
+- Identify unusual transaction patterns.
+- Request additional documentation when eligibility requirements are incomplete.
+- Initiate approved recovery procedures after service interruptions.
+
+**C. AI-assisted automation**
+- Recommend suppliers.
+- Prepare draft commercial agreements.
+- Analyze procurement opportunities.
+- Identify discrepancies in financial records.
+- Forecast cash-flow scenarios.
+- Recommend operational improvements.
+- Prepare financial and economic reports.
+- Identify potential supply-chain disruptions.
+- Summarize complex institutional workflows.
+
+**D. Controlled high-impact automation**
+
+High-impact actions must require explicit authorization from appropriately empowered users or institutions.
+
+Examples include:
+- Releasing payments.
+- Approving financing.
+- Changing ownership records.
+- Executing investment instructions.
+- Changing institutional account permissions.
+- Approving high-value procurement.
+- Filing statutory declarations.
+- Executing regulated financial services.
+- Releasing contractual funds.
+- Changing critical security configurations.
+
+### 10.2 Automation governance
+
+Every automation must have:
+
+- Unique automation ID.
+- Owner.
+- Authorized scope.
+- Trigger conditions.
+- Input validation.
+- Execution policy.
+- Approval requirements.
+- Risk classification.
+- Execution history.
+- Failure history.
+- Audit records.
+- Version history.
+- Pause and cancellation controls.
+
+Implement these execution states:
+
+`CREATED → VALIDATED → APPROVED → ACTIVE → EXECUTING → COMPLETED`
+
+Additional states:
+
+`PAUSED`, `FAILED`, `CANCELLED`, `REQUIRES_APPROVAL`, `EXPIRED`.
+
+### 10.3 AI decision boundaries
+
+AI agents may analyze, recommend, draft, classify and coordinate.
+
+They must not independently:
+- Transfer funds.
+- Approve regulated financing.
+- Execute investment trades.
+- Change legal ownership.
+- Override institutional authorization.
+- Bypass identity verification.
+- Remove audit records.
+- Change regulatory requirements.
+- Approve their own high-impact actions.
+
+Every AI-generated recommendation must include its supporting information, uncertainty and applicable limitations.
+
+### 10.4 Automation monitoring
+
+Build an automation control centre showing:
+
+- Active automations.
+- Pending approvals.
+- Executions in progress.
+- Completed executions.
+- Failed executions.
+- Average execution time.
+- Retry counts.
+- External provider errors.
+- Estimated operational savings, clearly distinguished from measured savings.
+- Human intervention frequency.
+- Security alerts.
+
+Implement rate limits, execution quotas, idempotency and circuit breakers.
+
+---
+
+# PART V — CONTINENTAL FINANCIAL AND PAYMENT INTEROPERABILITY
+
+## 11. UNIVERSAL PAYMENT PROVIDER NETWORK
+
+Expand V7 payment orchestration into a provider-neutral payment network.
+
+Support integration patterns for:
+
+- Mobile money providers.
+- Commercial banks.
+- Licensed payment service providers.
+- Card processors.
+- Authorized international remittance providers.
+- Institutional settlement networks.
+- Approved digital payment systems.
+
+The system must maintain a provider registry containing:
+
+- Provider identity.
+- Supported countries.
+- Supported currencies.
+- Supported payment instruments.
+- Transaction limits.
+- Fee schedules.
+- Settlement periods.
+- Availability.
+- API capabilities.
+- Authentication requirements.
+- Regulatory status evidence.
+- Integration status.
+- Reconciliation capabilities.
+
+### Payment routing
+
+Build a configurable routing engine that selects an eligible provider based on:
+
+- Country.
+- Currency.
+- Payment type.
+- Amount.
+- Provider availability.
+- Transaction fees.
+- Settlement time.
+- Regulatory eligibility.
+- Customer preference.
+- Reliability history.
+
+Provide transparent routing explanations.
+
+Do not claim that the cheapest provider is always the best provider.
+
+### Payment reliability
+
+Implement:
+
+- Idempotency keys.
+- Duplicate payment protection.
+- Payment status inquiry.
+- Webhook signature verification.
+- Settlement confirmation.
+- Timeout recovery.
+- Reconciliation.
+- Refund workflows.
+- Reversal workflows.
+- Dispute management.
+- Provider failover where safe and authorized.
+
+A timeout must not automatically trigger a second payment if the first payment may have succeeded.
+
+## 12. UNIVERSAL CURRENCY AND FX NETWORK
+
+Expand the currency registry into a global currency interoperability service.
+
+Support:
+
+- National currencies.
+- Regional currencies.
+- Major international currencies.
+- Approved additional currencies.
+- Currency precision rules.
+- Minor units.
+- Currency availability by jurisdiction.
+- Currency conversion.
+- Historical exchange rates.
+- Indicative rates.
+- Executable provider quotes.
+- FX fees.
+- Quote expiry.
+- Exchange-rate provenance.
+- Conversion history.
+
+Distinguish clearly between:
+
+1. Indicative exchange rates.
+2. Provider executable quotes.
+3. Authorized conversion instructions.
+4. Confirmed conversions.
+5. Settled conversions.
+
+Do not represent an indicative FX rate as a guaranteed conversion price.
+
+Maintain original transaction amounts, transaction currency, functional currency and applicable exchange-rate records.
+
+Support multi-currency reconciliation and currency exposure reports.
+
+## 13. CROSS-BORDER ECONOMIC COORDINATION
+
+Build a cross-border coordination service for legitimate economic activity across participating countries.
+
+Support:
+
+- Country-specific participant verification.
+- Cross-border supplier discovery.
+- Currency availability.
+- Trade document coordination.
+- Customs workflow integration.
+- Tax jurisdiction identification.
+- Logistics coordination.
+- Payment routing.
+- Contractual obligations.
+- Cross-border dispute workflows.
+- Institutional reporting.
+
+Support the East African Community and AfCFTA corridors through configurable country and corridor registries.
+
+Do not assume that a common platform automatically eliminates national laws, tariffs, foreign exchange restrictions or customs procedures.
+
+Every transaction must respect applicable jurisdiction rules.
+
+---
+
+# PART VI — GLOBAL BUSINESS AND INDUSTRY NETWORK
+
+## 14. UNIVERSAL BUSINESS OPERATING ENVIRONMENT
+
+Build a connected business environment that allows companies to manage their economic participation through AETHER–AROS.
+
+Provide:
+
+- Business profile.
+- Organization structure.
+- Branches.
+- Authorized representatives.
+- Departments.
+- Business accounts.
+- Suppliers.
+- Customers.
+- Contracts.
+- Purchase orders.
+- Sales orders.
+- Invoices.
+- Payments.
+- Receivables.
+- Payables.
+- Inventory.
+- Assets.
+- Employees and contractors.
+- Business performance.
+- Compliance documents.
+- Commercial opportunities.
+
+Support different business sizes:
+
+- Individual enterprises.
+- Microbusinesses.
+- Small businesses.
+- Medium enterprises.
+- Large corporations.
+- Multinational businesses.
+- Cooperatives.
+- Nonprofit organizations.
+- Public institutions.
+
+### Business workspace
+
+Create an integrated workspace with role-based access.
+
+A business owner should be able to see the organization's authorized economic operations without accessing another organization's private information.
+
+## 15. INDUSTRIAL AND PRODUCTIVE ECONOMY NETWORK
+
+Expand industrial infrastructure beyond trade listings.
+
+Support all productive sectors, including:
+
+- Manufacturing.
+- Agriculture.
+- Mining.
+- Energy.
+- Construction.
+- Transport.
+- Technology.
+- Telecommunications.
+- Tourism.
+- Healthcare.
+- Education.
+- Retail.
+- Wholesale.
+- Financial services.
+- Professional services.
+- Creative industries.
+- Public infrastructure.
+
+Provide configurable industry profiles rather than forcing every sector into one rigid data model.
+
+### Industrial capabilities
+
+- Production capacity.
+- Facility registry.
+- Equipment registry.
+- Raw material requirements.
+- Supplier networks.
+- Production planning.
+- Manufacturing orders.
+- Quality assurance.
+- Batch traceability.
+- Maintenance records.
+- Capacity utilization.
+- Industrial procurement.
+- Distribution.
+- Supply-chain performance.
+
+Support industrial value-chain analysis to identify:
+
+- Local sourcing opportunities.
+- Import dependencies.
+- Production bottlenecks.
+- Capacity gaps.
+- Potential supplier relationships.
+- Distribution constraints.
+- Investment requirements.
+
+Do not invent production capacity or industrial statistics.
+
+## 16. UNIVERSAL PROCUREMENT AND SOURCING EXCHANGE
+
+Create a procurement exchange for businesses and authorized institutions.
+
+Support:
+
+- Requests for information.
+- Requests for quotation.
+- Requests for proposals.
+- Tenders.
+- Supplier registration.
+- Qualification requirements.
+- Bid submission.
+- Bid evaluation workflows.
+- Contract awards.
+- Purchase orders.
+- Delivery tracking.
+- Invoice matching.
+- Disputes.
+
+Include transparent evaluation criteria and immutable decision records.
+
+Public procurement workflows must follow the applicable country's legal and institutional requirements.
+
+AETHER–AROS must not claim to award government contracts unless an authorized institution has completed the official decision process.
+
+---
+
+# PART VII — DATA, IDENTITY AND TRUST
+
+## 17. UNIVERSAL ECONOMIC IDENTITY NETWORK
+
+Expand AETHER ID into a jurisdiction-aware identity and organization verification framework.
+
+Support:
+
+- Individuals.
+- Businesses.
+- Cooperatives.
+- Financial institutions.
+- Government entities.
+- Service providers.
+- Authorized representatives.
+- Developers.
+- Institutional systems.
+
+Implement:
+
+- Identity verification status.
+- Organization verification.
+- Document verification.
+- Representative authorization.
+- Beneficial ownership evidence.
+- Verification provenance.
+- Expiry and renewal.
+- Revocation.
+- Permission delegation.
+- Cross-border verification references.
+
+AETHER ID must not replace national identity systems or government-issued legal identifiers.
+
+Use the minimum identity information necessary for each workflow.
+
+Provide consent and access controls.
+
+## 18. UNIVERSAL TRUST AND REPUTATION FRAMEWORK
+
+Build a trust framework based on verifiable evidence rather than a single opaque score.
+
+Separate:
+
+- Identity verification.
+- Business verification.
+- Contract performance.
+- Payment history.
+- Delivery performance.
+- Document authenticity.
+- Regulatory authorization.
+- Dispute history.
+- Counterparty references.
+
+Provide evidence-based reputation indicators with:
+
+- Source.
+- Date.
+- Verification method.
+- Confidence.
+- Expiry.
+- Appeal status.
+
+Do not allow an unverified accusation, automated fraud alert or unresolved dispute to become a permanent negative reputation record.
+
+Provide correction, appeal and dispute resolution mechanisms.
+
+## 19. DATA SOVEREIGNTY AND CROSS-BORDER DATA GOVERNANCE
+
+Implement country-aware data governance.
+
+Every data category must have:
+
+- Classification.
+- Ownership or responsible controller.
+- Processing purpose.
+- Legal basis.
+- Retention period.
+- Storage jurisdiction.
+- Access policy.
+- Transfer policy.
+- Encryption requirements.
+- Deletion or archival policy.
+
+Support configurable data residency and cross-border transfer restrictions.
+
+Do not assume that all economic data can legally be transferred to a central continental database.
+
+Implement federated data exchange where appropriate.
+
+Share only authorized information and aggregate insights where possible.
+
+---
+
+# PART VIII — CONTINENTAL ECONOMIC INTELLIGENCE
+
+## 20. AETHER ECONOMIC INTELLIGENCE NETWORK
+
+Expand V7's AI agents into a coordinated intelligence system.
+
+Create specialized agents for:
+
+1. Currency and FX intelligence.
+2. Payment operations.
+3. Business intelligence.
+4. Supplier discovery.
+5. Procurement intelligence.
+6. Capital access intelligence.
+7. Investment research.
+8. Industrial intelligence.
+9. Trade intelligence.
+10. Logistics intelligence.
+11. Employment and workforce intelligence.
+12. Public economy analysis.
+13. Asset intelligence.
+14. Risk and fraud analysis.
+15. Economic forecasting.
+16. Contract analysis.
+17. Tax and jurisdiction assistance.
+18. Infrastructure resilience.
+19. Market and price intelligence.
+20. Institutional integration monitoring.
+
+### Intelligence network functions
+
+- Cross-domain data analysis.
+- Economic pattern identification.
+- Opportunity detection.
+- Demand forecasting.
+- Supply forecasting.
+- Cash-flow forecasting.
+- Price trend analysis.
+- Trade flow analysis.
+- Business performance analysis.
+- Economic disruption detection.
+- Infrastructure monitoring.
+- Scenario simulation.
+
+### Forecasting safeguards
+
+Every forecast must identify:
+
+- Data sources.
+- Time period.
+- Model version.
+- Assumptions.
+- Confidence interval where supportable.
+- Known limitations.
+- Last updated time.
+
+Distinguish actual measurements from estimates, predictions and scenarios.
+
+Never present an AI forecast as a guaranteed economic outcome.
+
+## 21. CONTINENTAL ECONOMIC OBSERVATORY
+
+Create an aggregated economic intelligence dashboard.
+
+Show, where authorized and supported by real data:
+
+- Economic transaction volumes.
+- Cross-border trade activity.
+- Business participation.
+- Currency activity.
+- Payment success rates.
+- Supplier activity.
+- Industry capacity.
+- Logistics activity.
+- Employment opportunities.
+- Procurement activity.
+- Investment and financing activity.
+- Infrastructure disruptions.
+- Commodity price movements.
+- Regional economic trends.
+
+Provide country, region, corridor and industry views.
+
+Clearly distinguish:
+
+- AETHER–AROS platform activity.
+- Official government statistics.
+- External institutional data.
+- Partner-provided data.
+- Estimated or modeled values.
+
+Do not imply that platform transaction data represents the complete national or continental economy.
+
+---
+
+# PART IX — DEVELOPER AND INSTITUTIONAL ECOSYSTEM
+
+## 22. AETHER DEVELOPER ECOSYSTEM
+
+Build a formal developer platform.
+
+Include:
+
+- Developer registration.
+- Organization profiles.
+- API documentation.
+- API key management.
+- OAuth 2.0 where appropriate.
+- Scoped permissions.
+- Webhook registration.
+- Sandbox environments.
+- API versioning.
+- Usage metering.
+- Rate limits.
+- Developer analytics.
+- Integration testing.
+- Security review.
+- App registration.
+- Revocation controls.
+
+Provide APIs for approved services such as:
+
+- Identity verification status.
+- Business directory.
+- Currency registry.
+- FX quotes.
+- Payment initiation.
+- Payment status.
+- Invoice management.
+- Contract workflows.
+- Order management.
+- Logistics status.
+- Supplier discovery.
+- Procurement.
+- Economic intelligence.
+
+Sensitive APIs must require appropriate authorization and provider approval.
+
+### Developer marketplace
+
+Allow approved third-party developers to publish:
+
+- Business applications.
+- Industry applications.
+- Financial workflow applications.
+- Logistics applications.
+- Accounting applications.
+- Data analytics applications.
+- Enterprise integrations.
+- Productivity tools.
+
+Implement application review, permissions disclosure, security checks, billing and revocation.
+
+Do not allow unreviewed applications to access confidential economic records.
+
+## 23. INSTITUTIONAL INTEROPERABILITY GATEWAY
+
+Build a common gateway for authorized institutions and external service providers.
+
+Support:
+
+- REST APIs.
+- Webhooks.
+- ISO 20022 message integration where applicable.
+- Secure file exchange.
+- Event-based integration.
+- Batch processing.
+- API authentication.
+- Mutual TLS where supported.
+- Digital signatures.
+- Provider-specific adapters.
+
+Implement a provider-neutral interface so new institutions can be connected without rewriting the entire AETHER–AROS platform.
+
+Maintain independent provider status and capability records.
+
+No integration should be labelled live without evidence of real authorized connectivity.
+
+---
+
+# PART X — RESILIENCE AND AUTONOMOUS OPERATIONS
+
+## 24. CONTINENTAL SERVICE RESILIENCE
+
+Extend V7 disaster recovery and continuity infrastructure.
+
+Implement:
+
+- Automated backup verification.
+- Encrypted backups.
+- Point-in-time recovery where supported.
+- Database integrity verification.
+- Recovery testing.
+- Replication monitoring.
+- Service health monitoring.
+- Queue recovery.
+- Event replay.
+- Disaster recovery plans.
+- Regional service continuity.
+- Incident escalation.
+- Recovery audit trails.
+
+Define service-specific RPO and RTO targets.
+
+Do not report a recovery objective as achieved until an actual recovery exercise has verified it.
+
+### Network outage handling
+
+Support low-bandwidth and intermittent connectivity.
+
+Implement:
+
+- Offline-capable workflows where safe.
+- Local encrypted persistence.
+- Synchronization queues.
+- Conflict detection.
+- Conflict resolution.
+- Duplicate protection.
+- Delayed submission.
+- Clear pending status.
+- Recovery after reconnection.
+
+Financial transactions must never be falsely represented as settled while offline.
+
+## 25. AUTONOMOUS INFRASTRUCTURE OPERATIONS
+
+Build a system operations intelligence layer.
+
+Monitor:
+
+- API availability.
+- Database health.
+- Queue health.
+- Payment provider connectivity.
+- External integration health.
+- Processing delays.
+- Error rates.
+- Resource utilization.
+- Security alerts.
+- Backup status.
+- Replication lag.
+- Workflow failures.
+
+Implement governed remediation for safe operational tasks.
+
+Examples:
+
+- Restart a failed non-critical worker.
+- Retry a safe idempotent request.
+- Move repeatedly failing events to a dead-letter queue.
+- Notify administrators of degraded providers.
+- Activate approved failover.
+- Escalate unresolved incidents.
+
+Require human approval for high-impact infrastructure or financial actions.
+
+---
+
+# PART XI — COMMERCIAL AND ECONOMIC SUSTAINABILITY
+
+## 26. V8 COMMERCIAL ECOSYSTEM
+
+Preserve and expand the V7 commercial model.
+
+Revenue channels may include:
+
+- Individual subscriptions.
+- Business subscriptions.
+- Enterprise licensing.
+- Institutional infrastructure contracts.
+- API usage.
+- Developer marketplace fees.
+- Approved payment orchestration fees.
+- Procurement and commerce services.
+- Logistics coordination.
+- Data intelligence subscriptions.
+- Premium automation.
+- Integration services.
+- Authorized partner revenue sharing.
+
+Implement country-aware pricing, supported currencies, transparent fees and versioned tax rules.
+
+Do not charge hidden fees.
+
+Do not claim actual revenue, customers, partners or market adoption without evidence.
+
+## 27. ECONOMIC PARTICIPATION AND INCLUSION
+
+Design access for different levels of economic participation.
+
+Support:
+
+- Individuals with basic phones through approved channels.
+- Smartphone users.
+- Small businesses.
+- Rural businesses.
+- Large organizations.
+- Cooperatives.
+- Institutions.
+- Developers.
+- Low-bandwidth environments.
+- Multiple languages.
+- Accessibility requirements.
+
+Provide simplified workflows for users with limited digital experience.
+
+Do not make premium access a prerequisite for essential account security, financial transparency or lawful access to user data.
+
+---
+
+# PART XII — USER EXPERIENCE AND SYSTEM DESIGN
+
+## 28. V8 MAIN NAVIGATION
+
+Create a coherent, understandable interface.
+
+Use a clear hierarchy instead of exposing every technical subsystem as a separate top-level menu.
+
+Recommended main navigation:
+
+1. Global Overview.
+2. My Economy.
+3. Money & Payments.
+4. Business Network.
+5. Commerce.
+6. Capital & Investment.
+7. Work & Income.
+8. Industry.
+9. Trade & Logistics.
+10. Assets.
+11. Agreements.
+12. Economic Network.
+13. Intelligence.
+14. Institutions.
+15. Developer Ecosystem.
+16. Operations.
+17. Administration.
+
+Use role-based dashboards.
+
+A citizen should not see the same workspace as a bank integration administrator.
+
+A business owner should see business operations.
+
+An institution should see authorized institutional workflows.
+
+A developer should see API and integration services.
+
+### Interface principles
+
+- Professional and intuitive.
+- Mobile-first.
+- Responsive.
+- Fast.
+- Accessible.
+- Low-bandwidth aware.
+- Clear navigation.
+- Consistent interaction patterns.
+- Strong data visualization.
+- Understandable terminology.
+- Clear transaction status.
+- Transparent fees.
+- Visible security controls.
+
+Preserve the existing AETHER–AROS visual identity and improve usability without destroying existing working workflows.
+
+---
+
+# PART XIII — SECURITY AND REGULATORY GOVERNANCE
+
+## 29. ZERO-TRUST SECURITY ARCHITECTURE
+
+Implement:
+
+- Role-based access control.
+- Attribute-based access control where needed.
+- Multi-factor authentication.
+- Secure session management.
+- Device and session management.
+- Strong password hashing.
+- Encryption in transit.
+- Encryption at rest.
+- Key management.
+- Secret rotation.
+- API authorization.
+- Tenant isolation.
+- Rate limiting.
+- Audit logging.
+- Webhook verification.
+- Input validation.
+- Security monitoring.
+- Vulnerability scanning.
+- Dependency auditing.
+
+Use established cryptographic libraries and protocols.
+
+Never implement custom cryptography when a secure standard library is available.
+
+## 30. FINANCIAL AND REGULATORY BOUNDARIES
+
+AETHER–AROS is an interoperability and economic coordination platform. It must not automatically assume that it is licensed to perform every service represented in its network.
+
+For each country, define which services:
+
+- Can be operated directly.
+- Require a license.
+- Require a regulated provider.
+- Require institutional authorization.
+- Are limited to information or workflow coordination.
+- Must remain unavailable until approval.
+
+This applies particularly to:
+
+- Banking.
+- Deposit-taking.
+- Payment services.
+- Money transfers.
+- Foreign exchange.
+- Lending.
+- Securities.
+- Investment management.
+- Insurance.
+- Escrow.
+- Custody.
+- Public procurement.
+- Tax submissions.
+
+Use authorized providers and legal review where required.
+
+Do not represent platform records as sovereign financial records, official government certificates or legally conclusive ownership documents.
+
+---
+
+# PART XIV — DATA ARCHITECTURE AND ENGINEERING
+
+## 31. V8 DOMAIN ARCHITECTURE
+
+Organize the backend into clearly separated domains:
+
+- Identity and Access.
+- Economic Participants.
+- Economic Network Graph.
+- Discovery and Matching.
+- Universal Ledger.
+- Currency and FX.
+- Payments.
+- Commerce.
+- Business Operations.
+- Capital and Assets.
+- Work and Income.
+- Agreements.
+- Workflow Orchestration.
+- Industry.
+- Procurement.
+- Trade.
+- Logistics.
+- Institutional Integration.
+- Developer Ecosystem.
+- Intelligence.
+- Trust and Risk.
+- Jurisdiction and Compliance.
+- Commercial Billing.
+- Event Network.
+- Resilience.
+- System Administration.
+
+Use clear domain boundaries and shared services.
+
+Avoid creating circular dependencies between business domains.
+
+## 32. DATABASE AND EVENT ARCHITECTURE
+
+Implement versioned database migrations.
+
+Create or extend data models for:
+
+- Economic participants.
+- Organizations.
+- Network relationships.
+- Discovery listings.
+- Matching results.
+- Workflow definitions.
+- Workflow instances.
+- Workflow tasks.
+- Transaction coordination records.
+- Agreement records.
+- Agreement milestones.
+- Provider registry.
+- Provider capabilities.
+- Payment routing decisions.
+- FX quote records.
+- API applications.
+- Developer credentials.
+- Automation policies.
+- Automation executions.
+- Trust evidence.
+- Risk assessments.
+- Audit records.
+- Regional economic observations.
+
+Use durable event processing with:
+
+- Event IDs.
+- Event types.
+- Schema versions.
+- Tenant context.
+- Correlation IDs.
+- Idempotency keys.
+- Creation timestamps.
+- Acknowledgment status.
+- Retry information.
+- Dead-letter handling.
+
+Implement transactional outbox patterns where needed to avoid database/event inconsistencies.
+
+Use event sourcing selectively where it provides a clear audit or recovery advantage; do not unnecessarily rebuild the entire system around it.
+
+---
+
+# PART XV — TESTING AND VERIFICATION
+
+## 33. EXPANDED V8 VERIFICATION SUITE
+
+Preserve all existing V7 tests and introduce new V8 tests.
+
+Create at least 50 new focused V8 verification cases, bringing the reported baseline of 95 tests to a target of at least 145 tests, provided each test is meaningful and actually executable.
+
+Recommended test allocation:
+
+| Test range | Domain |
+|---|---|
+| T096–T105 | Economic participant network |
+| T106–T115 | Discovery and matching |
+| T116–T125 | Workflow orchestration |
+| T126–T133 | Transaction coordination |
+| T134–T139 | Agreements and obligations |
+| T140–T145 | Automation governance |
+
+### Required test cases
+
+- Participant creation and verification.
+- Organization relationship authorization.
+- Private network visibility.
+- Unauthorized graph access rejection.
+- Discovery filtering.
+- Match explanation integrity.
+- Match evidence provenance.
+- Workflow state transitions.
+- Workflow retry safety.
+- Workflow timeout handling.
+- Workflow cancellation.
+- Human approval requirements.
+- Cross-domain transaction correlation.
+- Partial payment handling.
+- Partial delivery handling.
+- Duplicate payment protection.
+- Provider failure recovery.
+- Agreement versioning.
+- Agreement amendment history.
+- Milestone authorization.
+- Automation permission enforcement.
+- High-impact action approval.
+- AI action restriction.
+- Automation pause and cancellation.
+- Audit log integrity.
+- API scope enforcement.
+- Developer credential revocation.
+- Data residency policy enforcement.
+- Cross-border transfer restriction.
+- Offline synchronization conflict handling.
+
+### Additional verification
+
+Run:
+
+- Unit tests.
+- Integration tests.
+- API tests.
+- End-to-end tests.
+- Database migration tests.
+- Multi-tenant security tests.
+- Authorization tests.
+- Financial invariant tests.
+- Provider sandbox tests where credentials exist.
+- Failure-injection tests.
+- Backup and recovery tests.
+- Performance tests.
+- Accessibility tests.
+
+A test must not pass simply because a mocked service returned a successful response when the test is intended to prove real external connectivity.
+
+Separate automated simulation tests from sandbox integration tests and production verification.
+
+---
+
+# PART XVI — IMPLEMENTATION AND RELEASE REQUIREMENTS
+
+## 34. IMPLEMENTATION SEQUENCE
+
+Implement V8 in the following internal order without creating separate public minor releases:
+
+**Stage 1 — Audit and preservation**
+- Inspect V1–V7.
+- Verify existing functionality.
+- Fix regressions.
+- Complete unfinished V7 components.
+- Create migration and backup checkpoints.
+
+**Stage 2 — Economic network foundation**
+- Participant graph.
+- Relationship management.
+- Privacy and authorization.
+- Economic discovery.
+
+**Stage 3 — Matching and coordination**
+- Matching engine.
+- Workflow orchestration.
+- Universal transaction references.
+- Cross-domain transaction state management.
+
+**Stage 4 — Agreements and automation**
+- Digital agreements.
+- Obligations.
+- Milestones.
+- Automation engine.
+- Human approval workflows.
+
+**Stage 5 — Provider and currency interoperability**
+- Provider-neutral registry.
+- Payment routing.
+- FX integration.
+- Settlement reconciliation.
+- Cross-border coordination.
+
+**Stage 6 — Business and industry ecosystem**
+- Business workspace.
+- Procurement exchange.
+- Industry capacity.
+- Developer ecosystem.
+
+**Stage 7 — Intelligence and resilience**
+- Economic intelligence network.
+- Economic observatory.
+- Operational automation.
+- Recovery improvements.
+
+**Stage 8 — Security, testing and release**
+- Full test suite.
+- Security review.
+- Data migration validation.
+- Performance testing.
+- Deployment validation.
+- Release documentation.
+
+Do not declare a stage complete merely because its interface exists.
+
+## 35. V8 ACCEPTANCE CRITERIA
+
+V8 is acceptable only when:
+
+1. V1–V7 capabilities remain preserved.
+2. Existing data survives migration.
+3. The economic participant graph works.
+4. Relationship permissions are enforced.
+5. Economic discovery returns real stored records.
+6. Matching results include explanations.
+7. Workflow orchestration is durable.
+8. Transaction coordination supports multiple related records.
+9. Partial completion is handled correctly.
+10. Agreements are versioned.
+11. High-impact actions require authorization.
+12. AI agents cannot bypass approval rules.
+13. Provider registry distinguishes simulated and verified connections.
+14. Payment routing is auditable.
+15. FX quotes have provenance and expiry.
+16. Currency amounts retain their original denomination.
+17. Cross-border workflows apply jurisdiction rules.
+18. Business workspaces enforce tenant isolation.
+19. Procurement decisions have traceable evidence.
+20. Developer APIs enforce scoped permissions.
+21. Data governance is enforced.
+22. Economic intelligence distinguishes actual data from forecasts.
+23. Offline workflows protect transaction integrity.
+24. Recovery procedures are tested.
+25. Audit logs are durable.
+26. Billing and commercial reporting use real underlying records.
+27. Security tests pass.
+28. Build succeeds.
+29. Type checking succeeds.
+30. All V1–V8 tests pass, or any remaining failures are explicitly documented.
+
+---
+
+# PART XVII — FINAL DELIVERY REPORT
+
+## 36. REQUIRED ENGINEERING REPORT
+
+After implementation, generate:
+
+**AETHER–AROS V8.0 — CONTINENTAL ECONOMIC NETWORK & AUTONOMOUS COORDINATION**
+
+Include:
+
+1. Executive summary.
+2. V1–V7 preservation report.
+3. V7 unfinished capabilities completed.
+4. V8 architecture.
+5. New economic network capabilities.
+6. Participant graph implementation.
+7. Discovery and matching implementation.
+8. Workflow orchestration implementation.
+9. Transaction coordination implementation.
+10. Agreement framework.
+11. Automation governance.
+12. Payment provider network.
+13. FX and currency interoperability.
+14. Cross-border coordination.
+15. Business and industry capabilities.
+16. Developer ecosystem.
+17. Intelligence network.
+18. Data sovereignty.
+19. Security architecture.
+20. Resilience improvements.
+21. Database migrations.
+22. API documentation.
+23. Test results.
+24. Build and type-check results.
+25. Sandbox integrations.
+26. Production integrations independently verified.
+27. Simulated capabilities.
+28. Missing credentials and external dependencies.
+29. Known limitations.
+30. Deployment instructions.
+31. Remaining risks.
+32. Recommended next major strategic direction.
+
+### Required truthfulness rules
+
+Never report:
+- A passing test that was not executed.
+- A live provider connection that was not verified.
+- A completed financial settlement without authoritative evidence.
+- A government submission without confirmed acceptance.
+- A legal partnership without a real agreement.
+- A production-ready system without the relevant security and operational evidence.
+- Real revenue without actual financial records.
+
+Use explicit implementation statuses:
+
+`IMPLEMENTED_AND_TESTED`
+
+`IMPLEMENTED_NOT_FULLY_VERIFIED`
+
+`SIMULATED`
+
+`SANDBOX_CONNECTED`
+
+`PRODUCTION_CONNECTED`
+
+`PRODUCTION_VERIFIED`
+
+`BLOCKED_BY_EXTERNAL_DEPENDENCY`
+
+`NOT_IMPLEMENTED`
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+You are modifying the existing AETHER–AROS repository, not creating a new disconnected demonstration application.
+
+Your responsibility is to deliver a real V8 engineering implementation.
+
+Inspect first. Preserve existing functionality. Identify missing capabilities. Implement the shared infrastructure. Integrate the domains. Test the actual system. Report the results honestly.
+
+Do not sacrifice security, accounting correctness, privacy or regulatory boundaries for the appearance of completeness.
+
+Do not narrow the platform to agriculture, banking, mobile money or any other individual sector.
+
+AETHER–AROS must remain a universal economic operating system.
+
+**V8 strategic destination:**
+
+A connected continental economic network through which authorized people, businesses, institutions, industries and service providers can discover opportunities, establish trusted relationships, coordinate economic activity and exchange value across borders, currencies and sectors.
+
+**Developed under VINEXSAH TECHNOLOGIES. All rights reserved.**

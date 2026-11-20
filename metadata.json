@@ -1,0 +1,6 @@
+{
+  "name": "AETHER–AROS V1",
+  "description": "African Economic, Agricultural & Resilience Operating System by VINEXSAH TECHNOLOGIES. Connecting farmers, agro-dealers, buyers, cooperatives, and logistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "react-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "start": "tsx server.ts",
+    "build": "vite build",
+    "build:check": "NODE_OPTIONS='--max-old-space-size=640' vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "node scripts/econex-verify-sequential.mjs --batch=V20",
+    "test:unit": "node scripts/econex-verify-sequential.mjs --batch=UNIT",
+    "test:integration": "node scripts/econex-verify-sequential.mjs --batch=V18,V19,V20",
+    "test:historical": "node scripts/econex-verify-sequential.mjs --batch=ALL",
+    "verify": "node scripts/econex-verify-sequential.mjs --batch=VERIFY",
+    "export:zip": "node scripts/econex-export.mjs",
+    "export:check": "node scripts/econex-export.mjs --verify-only",
+    "security:scan": "node scripts/econex-secret-scan.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/pg": "^8.23.1",
+    "@vitejs/plugin-react": "^6.1.1",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "pg": "^8.23.1",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.21.0",
+    "typescript": "^7.0.2",
+    "@types/express": "^4.17.21"
+  }
+}

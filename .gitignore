@@ -1,0 +1,21 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+*.zip
+.env*
+!.env.example
+
+# Runtime local WAL databases & automated snapshots (never publish live records)
+data/aros_database.json
+data/aros_database.json.*
+data/*.backup.json
+data/.dev_kms_isolated.json
+data/backups/
+
+# Generated exports & verification artifacts
+exports/
+.econex-reports/
+.tmp/
