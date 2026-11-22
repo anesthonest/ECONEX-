@@ -948,7 +948,11 @@ export function getMemberIsolatedStatements(params: {
 
   const statements = isPrivileged
     ? pool.memberStatements
-    : pool.memberStatements.filter((s) => s.farmerUserId === params.viewerUserId);
+    : pool.memberStatements.filter(
+        (s) =>
+          s.farmerUserId === params.viewerUserId &&
+          (!params.targetParticipantId || s.farmerParticipantId === params.targetParticipantId)
+      );
 
   return {
     ok: true,

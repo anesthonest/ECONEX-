@@ -20,6 +20,9 @@ import { v17Router } from './v17Routes.ts';
 import { v18Router } from './v18Routes.ts';
 import { v19Router } from './v19Routes.ts';
 import { v20Router } from './v20Routes.ts';
+import { v21Router } from './v21Routes.ts';
+import { v22Router } from './v22Routes.ts';
+import { v23Router } from './v23Routes.ts';
 import {
   UserProfile,
   UserRole,
@@ -6153,6 +6156,9 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     release: 'V18.0-COMPLETE-PLATFORM-CONSOLIDATION',
     v19Release: 'V19.0-PLATFORM-STABILITY-AND-DELIVERY',
     v20Release: 'V20.0-UNIFIED-ECONOMIC-OPERATIONS',
+    v21Release: 'V21.0-CONTROLLED-PILOT-AND-MARKET-ACTIVATION',
+    v22Release: 'V22.0-UNIVERSAL-ECONOMIC-GROWTH',
+    v23Release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
     consolidationRelease: 'V15.9-FINAL-CONSOLIDATION-AND-RELEASE',
     v17Release: 'V17.0-VERIFIED-ECONOMIC-NETWORK-OPERATIONS',
     attribution: 'Developed under VINEXSAH TECHNOLOGIES. All rights reserved.',
@@ -6191,6 +6197,9 @@ apiRouter.use('/v17', v17Router);
 apiRouter.use('/v18', v18Router);
 apiRouter.use('/v19', v19Router);
 apiRouter.use('/v20', v20Router);
+apiRouter.use('/v21', v21Router);
+apiRouter.use('/v22', v22Router);
+apiRouter.use('/v23', v23Router);
 
 // Prevent missing API routes from falling through to Vite SPA HTML
 apiRouter.use((_req: Request, res: Response) => {

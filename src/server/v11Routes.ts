@@ -2046,7 +2046,7 @@ v11Router.post('/system/backup-verify', (_req: Request, res: Response) => {
       .readdirSync(BACKUP_DIR)
       .filter((f) => f.startsWith('aros_v11_verified_') && f.endsWith('.json'))
       .sort();
-    for (const stale of v11Backups.slice(0, Math.max(0, v11Backups.length - 3))) {
+    for (const stale of v11Backups.slice(0, Math.max(0, v11Backups.length - 1))) {
       fs.unlinkSync(path.join(BACKUP_DIR, stale));
     }
   } catch {

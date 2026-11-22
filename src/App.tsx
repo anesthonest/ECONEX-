@@ -60,6 +60,63 @@ const V20EconomicOperationsHub = lazy(() =>
 const V20PilotControlView = lazy(() =>
   import('./components/v20/V20PilotControlView.tsx').then((m) => ({ default: m.V20PilotControlView }))
 );
+const V21FieldOperationsApp = lazy(() =>
+  import('./components/v21/V21FieldOperationsApp.tsx').then((m) => ({ default: m.V21FieldOperationsApp }))
+);
+const V21OnboardingHub = lazy(() =>
+  import('./components/v21/V21OnboardingHub.tsx').then((m) => ({ default: m.V21OnboardingHub }))
+);
+const V21PilotCommandCentre = lazy(() =>
+  import('./components/v21/V21PilotCommandCentre.tsx').then((m) => ({ default: m.V21PilotCommandCentre }))
+);
+const V22UniversalDashboard = lazy(() =>
+  import('./components/v22/V22UniversalDashboard.tsx').then((m) => ({ default: m.V22UniversalDashboard }))
+);
+const V22DiscoverEconomyView = lazy(() =>
+  import('./components/v22/V22DiscoverEconomyView.tsx').then((m) => ({ default: m.V22DiscoverEconomyView }))
+);
+const V22UniversalMarketplaceView = lazy(() =>
+  import('./components/v22/V22UniversalMarketplaceView.tsx').then((m) => ({ default: m.V22UniversalMarketplaceView }))
+);
+const V22BusinessWorkspaceView = lazy(() =>
+  import('./components/v22/V22BusinessWorkspaceView.tsx').then((m) => ({ default: m.V22BusinessWorkspaceView }))
+);
+const V22ProcurementProjectsView = lazy(() =>
+  import('./components/v22/V22ProcurementProjectsView.tsx').then((m) => ({ default: m.V22ProcurementProjectsView }))
+);
+const V22FinancialIntelligenceView = lazy(() =>
+  import('./components/v22/V22FinancialIntelligenceView.tsx').then((m) => ({ default: m.V22FinancialIntelligenceView }))
+);
+const V23UniversalWalletDashboard = lazy(() =>
+  import('./components/v23/V23UniversalWalletDashboard.tsx').then((m) => ({ default: m.V23UniversalWalletDashboard }))
+);
+const V23MerchantAcceptanceView = lazy(() =>
+  import('./components/v23/V23MerchantAcceptanceView.tsx').then((m) => ({ default: m.V23MerchantAcceptanceView }))
+);
+const V23CardsInfrastructureView = lazy(() =>
+  import('./components/v23/V23CardsInfrastructureView.tsx').then((m) => ({ default: m.V23CardsInfrastructureView }))
+);
+const V23CrossCountryNetworkView = lazy(() =>
+  import('./components/v23/V23CrossCountryNetworkView.tsx').then((m) => ({ default: m.V23CrossCountryNetworkView }))
+);
+const V23WalletOperationsAdminView = lazy(() =>
+  import('./components/v23/V23WalletOperationsAdminView.tsx').then((m) => ({ default: m.V23WalletOperationsAdminView }))
+);
+const V24ExecutionNetworkHub = lazy(() =>
+  import('./components/v24/V24ExecutionNetworkHub.tsx').then((m) => ({ default: m.V24ExecutionNetworkHub }))
+);
+const V24MarketplaceRfqContractsView = lazy(() =>
+  import('./components/v24/V24MarketplaceRfqContractsView.tsx').then((m) => ({ default: m.V24MarketplaceRfqContractsView }))
+);
+const V24OrdersInventoryManufacturingView = lazy(() =>
+  import('./components/v24/V24OrdersInventoryManufacturingView.tsx').then((m) => ({ default: m.V24OrdersInventoryManufacturingView }))
+);
+const V24ProcurementLogisticsProjectsView = lazy(() =>
+  import('./components/v24/V24ProcurementLogisticsProjectsView.tsx').then((m) => ({ default: m.V24ProcurementLogisticsProjectsView }))
+);
+const V24BusinessDocumentsExecutionView = lazy(() =>
+  import('./components/v24/V24BusinessDocumentsExecutionView.tsx').then((m) => ({ default: m.V24BusinessDocumentsExecutionView }))
+);
 const FarmerSimpleView = lazy(() =>
   import('./components/v151/FarmerSimpleView.tsx').then((m) => ({ default: m.FarmerSimpleView }))
 );
@@ -220,7 +277,7 @@ const V17NetworkControlCenter = lazy(() =>
   import('./components/V17NetworkControlCenter.tsx').then((m) => ({ default: m.V17NetworkControlCenter }))
 );
 
-const TOTAL_VERIFICATION_TESTS = 1725;
+const TOTAL_VERIFICATION_TESTS = 3600;
 
 function ModuleLoadingFallback() {
   return (
@@ -668,6 +725,44 @@ function MainAppShell() {
         return <V20EconomicOperationsHub onNavigate={(tab) => navigateToTab(tab)} />;
       case 'v20-pilots':
         return <V20PilotControlView onNavigateTab={(tab) => navigateToTab(tab)} />;
+      case 'v21-field-ops':
+        return <V21FieldOperationsApp onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v21-onboarding':
+        return <V21OnboardingHub onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v21-command-centre':
+        return <V21PilotCommandCentre onNavigateTab={(tab) => navigateToTab(tab)} />;
+      case 'v22-overview':
+        return <V22UniversalDashboard onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v22-discover':
+        return <V22DiscoverEconomyView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v22-marketplace':
+        return <V22UniversalMarketplaceView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v22-businesses':
+        return <V22BusinessWorkspaceView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v22-procurement':
+        return <V22ProcurementProjectsView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v22-finance-intel':
+        return <V22FinancialIntelligenceView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v23-wallet':
+        return <V23UniversalWalletDashboard onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v23-merchant':
+        return <V23MerchantAcceptanceView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v23-cards':
+        return <V23CardsInfrastructureView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v23-country-network':
+        return <V23CrossCountryNetworkView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v23-wallet-admin':
+        return <V23WalletOperationsAdminView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v24-execution-hub':
+        return <V24ExecutionNetworkHub onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v24-marketplace-rfq':
+        return <V24MarketplaceRfqContractsView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v24-orders-inventory':
+        return <V24OrdersInventoryManufacturingView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v24-procurement-logistics':
+        return <V24ProcurementLogisticsProjectsView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v24-documents-settlement':
+        return <V24BusinessDocumentsExecutionView onNavigate={(tab) => navigateToTab(tab)} />;
       case 'v18-control-center':
         return <V18SystemControlCenter onNavigateTab={(tab) => navigateToTab(tab)} />;
       case 'v19-diagnostics':
@@ -947,7 +1042,7 @@ function MainAppShell() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="space-y-1 text-center md:text-left">
             <div className="font-display font-bold text-sm text-[#F5F5F5] tracking-wide">
-              ECONEX <span className="text-[#D4AF37] font-normal text-xs ml-1">V20.0</span>
+              ECONEX <span className="text-[#D4AF37] font-normal text-xs ml-1">V24.0</span>
             </div>
             <p className="text-xs text-[#A0A0A0]">Universal Economic Operating System</p>
             <p className="text-xs text-[#A0A0A0]">

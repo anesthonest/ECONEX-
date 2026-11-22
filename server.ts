@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { apiRouter } from './src/server/api.ts';
 import { db } from './src/server/db.ts';
+import { correlationMiddleware, validateV21Environment } from './src/server/v21Config.ts';
 
 dotenv.config();
 
@@ -37,24 +38,49 @@ async function startServer() {
   }
 
   app.use(express.json({ limit: '5mb' }));
+  app.use(correlationMiddleware);
+
+  let shuttingDown = false;
 
   // Mount API router
   app.use('/api', apiRouter);
 
-  // Root process health check
-  app.get('/health', (_req, res) => {
+  // Root process health & readiness checks
+  app.get('/health', (req, res) => {
     const mem = process.memoryUsage();
+    const envDiag = validateV21Environment();
     res.json({
-      status: 'healthy',
+      status: shuttingDown ? 'DRAINING' : 'healthy',
       product: 'ECONEX',
-      system: 'ECONEX V19',
-      release: 'V19.0-PLATFORM-STABILITY-AND-DELIVERY',
-      environment: process.env.ECONEX_ENV || (isProduction ? 'PRODUCTION' : 'DEVELOPMENT'),
+      system: 'ECONEX V23',
+      release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
+      v19Release: 'V19.0-PLATFORM-STABILITY-AND-DELIVERY',
+      v20Release: 'V20.0-UNIFIED-ECONOMIC-OPERATIONS',
+      v21Release: 'V21.0-CONTROLLED-PILOT-AND-MARKET-ACTIVATION',
+      v22Release: 'V22.0-UNIVERSAL-ECONOMIC-GROWTH',
+      v23Release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
+      environment: envDiag.environment,
+      databaseAuthority: envDiag.databaseAuthority,
       developer: 'VINEXSAH TECHNOLOGIES',
+      correlationId: (req as any).correlationId || null,
       uptimeSeconds: Math.round(process.uptime()),
       memoryRssMb: Number((mem.rss / (1024 * 1024)).toFixed(1)),
       heapUsedMb: Number((mem.heapUsed / (1024 * 1024)).toFixed(1)),
       port: PORT,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  app.get('/ready', (_req, res) => {
+    const envDiag = validateV21Environment();
+    const fin = db.getFinancialIntegrityReport();
+    const isReady = !shuttingDown && envDiag.portValid && fin.journalBalanced;
+    res.status(isReady ? 200 : 503).json({
+      ready: isReady,
+      shuttingDown,
+      schemaVersion: db.schemaVersion,
+      databaseAuthority: envDiag.databaseAuthority,
+      journalBalanced: fin.journalBalanced,
       timestamp: new Date().toISOString(),
     });
   });
@@ -86,7 +112,6 @@ async function startServer() {
     );
   });
 
-  let shuttingDown = false;
   const gracefulShutdown = async (signal: string) => {
     if (shuttingDown) return;
     shuttingDown = true;

@@ -4407,7 +4407,15 @@ export interface IntelligenceAuditEvent {
     | 'V18_ADMIN_ACTION'
     | 'V19_EXPORT_VERIFIED'
     | 'V20_TRADE_TRANSITION'
-    | 'V20_PILOT_LIFECYCLE';
+    | 'V20_PILOT_LIFECYCLE'
+    | 'V21_PILOT_LIFECYCLE'
+    | 'V21_ONBOARDING_EVENT'
+    | 'V21_FIELD_TASK_EVENT'
+    | 'V21_EXCEPTION_ACTION'
+    | 'V21_SUPPORT_ACTION'
+    | 'V21_POSTGRES_MIGRATION'
+    | 'PROMPT_INJECTION_BLOCKED'
+    | 'REPORT_EXPORTED';
   entityType: string;
   entityId: string;
   details: string;
@@ -7966,4 +7974,1511 @@ export interface V20MigrationCheckpoint {
   startedAt: string;
   completedAt?: string;
 }
+
+// ==========================================
+// ECONEX V21.0 — CONTROLLED PILOT DEPLOYMENT, FIELD OPS & COMMERCIAL ACTIVATION
+// ==========================================
+
+export type V21PilotLifecycleState =
+  | 'DRAFT'
+  | 'CONFIGURED'
+  | 'APPROVAL_PENDING'
+  | 'APPROVED'
+  | 'READY'
+  | 'ACTIVE'
+  | 'PAUSED'
+  | 'COMPLETED'
+  | 'SUSPENDED'
+  | 'CANCELLED';
+
+export type V21PilotTemplateModel =
+  | 'FARMER_TO_BUYER'
+  | 'SME_TRADE'
+  | 'COOPERATIVE_AGGREGATION';
+
+export type V21ParticipantCategory =
+  | 'INDIVIDUAL'
+  | 'FARMER'
+  | 'BUYER_TRADER'
+  | 'SME_BUSINESS'
+  | 'COOPERATIVE'
+  | 'AGRO_DEALER'
+  | 'LOGISTICS_OPERATOR'
+  | 'SERVICE_PROVIDER'
+  | 'INSTITUTIONAL'
+  | 'FIELD_OFFICER';
+
+export type V21VerificationStatus =
+  | 'UNVERIFIED'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'VERIFIED'
+  | 'REJECTED'
+  | 'SUSPENDED'
+  | 'EXPIRED';
+
+export type V21OfflineSyncStatus =
+  | 'LOCAL_DRAFT'
+  | 'QUEUED'
+  | 'SYNCING'
+  | 'SYNCED'
+  | 'CONFLICT'
+  | 'FAILED';
+
+export type V21FieldTaskStatus =
+  | 'CREATED'
+  | 'ASSIGNED'
+  | 'ACCEPTED'
+  | 'IN_PROGRESS'
+  | 'SUBMITTED'
+  | 'REVIEWED'
+  | 'CLOSED'
+  | 'REJECTED'
+  | 'REASSIGNED';
+
+export interface V21GeoLocation {
+  countryCode: string;
+  region: string;
+  district: string;
+  subcounty: string;
+  parish: string;
+  village: string;
+  gpsPermissionGranted?: boolean;
+  gpsLat?: number;
+  gpsLng?: number;
+}
+
+export interface V21AuditEntry {
+  id: string;
+  actorId: string;
+  actorRole: string;
+  action: string;
+  fromState?: string;
+  toState?: string;
+  note: string;
+  timestamp: string;
+  immutableHash: string;
+}
+
+export interface V21MetricDefinition {
+  key: string;
+  label: string;
+  value: number | null;
+  unit: string;
+  definition: string;
+  sourceRecord: string;
+  timePeriod: string;
+  geographicScope: string;
+  pilotId: string;
+  classification: 'ACTUAL' | 'SIMULATED' | 'TEST' | 'TARGET' | 'PROJECTION' | 'PENDING_EXTERNAL_SURVEY';
+  calculationMethod: string;
+}
+
+export interface V21PilotRecord {
+  id: string;
+  tenantId: string;
+  code: string;
+  name: string;
+  description: string;
+  modelTemplate: V21PilotTemplateModel;
+  geography: V21GeoLocation;
+  objectives: string[];
+  participatingOrganizationIds: string[];
+  participantCategories: V21ParticipantCategory[];
+  pilotAdminIds: string[];
+  fieldOfficerIds: string[];
+  startDate: string;
+  endDate: string;
+  approvedEconomicActivities: string[];
+  operationalRules: string[];
+  maxParticipantsLimit: number;
+  maxSingleTradeUgx: number;
+  verificationRequirements: string[];
+  riskClassification: 'LOW' | 'MEDIUM' | 'HIGH';
+  supportContacts: { name: string; role: string; phoneOrChannel: string }[];
+  status: V21PilotLifecycleState;
+  statusReason?: string;
+  performanceIndicators: V21MetricDefinition[];
+  separatedSummary: {
+    actual: {
+      onboardedParticipants: number;
+      verifiedParticipants: number;
+      organizationsOnboarded: number;
+      activeListings: number;
+      activeTrades: number;
+      completedTrades: number;
+      realizedTradeVolumeUgx: number;
+      reconciledObligationsCount: number;
+      deliveriesCompleted: number;
+      disputesOpened: number;
+      disputesResolved: number;
+    };
+    simulated: {
+      sandboxPaymentsCount: number;
+      sandboxPaymentVolumeUgx: number;
+    };
+    test: {
+      testTradesCount: number;
+      testObligationsCount: number;
+    };
+    target: {
+      targetParticipants: number;
+      targetVerifiedRatePct: number;
+      targetCompletedTrades: number;
+    };
+    projection: {
+      estimatedMonthlyGmUgx: number;
+      disclaimer: string;
+    };
+  };
+  auditHistory: V21AuditEntry[];
+  closureReport?: {
+    closedBy: string;
+    closedAt: string;
+    summary: string;
+    lessonsLearned: string[];
+    pendingExternalOutcomeNotes: string[];
+    reportChecksumSha256: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V21ParticipantOnboarding {
+  id: string;
+  tenantId: string;
+  pilotId: string;
+  userId: string;
+  participantId: string;
+  fullName: string;
+  phoneMasked: string;
+  preferredLanguage: string;
+  category: V21ParticipantCategory;
+  organizationId?: string;
+  organizationName?: string;
+  geography: V21GeoLocation;
+  consentAccepted: boolean;
+  consentVersion: string;
+  privacyNoticeAcceptedAt: string;
+  verificationStatus: V21VerificationStatus;
+  registrationIsNotIdentityVerification: true;
+  evidenceSubmitted: {
+    id: string;
+    documentType: string;
+    referenceNumberMasked: string;
+    fileHashSha256: string;
+    attestationStatus: 'SELF_DECLARED_UNVERIFIED' | 'INDEPENDENTLY_REVIEWED' | 'AUTHORITY_ATTESTED';
+    uploadedAt: string;
+    reviewedBy?: string;
+    reviewedAt?: string;
+    reviewNote?: string;
+  }[];
+  activityPermissions: string[];
+  suspended: boolean;
+  suspensionReason?: string;
+  recoveryRequests: { id: string; reason: string; status: 'REQUESTED' | 'VERIFIED' | 'COMPLETED'; requestedAt: string }[];
+  auditHistory: V21AuditEntry[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V21FieldActivityRecord {
+  id: string;
+  tenantId: string;
+  pilotId: string;
+  fieldOfficerId: string;
+  participantId?: string;
+  recordType: 'ONBOARDING_CAPTURE' | 'HARVEST_CAPTURE' | 'DELIVERY_PROOF' | 'SITE_VISIT' | 'ASSISTANCE_LOG';
+  title: string;
+  summary: string;
+  payload: Record<string, any>;
+  evidenceAttachmentMeta?: { fileName: string; mimeType: string; sizeBytes: number; sha256: string };
+  gpsPermissionGranted: boolean;
+  gpsCoordinates?: { lat: number; lng: number; accuracyMeters?: number };
+  syncStatus: V21OfflineSyncStatus;
+  idempotencyKey: string;
+  clientVersion: number;
+  serverVersion: number;
+  retryCount: number;
+  lastError?: string;
+  conflictId?: string;
+  syncedEntityId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V21FieldOfficerTask {
+  id: string;
+  tenantId: string;
+  pilotId: string;
+  officerUserId: string;
+  officerDisplayName: string;
+  assignedDistrict: string;
+  assignedSubcounty?: string;
+  participantId?: string;
+  title: string;
+  instructions: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: V21FieldTaskStatus;
+  siteVisitNotes?: string;
+  assistanceSummary?: string;
+  followUpAction?: string;
+  supervisorReviewNote?: string;
+  supervisorId?: string;
+  dueDate: string;
+  history: V21AuditEntry[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V21OperationalException {
+  id: string;
+  tenantId: string;
+  pilotId: string;
+  exceptionType:
+    | 'VERIFICATION_BACKLOG'
+    | 'DELIVERY_EXCEPTION'
+    | 'OFFLINE_SYNC_FAILURE'
+    | 'RECONCILIATION_EXCEPTION'
+    | 'DISPUTE_ATTENTION'
+    | 'SUPPORT_ESCALATION';
+  title: string;
+  description: string;
+  sourceEntityId: string;
+  district: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  status: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
+  ownerId: string;
+  resolutionHistory: { actorId: string; note: string; status: string; timestamp: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V21SupportRequest {
+  id: string;
+  tenantId: string;
+  pilotId: string;
+  reporterUserId: string;
+  reporterRole: string;
+  category: 'SUPPORT' | 'COMPLAINT' | 'ABUSE_REPORT' | 'PRIVACY_EXPORT' | 'VERIFICATION_HELP';
+  subject: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  status: 'OPEN' | 'ASSIGNED' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
+  assignedOfficerId?: string;
+  resolutionNotes: { actorId: string; note: string; timestamp: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V21CountryProfile {
+  countryCode: string;
+  countryName: string;
+  regionalBloc: 'EAC' | 'EAC_AFCFTA';
+  defaultCurrency: string;
+  supportedUnits: string[];
+  timezone: string;
+  supportedLanguages: string[];
+  geographicHierarchy: string[];
+  businessProfileFields: string[];
+  verificationRequirements: string[];
+  operationalDocuments: string[];
+  institutionalIntegrationStatus: 'NOT_CONNECTED_OPERATIONAL_GUIDANCE_ONLY';
+  disclaimer: string;
+}
+
+export interface V21PostgresMigrationRun {
+  id: string;
+  mode: 'DRY_RUN_AUDIT' | 'LOCAL_TEST_PG' | 'CUTOVER_BLOCKED';
+  status: 'COMPLETED' | 'RECOVERED_INTERRUPTED' | 'BLOCKED' | 'FAILED';
+  databaseUrlConfigured: boolean;
+  activeAuthority: 'LOCAL_JSON_WAL_AUTHORITATIVE';
+  postgresCutoverComplete: false;
+  collectionsAudited: number;
+  mappedTablesCount: number;
+  collectionMappings: {
+    collectionName: string;
+    postgresTable: string;
+    recordCount: number;
+    foreignKeysChecked: boolean;
+    tenantIsolationField: string;
+    checksumSha256: string;
+  }[];
+  duplicatePreventionVerified: boolean;
+  interruptedRecoveryVerified: boolean;
+  rollbackVerified: boolean;
+  ledgerBalancedBefore: boolean;
+  ledgerBalancedAfter: boolean;
+  ledgerDebitUgx: number;
+  ledgerCreditUgx: number;
+  executedAt: string;
+  notes: string;
+}
+
+// ==========================================
+// ECONEX V22.0 — UNIVERSAL ECONOMIC ACTIVITY & GROWTH ENGINE (SCHEMA 20)
+// ==========================================
+
+export type V22MetricClassification =
+  | 'ACTUAL'
+  | 'SIMULATED'
+  | 'TEST'
+  | 'TARGET'
+  | 'PROJECTION'
+  | 'PENDING_EXTERNAL_SURVEY';
+
+export type V22SectorCode =
+  | 'AGRI_LIVESTOCK'
+  | 'FOOD_PROCESSING'
+  | 'MANUFACTURING'
+  | 'WHOLESALE_DISTRIBUTION'
+  | 'RETAIL_CONSUMER'
+  | 'CONSTRUCTION_CIVIL'
+  | 'REAL_ESTATE'
+  | 'TRANSPORT_LOGISTICS'
+  | 'WAREHOUSING_SUPPLY'
+  | 'ENERGY_UTILITIES'
+  | 'WATER_ENVIRONMENT'
+  | 'MINING_EXTRACTIVES'
+  | 'FORESTRY_TIMBER'
+  | 'HEALTHCARE_MEDICAL'
+  | 'PHARMA_BIOTECH'
+  | 'EDUCATION_TRAINING'
+  | 'ICT_SOFTWARE'
+  | 'TELECOM_MEDIA'
+  | 'FINANCIAL_COORDINATION'
+  | 'PROFESSIONAL_ADVISORY'
+  | 'TOURISM_HOSPITALITY'
+  | 'CREATIVE_ARTS'
+  | 'SECURITY_FACILITIES'
+  | 'AUTOMOTIVE_MACHINERY'
+  | 'TEXTILES_APPAREL'
+  | 'CHEMICALS_PLASTICS'
+  | 'COOPERATIVES_NGOS'
+  | 'PUBLIC_INSTITUTIONAL'
+  | string;
+
+export interface V22SectorDefinition {
+  id: string;
+  code: V22SectorCode;
+  name: string;
+  categoryGroup:
+    | 'PRIMARY_PRODUCTION'
+    | 'INDUSTRY_CONSTRUCTION'
+    | 'COMMERCE_LOGISTICS'
+    | 'SERVICES_TECHNOLOGY'
+    | 'SOCIAL_PUBLIC_INSTITUTIONS';
+  description: string;
+  subsectors: string[];
+  supportedActivityTypes: string[];
+  sensitiveDataIsolationRequired: boolean;
+  complianceNotes: string;
+  isCustomAdded: boolean;
+  status: 'ACTIVE' | 'ARCHIVED';
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22BusinessProfile {
+  id: string;
+  tenantId: string;
+  ownerUserId: string;
+  name: string;
+  legalEntityType:
+    | 'SOLE_PROPRIETORSHIP'
+    | 'PARTNERSHIP'
+    | 'LIMITED_COMPANY'
+    | 'COOPERATIVE'
+    | 'NGO_ASSOCIATION'
+    | 'PUBLIC_INSTITUTION';
+  primarySectorCode: V22SectorCode;
+  secondarySectorCodes: V22SectorCode[];
+  subsectors: string[];
+  activityCategories: string[];
+  countryCode: string;
+  district: string;
+  operatingLocations: string[];
+  currenciesSupported: string[];
+  registrationReference?: string;
+  taxReference?: string;
+  registrationVerified: boolean;
+  productLicenceVerified: boolean;
+  verificationStatus: 'SELF_DECLARED' | 'PENDING_REVIEW' | 'IDENTITY_VERIFIED' | 'LICENCE_VERIFIED' | 'SUSPENDED';
+  operationalStatus: 'ACTIVE' | 'PAUSED' | 'SUSPENDED';
+  summary: string;
+  capabilities: string[];
+  traceableDocuments: {
+    id: string;
+    docType: 'REGISTRATION' | 'TAX_CLEARANCE' | 'SECTOR_LICENCE' | 'QUALITY_CERT' | 'SAFETY_RECORD';
+    title: string;
+    referenceMasked: string;
+    sha256: string;
+    verified: boolean;
+    uploadedAt: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22IndividualProfile {
+  id: string;
+  tenantId: string;
+  userId: string;
+  fullName: string;
+  professionalTitle: string;
+  sectorCodes: V22SectorCode[];
+  skills: string[];
+  countryCode: string;
+  district: string;
+  isIndividualNonRegistered: true;
+  hourlyOrUnitRate: number;
+  currency: string;
+  availabilityStatus: 'AVAILABLE' | 'BUSY' | 'UNAVAILABLE';
+  portfolioItems: {
+    id: string;
+    title: string;
+    sectorCode: string;
+    completedYear: string;
+    summary: string;
+    evidenceHashSha256: string;
+  }[];
+  identityVerified: boolean;
+  verificationNote: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V22ListingOfferKind =
+  | 'GOODS'
+  | 'SERVICE'
+  | 'EQUIPMENT_RENTAL'
+  | 'WHOLESALE_LOT'
+  | 'RETAIL_ITEM'
+  | 'DIGITAL_OFFER'
+  | 'PROFESSIONAL_SERVICE'
+  | 'CONTRACT_OFFER';
+
+export interface V22ProductOrService {
+  id: string;
+  tenantId: string;
+  sectorCode: V22SectorCode;
+  subsector: string;
+  offerKind: V22ListingOfferKind;
+  transactionMode: 'B2B' | 'B2C' | 'INSTITUTIONAL' | 'B2B_B2C';
+  sellerType: 'BUSINESS' | 'INDIVIDUAL' | 'COOPERATIVE' | 'INSTITUTION';
+  sellerProfileId: string;
+  sellerUserId: string;
+  sellerName: string;
+  title: string;
+  description: string;
+  pricingModel: 'FIXED' | 'QUOTE_BASED' | 'HOURLY' | 'MILESTONE';
+  unitPrice: number;
+  currency: string;
+  unitLabel: string;
+  minOrderQty: number;
+  availableQty?: number | null;
+  countryCode: string;
+  district: string;
+  deliveryRegions: string[];
+  identityVerified: boolean;
+  productOrLicenceVerified: boolean;
+  qualityClassification: string;
+  moderationStatus: 'ACTIVE' | 'FLAGGED_UNDER_REVIEW' | 'REMOVED';
+  fraudReportsCount: number;
+  isTestRecord?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22FraudReport {
+  id: string;
+  tenantId: string;
+  targetType: 'LISTING' | 'BUSINESS' | 'INDIVIDUAL' | 'TENDER';
+  targetId: string;
+  reporterUserId: string;
+  reasonCategory: 'MISLEADING_TERMS' | 'SUSPECTED_FRAUD' | 'UNLICENSED_CLAIM' | 'ABUSIVE_CONTENT' | 'SENSITIVE_DATA_EXPOSURE';
+  description: string;
+  status: 'OPEN' | 'UNDER_REVIEW' | 'ACTION_TAKEN' | 'DISMISSED';
+  reviewedBy?: string;
+  reviewNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V22CommercialStage =
+  | 'PARTICIPANT_REGISTERED'
+  | 'DISCOVERY'
+  | 'ENQUIRY'
+  | 'QUOTATION'
+  | 'NEGOTIATION'
+  | 'AGREEMENT_CONFIRMED'
+  | 'ORDER_OR_ENGAGEMENT_ACTIVE'
+  | 'OBLIGATIONS_ASSIGNED'
+  | 'EXECUTION_IN_PROGRESS'
+  | 'MILESTONE_EVIDENCE_SUBMITTED'
+  | 'DELIVERY_OR_SERVICE_ACCEPTED'
+  | 'INVOICE_ISSUED'
+  | 'EXTERNAL_PAYMENT_REFERENCED'
+  | 'RECONCILIATION_COMPLETED'
+  | 'COMPLETED'
+  | 'PERFORMANCE_TRUST_RECORDED'
+  | 'CANCELLED'
+  | 'DISPUTED';
+
+export interface V22CommercialAgreementSnapshot {
+  version: number;
+  templateCode: string;
+  title: string;
+  termsSummary: string;
+  scopeOfWorkOrGoods: string;
+  agreedAmount: number;
+  currency: string;
+  deliveryOrScheduleTerms: string;
+  buyerAccepted: boolean;
+  sellerAccepted: boolean;
+  lockedAfterAcceptance: boolean;
+  sha256Hash: string;
+  legalDisclaimer: string;
+  recordedAt: string;
+}
+
+export interface V22EconomicActivity {
+  id: string;
+  tenantId: string;
+  activityCode: string;
+  sectorCode: V22SectorCode;
+  activityType:
+    | 'GOODS_TRADE'
+    | 'SERVICE_ENGAGEMENT'
+    | 'WHOLESALE_SUPPLY'
+    | 'RETAIL_ORDER'
+    | 'EQUIPMENT_HIRE'
+    | 'PROJECT_CONTRACT'
+    | 'PROCUREMENT_AWARD';
+  title: string;
+  listingId?: string;
+  buyerUserId: string;
+  buyerName: string;
+  sellerUserId: string;
+  sellerName: string;
+  quantity: number;
+  unitLabel: string;
+  unitPrice: number;
+  totalAmount: number;
+  currency: string;
+  countryCode: string;
+  district: string;
+  stage: V22CommercialStage;
+  configuredStages: V22CommercialStage[];
+  agreement?: V22CommercialAgreementSnapshot;
+  evidenceRecords: {
+    id: string;
+    stage: V22CommercialStage;
+    summary: string;
+    sha256: string;
+    submittedBy: string;
+    submittedAt: string;
+  }[];
+  invoiceId?: string;
+  paymentReferenceId?: string;
+  idempotencyKey: string;
+  version: number;
+  isTestRecord?: boolean;
+  history: {
+    stage: V22CommercialStage;
+    actorId: string;
+    actorRole: string;
+    note: string;
+    timestamp: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22ProcurementOpportunity {
+  id: string;
+  tenantId: string;
+  referenceNumber: string;
+  sectorCode: V22SectorCode;
+  issuerProfileId: string;
+  issuerName: string;
+  issuerKind: 'PRIVATE_BUSINESS' | 'COOPERATIVE' | 'NGO' | 'INSTITUTION_ADVISORY';
+  opportunityType: 'RFQ' | 'TENDER' | 'SERVICE_CALL' | 'SUBCONTRACT_CALL';
+  title: string;
+  scopeDescription: string;
+  budgetAmount: number;
+  currency: string;
+  countryCode: string;
+  district: string;
+  submissionDeadline: string;
+  evaluationCriteria: { criterion: string; weightPct: number }[];
+  status: 'OPEN' | 'EVALUATION' | 'AWARDED' | 'CLOSED' | 'CANCELLED';
+  awardedBidId?: string;
+  linkedActivityId?: string;
+  nonOfficialGovernmentDisclaimer: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22ProcurementBid {
+  id: string;
+  tenantId: string;
+  tenderId: string;
+  bidderProfileId: string;
+  bidderUserId: string;
+  bidderName: string;
+  proposedAmount: number;
+  currency: string;
+  deliveryLeadDays: number;
+  technicalSummary: string;
+  supportingEvidenceHash: string;
+  evaluationScore?: number;
+  evaluationJustification?: string;
+  evaluatedBy?: string;
+  status: 'SUBMITTED' | 'SHORTLISTED' | 'AWARDED' | 'REJECTED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22ProjectMilestone {
+  id: string;
+  sequence: number;
+  title: string;
+  deliverable: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  status: 'PLANNED' | 'IN_PROGRESS' | 'EVIDENCE_SUBMITTED' | 'INSPECTED' | 'ACCEPTED' | 'REJECTED';
+  evidenceHash?: string;
+  evidenceNotes?: string;
+  acceptedBy?: string;
+  acceptedAt?: string;
+}
+
+export interface V22ProjectVariation {
+  id: string;
+  requestedBy: string;
+  reason: string;
+  scopeDelta: string;
+  budgetDelta: number;
+  scheduleDeltaDays: number;
+  status: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED';
+  reviewedBy?: string;
+  reviewedAt?: string;
+  createdAt: string;
+}
+
+export interface V22ProjectRecord {
+  id: string;
+  tenantId: string;
+  projectCode: string;
+  sectorCode: V22SectorCode;
+  title: string;
+  clientName: string;
+  clientUserId: string;
+  contractorName: string;
+  contractorUserId: string;
+  countryCode: string;
+  district: string;
+  totalBudget: number;
+  currency: string;
+  status: 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED';
+  milestones: V22ProjectMilestone[];
+  variations: V22ProjectVariation[];
+  linkedActivityId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22InvoiceRecord {
+  id: string;
+  tenantId: string;
+  invoiceNumber: string;
+  activityId?: string;
+  projectId?: string;
+  issuerUserId: string;
+  issuerName: string;
+  recipientUserId: string;
+  recipientName: string;
+  sectorCode: V22SectorCode;
+  lineItems: { description: string; qty: number; unitPrice: number; total: number }[];
+  subtotal: number;
+  taxRatePct: number;
+  taxAmount: number;
+  totalAmount: number;
+  paidAmount: number;
+  balanceDue: number;
+  currency: string;
+  exchangeRateToUgx: number;
+  exchangeRateSource: string;
+  status: 'ISSUED' | 'PARTIALLY_PAID' | 'PAID' | 'DISPUTED' | 'VOID';
+  dueDate: string;
+  journalEntryId?: string;
+  isTestRecord?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22PaymentReference {
+  id: string;
+  tenantId: string;
+  invoiceId: string;
+  activityId?: string;
+  externalChannel: 'BANK_TRANSFER' | 'MOBILE_MONEY' | 'CHEQUE_EFT' | 'SANDBOX_RAIL' | 'EXTERNAL_POS_RECEIPT';
+  externalProviderName: string;
+  externalReferenceNumber: string;
+  amount: number;
+  currency: string;
+  evidenceSha256: string;
+  reconciliationStatus: 'RECORDED_EXTERNAL_REF' | 'VERIFIED_RECONCILED' | 'VARIANCE_FLAGGED';
+  nonCustodialNotice: string;
+  journalEntryId?: string;
+  recordedBy: string;
+  recordedAt: string;
+}
+
+export interface V22FxRateRecord {
+  currencyCode: string;
+  currencyName: string;
+  symbol: string;
+  rateToUgx: number;
+  rateSource: string;
+  classification: 'ACTUAL_REFERENCE' | 'INDICATIVE_MARKET' | 'SANDBOX_FIXED';
+  updatedAt: string;
+}
+
+export interface V22WorkforceTask {
+  id: string;
+  tenantId: string;
+  businessProfileId: string;
+  assigneeName: string;
+  assigneeRole: string;
+  title: string;
+  sectorCode: V22SectorCode;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  status: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V22EconomicInsight {
+  id: string;
+  tenantId: string;
+  sectorCode: V22SectorCode;
+  title: string;
+  insightType: 'SUPPLY_GAP' | 'PROCUREMENT_DEMAND' | 'SECTOR_OPPORTUNITY' | 'CORRIDOR_BOTTLENECK' | 'GROWTH_SIGNAL';
+  summary: string;
+  evidenceBasis: string;
+  sourceRecordIds: string[];
+  dataDate: string;
+  geographicCoverage: string;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  limitations: string;
+  classification: V22MetricClassification;
+  recommendedNextStep: string;
+  requiresHumanConfirmation: true;
+  acknowledgedBy?: string;
+  createdAt: string;
+}
+
+export interface V22EconomicRelationship {
+  id: string;
+  tenantId: string;
+  sourceEntityId: string;
+  sourceEntityName: string;
+  sourceEntityType: 'INDIVIDUAL' | 'BUSINESS' | 'COOPERATIVE' | 'INSTITUTION' | 'PROJECT';
+  targetEntityId: string;
+  targetEntityName: string;
+  targetEntityType: 'INDIVIDUAL' | 'BUSINESS' | 'COOPERATIVE' | 'INSTITUTION' | 'PROJECT';
+  relationshipType: 'SUPPLIER_TO' | 'SERVICE_CONTRACTOR_FOR' | 'BUYER_OF' | 'PROCUREMENT_PARTNER' | 'PROJECT_PARTNER' | 'FINANCE_COORDINATOR';
+  sectorCode: V22SectorCode;
+  verifiedByTransactionCount: number;
+  sensitiveMaskApplied: boolean;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+}
+
+export interface V22SubscriptionPlan {
+  id: string;
+  code: string;
+  name: string;
+  targetAudience: string;
+  monthlyFeeUgx: number;
+  annualFeeUgx: number;
+  currency: string;
+  includedCapabilities: string[];
+  classification: 'PROPOSED_CONFIGURABLE_PLAN';
+  activeSubscribersCount: number;
+  createdAt: string;
+}
+
+export interface V22BusinessSubscription {
+  id: string;
+  tenantId: string;
+  subscriberProfileId: string;
+  planId: string;
+  status: 'CONFIGURED_TRIAL' | 'ACTIVE_PENDING_BILLING' | 'CANCELLED';
+  billingNotice: string;
+  createdAt: string;
+}
+
+export interface V22InteroperabilityEvent {
+  id: string;
+  tenantId: string;
+  partnerId: string;
+  eventType: string;
+  idempotencyKey: string;
+  signatureValid: boolean;
+  payloadSummary: string;
+  receivedAt: string;
+}
+
+export interface V22AiAssistantQueryResult {
+  id: string;
+  query: string;
+  promptInjectionDetected: boolean;
+  blockedReason?: string;
+  answer: string;
+  modelUsed: string;
+  evidenceIdsCited: string[];
+  limitations: string[];
+  suggestedAction?: {
+    actionLabel: string;
+    endpointHint: string;
+    requiresExplicitHumanConfirmation: true;
+  };
+  generatedAt: string;
+}
+
+// ==========================================
+// ECONEX V23.0 — UNIVERSAL ECONOMIC IDENTITY, WALLET NETWORK & CARD INFRASTRUCTURE (SCHEMA 21)
+// ==========================================
+
+export type V23ParticipantCategory =
+  | 'INDIVIDUAL'
+  | 'SOLE_TRADER'
+  | 'SMALL_BUSINESS'
+  | 'MEDIUM_BUSINESS'
+  | 'CORPORATION'
+  | 'PARTNERSHIP'
+  | 'COOPERATIVE'
+  | 'ASSOCIATION'
+  | 'INSTITUTION'
+  | 'APPROVED_ORGANIZATION';
+
+export type V23AuthorizedEconomicRole =
+  | 'INDIVIDUAL'
+  | 'BUSINESS_OWNER'
+  | 'SUPPLIER'
+  | 'EMPLOYEE'
+  | 'SERVICE_PROVIDER'
+  | 'COOPERATIVE_MEMBER'
+  | 'MERCHANT'
+  | 'INSTITUTIONAL_APPROVER';
+
+export type V23VerificationStatus = 'UNVERIFIED' | 'PENDING_REVIEW' | 'VERIFIED' | 'REJECTED';
+export type V23AccountLifecycleStatus = 'PENDING_ACTIVATION' | 'ACTIVE' | 'RESTRICTED' | 'SUSPENDED' | 'CLOSED_RETAINED';
+
+export interface V23ParticipantIdentity {
+  id: string;
+  tenantId: string;
+  userId?: string;
+  category: V23ParticipantCategory;
+  authorizedRoles: V23AuthorizedEconomicRole[];
+  displayName: string;
+  legalName: string;
+  emailMasked: string;
+  phoneMasked: string;
+  phoneHash: string;
+  countryCode: string;
+  activeCountryContext: string;
+  districtOrCity: string;
+  identityVerificationStatus: V23VerificationStatus;
+  businessVerificationStatus: 'NOT_APPLICABLE' | V23VerificationStatus;
+  accountStatus: V23AccountLifecycleStatus;
+  statusReason?: string;
+  deviceFingerprintHash: string;
+  recoveryEmailHint?: string;
+  consentGiven: boolean;
+  consentTimestamp: string;
+  retentionLockUntil?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V23WalletCategory = 'INDIVIDUAL' | 'BUSINESS' | 'COOPERATIVE' | 'INSTITUTIONAL';
+
+export interface V23WalletNumberAllocation {
+  id: string;
+  euwn: string; // EX-XXXXXXXXXXXX (non-predictable permanent Universal Wallet Number)
+  participantIdentityId: string;
+  walletAccountId: string;
+  walletCategory: V23WalletCategory;
+  permanent: true;
+  reassigned: false;
+  countryIndependent: true;
+  phoneChangeCount: number;
+  deviceMigrationCount: number;
+  travelCountryHistory: string[];
+  issuedAt: string;
+}
+
+export type V23CurrencyCode = 'UGX' | 'KES' | 'TZS' | 'RWF' | 'BIF' | 'SSP' | 'CDF' | 'USD' | 'EUR';
+
+export interface V23WalletAccount {
+  id: string;
+  tenantId: string;
+  participantIdentityId: string;
+  euwn: string;
+  walletCategory: V23WalletCategory;
+  label: string;
+  displayName: string;
+  status: V23AccountLifecycleStatus;
+  statusReason?: string;
+  ownerUserId: string;
+  linkedEntityId?: string; // e.g., BIZ-V22-* or coop/institution id
+  staffPermissions: {
+    userId: string;
+    role: 'OWNER' | 'OPERATOR' | 'APPROVER' | 'AUDITOR';
+    canInitiate: boolean;
+    canApprove: boolean;
+  }[];
+  dualApprovalThresholdMinor: number;
+  primaryCountryCode: string;
+  activeCountryCode: string;
+  pinHash: string;
+  pinSalt: string;
+  pinSet: boolean;
+  mfaEnabled: boolean;
+  newDeviceRestrictedUntil?: string;
+  dailyLimitMinorByCurrency: Partial<Record<V23CurrencyCode, number>>;
+  isTestMode: true;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V23CurrencySubaccount {
+  id: string;
+  tenantId: string;
+  walletAccountId: string;
+  euwn: string;
+  currency: V23CurrencyCode;
+  minorUnitScale: 100;
+  availableMinor: number;
+  pendingMinor: number;
+  reservedMinor: number;
+  restrictedMinor: number;
+  reversedMinor: number;
+  testOnlyBalanceMinor: number;
+  ledgerAccountId: string;
+  status: 'ACTIVE' | 'FROZEN' | 'CLOSED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V23RegulatoryGateItem {
+  gateCode: string;
+  title: string;
+  completed: boolean;
+  evidenceRef?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  notes: string;
+}
+
+export interface V23CountryOperatingProfile {
+  countryCode: string;
+  countryName: string;
+  regionalBloc: 'EAC' | 'EAC_AFCFTA' | 'AFCFTA';
+  countryActivationStatus: 'NOT_ACTIVATED' | 'SANDBOX_CONFIGURED' | 'REGULATORY_REVIEW';
+  operationalAvailabilityStatus: 'SANDBOX_ONLY_NOT_LIVE';
+  sandboxWalletAvailable: boolean;
+  supportedCurrencies: V23CurrencyCode[];
+  defaultCurrency: V23CurrencyCode;
+  localWalletEligibilityRules: string[];
+  verificationRequirements: string[];
+  permittedTransactionTypes: V23TransactionType[];
+  perTxLimitMinor: Partial<Record<V23CurrencyCode, number>>;
+  dailyLimitMinor: Partial<Record<V23CurrencyCode, number>>;
+  feeScheduleSummary: string;
+  taxAndReportingNotes: string;
+  localDisputeProcedure: string;
+  cardPermissions: 'SANDBOX_SIMULATION_ONLY';
+  withdrawalPermissions: 'DISABLED_PENDING_LICENCE';
+  regulatoryStatus: 'PRE_REGULATORY_CLASSIFICATION_AND_LICENSING';
+  regulatoryAuthorityRef: string;
+  customerProtectionRequirements: string[];
+  dataHandlingRules: string;
+  activationGates: V23RegulatoryGateItem[];
+  updatedAt: string;
+}
+
+export type V23TransactionType =
+  | 'WALLET_TO_WALLET'
+  | 'INDIVIDUAL_TO_BUSINESS'
+  | 'BUSINESS_TO_BUSINESS'
+  | 'CUSTOMER_TO_MERCHANT'
+  | 'COMMERCIAL_ORDER_PAYMENT'
+  | 'INVOICE_SETTLEMENT_RECORD'
+  | 'COOPERATIVE_ALLOCATION'
+  | 'REFUND'
+  | 'REVERSAL'
+  | 'CASH_WITHDRAWAL_RECORD'
+  | 'CASH_DEPOSIT_RECORD'
+  | 'CARD_PURCHASE_RECORD'
+  | 'CROSS_COUNTRY_INTERNAL_TRANSFER';
+
+export type V23TransactionStatus =
+  | 'CREATED'
+  | 'INITIATED'
+  | 'VALIDATED'
+  | 'PENDING_AUTHORIZATION'
+  | 'AUTHORIZED'
+  | 'RISK_CHECKED'
+  | 'APPROVED'
+  | 'PROCESSING'
+  | 'POSTED'
+  | 'CONFIRMED'
+  | 'REJECTED'
+  | 'FAILED'
+  | 'CANCELLED'
+  | 'PENDING_REVIEW'
+  | 'UNDER_REVIEW'
+  | 'DISPUTED'
+  | 'REVERSED'
+  | 'REFUND_PENDING'
+  | 'PARTIALLY_REFUNDED'
+  | 'REFUNDED'
+  | 'EXPIRED';
+
+export interface V23TransactionHistoryEntry {
+  fromStatus: V23TransactionStatus | null;
+  toStatus: V23TransactionStatus;
+  actorUserId: string;
+  reason: string;
+  timestamp: string;
+}
+
+export interface V23WalletTransaction {
+  id: string;
+  tenantId: string;
+  txReference: string;
+  idempotencyKey: string;
+  correlationId: string;
+  txType: V23TransactionType;
+  status: V23TransactionStatus;
+  sourceWalletId: string;
+  sourceEuwn: string;
+  sourceSubaccountId: string;
+  sourceCurrency: V23CurrencyCode;
+  sourceAmountMinor: number;
+  feeMinor: number;
+  feeCurrency: V23CurrencyCode;
+  destinationWalletId: string;
+  destinationEuwn: string;
+  destinationSubaccountId: string;
+  destinationCurrency: V23CurrencyCode;
+  destinationAmountMinor: number;
+  fxApplied: boolean;
+  fxRateApplied: number;
+  fxRateSource: string;
+  fxRateTimestamp: string;
+  fxRateClassification: 'NONE' | 'SYNTHETIC_TEST_RATE';
+  fxUserConfirmed: boolean;
+  sourceCountryCode: string;
+  destinationCountryCode: string;
+  purpose: string;
+  settlementClassification: 'SANDBOX_INTERNAL_LEDGER' | 'BLOCKED_REAL_VALUE_GATE';
+  isTestTransaction: true;
+  linkedModuleRef?: {
+    module: 'MARKETPLACE' | 'INVOICE' | 'PROCUREMENT' | 'LOGISTICS' | 'COOPERATIVE' | 'PROJECT' | 'BUSINESS' | 'MERCHANT_QR' | 'CARD';
+    recordId: string;
+    label: string;
+  };
+  journalEntryId?: string;
+  reversedByTransactionId?: string;
+  parentTransactionId?: string;
+  refundedMinorTotal: number;
+  riskScore: number;
+  riskFlags: string[];
+  approvalRequired: boolean;
+  approvedByUserId?: string;
+  history: V23TransactionHistoryEntry[];
+  createdByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V23LedgerPosting {
+  id: string;
+  tenantId: string;
+  transactionId: string;
+  txReference: string;
+  journalEntryId: string;
+  lines: {
+    subaccountId: string;
+    walletAccountId: string;
+    direction: 'DEBIT' | 'CREDIT';
+    amountMinor: number;
+    currency: V23CurrencyCode;
+    memo: string;
+  }[];
+  totalDebitMinor: number;
+  totalCreditMinor: number;
+  balanced: boolean;
+  immutable: true;
+  postingHashSha256: string;
+  postedAt: string;
+}
+
+export interface V23MerchantAccount {
+  id: string;
+  tenantId: string;
+  walletAccountId: string;
+  euwn: string;
+  merchantName: string;
+  sectorCode: string;
+  countryCode: string;
+  districtOrCity: string;
+  verificationStatus: V23VerificationStatus;
+  status: 'ACTIVE_SANDBOX' | 'SUSPENDED' | 'CLOSED';
+  suspensionReason?: string;
+  perTxLimitMinor: number;
+  dailyLimitMinor: number;
+  acceptedCurrencies: V23CurrencyCode[];
+  sandboxVolumeMinorByCurrency: Partial<Record<V23CurrencyCode, number>>;
+  sandboxTxCount: number;
+  sandboxRefundCount: number;
+  modeLabel: 'SANDBOX_TEST_MODE_ONLY';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V23MerchantTerminal {
+  id: string;
+  tenantId: string;
+  merchantId: string;
+  terminalCode: string;
+  terminalType: 'STATIC_QR_POINT' | 'DYNAMIC_POS_SIM' | 'WEB_CHECKOUT_SIM';
+  label: string;
+  locationLabel: string;
+  status: 'ACTIVE' | 'SUSPENDED' | 'DECOMMISSIONED';
+  lastActivityAt: string;
+  createdAt: string;
+}
+
+export interface V23QrPaymentRequest {
+  id: string;
+  tenantId: string;
+  paymentReference: string;
+  merchantId: string;
+  merchantName: string;
+  merchantEuwn: string;
+  terminalId: string;
+  qrKind: 'STATIC' | 'DYNAMIC';
+  amountMinor: number;
+  currency: V23CurrencyCode;
+  feePreviewMinor: number;
+  description: string;
+  countryCode: string;
+  payloadJson: string;
+  payloadSignatureSha256: string;
+  status: 'ACTIVE' | 'AUTHORIZED' | 'COMPLETED_SANDBOX' | 'EXPIRED' | 'CANCELLED' | 'REJECTED';
+  linkedTransactionId?: string;
+  receiptNumber?: string;
+  expiresAt: string;
+  modeLabel: 'SANDBOX_TEST_MODE_ONLY';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V23CardStatus =
+  | 'ISSUED_TEST'
+  | 'ACTIVE_TEST'
+  | 'FROZEN'
+  | 'SUSPENDED'
+  | 'REPORTED_LOST'
+  | 'REPORTED_STOLEN'
+  | 'REPLACEMENT_REQUESTED'
+  | 'CANCELLED'
+  | 'EXPIRED';
+
+export interface V23VirtualCard {
+  id: string;
+  tenantId: string;
+  walletAccountId: string;
+  euwn: string;
+  participantIdentityId: string;
+  cardholderName: string;
+  tokenizedCardRef: string;
+  maskedPan: string; // Unmistakably fictional test format e.g. 4999 00XX XXXX 4242
+  expiryPlaceholder: string;
+  cardStatus: V23CardStatus;
+  allowedCurrencies: V23CurrencyCode[];
+  allowedCountries: string[];
+  blockedMccs: string[];
+  perTxLimitMinor: number;
+  dailyLimitMinor: number;
+  onlinePaymentsEnabled: boolean;
+  contactlessConfigured: boolean;
+  testMode: true;
+  externalNetworkUsable: false;
+  nonIssuanceNotice: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V23PhysicalCardStage =
+  | 'APPLIED'
+  | 'ELIGIBILITY_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'PRODUCTION_REQUESTED'
+  | 'PERSONALIZATION'
+  | 'DISPATCHED'
+  | 'DELIVERED'
+  | 'ACTIVATED'
+  | 'PIN_SETUP_VERIFIED'
+  | 'SUSPENDED'
+  | 'REPLACEMENT_REQUESTED'
+  | 'RENEWED'
+  | 'CANCELLED';
+
+export interface V23PhysicalCard {
+  id: string;
+  tenantId: string;
+  walletAccountId: string;
+  euwn: string;
+  participantIdentityId: string;
+  cardholderName: string;
+  tokenizedCardRef: string;
+  maskedPan: string;
+  stage: V23PhysicalCardStage;
+  cardStatus: V23CardStatus;
+  emvChipConfigured: boolean;
+  contactlessConfigured: boolean;
+  atmInterfaceStatus: 'INACTIVE_NOT_LIVE';
+  issuerInterfaceStatus: 'INACTIVE_PENDING_PARTNER_AND_LICENCE';
+  acquirerInterfaceStatus: 'INACTIVE_SANDBOX_ONLY';
+  schemeCertified: false;
+  physicalCardLiveIssued: false;
+  dispatchTrackingRef?: string;
+  deliveryCountryCode: string;
+  deliveryDistrict: string;
+  pinConfiguredHash?: string;
+  nonCertificationNotice: string;
+  history: { stage: V23PhysicalCardStage; actorUserId: string; note: string; timestamp: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V23ComplianceReview {
+  id: string;
+  tenantId: string;
+  subjectType: 'IDENTITY' | 'BUSINESS' | 'TRANSACTION' | 'MERCHANT';
+  subjectId: string;
+  reviewType: 'CDD' | 'KYB' | 'UBO' | 'PEP_INTERFACE_STUB' | 'SANCTIONS_INTERFACE_STUB' | 'SUSPICIOUS_TX_REVIEW';
+  riskScore: number;
+  riskReasons: string[];
+  automatedRecommendation: string;
+  humanDecision: 'PENDING_HUMAN_REVIEW' | 'CLEARED' | 'RESTRICTED' | 'ESCALATED' | 'APPEAL_OPEN';
+  requiresHumanReview: true;
+  reviewedByUserId?: string;
+  decisionReason?: string;
+  appealNotes?: string;
+  liveScreeningClaimed: false;
+  screeningNotice: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V23RiskEvent {
+  id: string;
+  tenantId: string;
+  walletAccountId?: string;
+  transactionId?: string;
+  eventKind: 'VELOCITY_ALERT' | 'DUPLICATE_TX' | 'NEW_DEVICE_RESTRICTION' | 'COUNTRY_BLOCK' | 'CARD_FROZEN_BLOCK' | 'RATE_LIMIT_ABUSE' | 'ENUMERATION_DEFENSE';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+  details: string;
+  resolved: boolean;
+  createdAt: string;
+}
+
+export interface V23ReconciliationRecord {
+  id: string;
+  tenantId: string;
+  scope: 'FULL_WALLET_NETWORK' | 'MERCHANT_BATCH' | 'CURRENCY_SUBLEDGER';
+  status: 'BALANCED' | 'EXCEPTION_DETECTED' | 'RESOLVED';
+  journalBalanced: boolean;
+  totalSubaccountsChecked: number;
+  totalPostingsChecked: number;
+  imbalanceCount: number;
+  exceptions: string[];
+  executedBy: string;
+  executedAt: string;
+}
+
+export interface V23WalletAuditEvent {
+  id: string;
+  tenantId: string;
+  actorUserId: string;
+  actorRole: UserRole;
+  action: string;
+  targetType: string;
+  targetId: string;
+  summary: string;
+  correlationId: string;
+  prevHash: string;
+  entryHash: string;
+  createdAt: string;
+}
+
+export interface V23FeeConfiguration {
+  id: string;
+  serviceType: V23TransactionType | 'CARD_VIRTUAL_TEST' | 'CARD_PHYSICAL_TEST' | 'MERCHANT_QR';
+  countryCode: string;
+  currency: V23CurrencyCode;
+  participantCategory: V23ParticipantCategory | 'ALL';
+  flatFeeMinor: number;
+  percentBps: number; // basis points (e.g., 50 = 0.50%)
+  minFeeMinor: number;
+  maxFeeMinor: number;
+  classification: 'CONFIGURABLE_SANDBOX_SCHEDULE';
+  activeRevenueRecognizedMinor: 0;
+  updatedBy: string;
+  updatedAt: string;
+}
+
+export type V23SupportCategory =
+  | 'INCORRECT_RECIPIENT'
+  | 'MISSING_TRANSACTION'
+  | 'DUPLICATE_TRANSACTION'
+  | 'UNAUTHORIZED_ACTIVITY'
+  | 'MERCHANT_DISPUTE'
+  | 'REFUND_COMPLAINT'
+  | 'CARD_LOSS_THEFT'
+  | 'ACCOUNT_TAKEOVER'
+  | 'ACCOUNT_RECOVERY'
+  | 'VERIFICATION_APPEAL'
+  | 'SUSPENSION_APPEAL'
+  | 'DATA_CORRECTION';
+
+export interface V23SupportDisputeCase {
+  id: string;
+  tenantId: string;
+  caseReference: string;
+  category: V23SupportCategory;
+  participantIdentityId: string;
+  walletAccountId?: string;
+  linkedTransactionId?: string;
+  assignedSupportRole: string;
+  status: 'OPEN' | 'UNDER_INVESTIGATION' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
+  summary: string;
+  evidenceRefs: string[];
+  resolutionNotes?: string;
+  escalationHistory: { role: string; note: string; at: string }[];
+  closureReason?: string;
+  consumerProtectionNotice: string;
+  submittedAt: string;
+  updatedAt: string;
+}
+
+export interface V23OfflineQueueItem {
+  id: string;
+  tenantId: string;
+  deviceId: string;
+  clientDraftId: string;
+  sourceWalletId: string;
+  recipientEuwn: string;
+  amountMinor: number;
+  currency: V23CurrencyCode;
+  countryCode: string;
+  purpose: string;
+  syncStatus: 'QUEUED_LOCAL' | 'SUBMITTED' | 'SERVER_POSTED' | 'SERVER_REJECTED' | 'CONFLICT_DETECTED';
+  linkedTransactionId?: string;
+  conflictOrRejectReason?: string;
+  queuedAt: string;
+  syncedAt?: string;
+}
+
+export type V23IntegrationState =
+  | 'NOT_CONFIGURED'
+  | 'CONFIGURED_TEST'
+  | 'TEST_VERIFIED'
+  | 'PENDING_APPROVAL'
+  | 'LIVE_APPROVED'
+  | 'SUSPENDED';
+
+export interface V23IntegrationInterface {
+  id: string;
+  code: string;
+  name: string;
+  category: 'PAYMENT_SWITCH' | 'CARD_ISSUER_PROCESSOR' | 'CARD_ACQUIRER' | 'ATM_NETWORK' | 'KYC_REGISTRY' | 'SANCTIONS_SCREENING' | 'SETTLEMENT_BANK' | 'FX_RATE_FEED';
+  countryCode: string;
+  state: V23IntegrationState;
+  liveEnabled: boolean;
+  providerPlaceholder: string;
+  regulatoryPrereq: string;
+  updatedAt: string;
+}
+
+export interface V23ReversalOrRefund {
+  id: string;
+  tenantId: string;
+  kind: 'FULL_REVERSAL' | 'PARTIAL_REFUND' | 'FULL_REFUND';
+  originalTransactionId: string;
+  refundTransactionId: string;
+  amountMinor: number;
+  currency: V23CurrencyCode;
+  reason: string;
+  merchantId?: string;
+  approvedByUserId: string;
+  createdAt: string;
+}
+
+export interface V23PostgresMigrationRun {
+  id: string;
+  mode: 'DRY_RUN_AUDIT' | 'LOCAL_TEST_PG' | 'CUTOVER_BLOCKED';
+  status: 'COMPLETED' | 'BLOCKED' | 'RECOVERED_INTERRUPTED';
+  databaseUrlConfigured: boolean;
+  activeAuthority: 'LOCAL_JSON_WAL_AUTHORITATIVE';
+  postgresCutoverComplete: false;
+  schemaVersionTarget: 21;
+  collectionsAudited: number;
+  mappedTablesCount: number;
+  collectionMappings: {
+    collectionName: string;
+    postgresTable: string;
+    recordCount: number;
+    foreignKeysChecked: boolean;
+    checksumSha256: string;
+  }[];
+  uniqueEuwnVerified: boolean;
+  uniqueTxRefVerified: boolean;
+  rollbackVerified: boolean;
+  ledgerBalancedBefore: boolean;
+  ledgerBalancedAfter: boolean;
+  executedAt: string;
+  notes: string;
+}
+
+export interface V23ContinuityTestRun {
+  id: string;
+  scenarioCode: string;
+  scenarioTitle: string;
+  passed: boolean;
+  expectedTransactionState: string;
+  observedTransactionState: string;
+  recoveryProcedure: string;
+  auditEvidenceId: string;
+  userFacingOutcome: string;
+  durationMs: number;
+  executedAt: string;
+}
+
+
+
 

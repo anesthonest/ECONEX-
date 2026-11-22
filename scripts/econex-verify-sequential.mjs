@@ -77,6 +77,27 @@ const BATCH_SPECS = [
       { id: 'V20', file: './src/components/modules/v20UnifiedOperationsTests.ts', fn: 'runV20VerificationTests', passBase: true },
     ],
   },
+  {
+    batchId: 'BATCH_K_V21',
+    label: 'V21 Controlled Pilot Deployment, Field Operations & Commercial Activation (T1726–T2000)',
+    suites: [
+      { id: 'V21', file: './src/components/modules/v21PilotOperationsTests.ts', fn: 'runV21VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_L_V22',
+    label: 'V22 Universal Economic Activity & Growth Engine (T2001–T2400)',
+    suites: [
+      { id: 'V22', file: './src/components/modules/v22UniversalEconomyTests.ts', fn: 'runV22VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_M_V23',
+    label: 'V23 Universal Economic Identity, Wallet Network & Card Infrastructure (T2401–T2950)',
+    suites: [
+      { id: 'V23', file: './src/components/modules/v23WalletNetworkTests.ts', fn: 'runV23VerificationTests', passBase: true },
+    ],
+  },
 ];
 
 function runSingleSuiteIsolated(suite) {
@@ -145,10 +166,10 @@ function runSingleSuiteIsolated(suite) {
 
 function parseRequestedBatches() {
   const arg = process.argv.find((a) => a.startsWith('--batch='));
-  const val = arg ? arg.split('=')[1].toUpperCase() : 'V20';
+  const val = arg ? arg.split('=')[1].toUpperCase() : 'V23';
   if (val === 'ALL') return BATCH_SPECS;
-  if (val === 'VERIFY') return BATCH_SPECS.filter((b) => ['BATCH_H_V18', 'BATCH_I_V19', 'BATCH_J_V20'].includes(b.batchId));
-  if (val === 'UNIT') return BATCH_SPECS.filter((b) => ['BATCH_E_V151_V159', 'BATCH_I_V19', 'BATCH_J_V20'].includes(b.batchId));
+  if (val === 'VERIFY') return BATCH_SPECS.filter((b) => ['BATCH_H_V18', 'BATCH_I_V19', 'BATCH_J_V20', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23'].includes(b.batchId));
+  if (val === 'UNIT') return BATCH_SPECS.filter((b) => ['BATCH_E_V151_V159', 'BATCH_I_V19', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23'].includes(b.batchId));
 
   const tokens = val.split(',').map((t) => t.trim());
   const selected = [];
@@ -158,7 +179,7 @@ function parseRequestedBatches() {
       selected.push({ ...b, suites: filteredSuites });
     }
   }
-  return selected.length > 0 ? selected : BATCH_SPECS.filter((b) => b.batchId === 'BATCH_J_V20');
+  return selected.length > 0 ? selected : BATCH_SPECS.filter((b) => b.batchId === 'BATCH_M_V23');
 }
 
 async function main() {
@@ -194,7 +215,7 @@ async function main() {
   const totalFailed = suiteResults.reduce((acc, s) => acc + s.failed, 0);
 
   const report = {
-    release: 'V20.0-UNIFIED-ECONOMIC-OPERATIONS',
+    release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
     baseUrl: BASE_URL,
     executedAt: startedAt,
     completedAt: new Date().toISOString(),

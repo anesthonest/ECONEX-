@@ -1,0 +1,1223 @@
+# ECONEX V23.0 — REMAINING MASTER EXECUTION BLUEPRINT
+## UNIVERSAL ECONOMIC IDENTITY, WALLET NETWORK & CARD INFRASTRUCTURE
+
+**Release:** V23.0-UNIVERSAL-WALLET-NETWORK  
+**Schema Target:** Version 21  
+**Product:** ECONEX — Universal Economic Operating System  
+**Developer:** VINEXSAH TECHNOLOGIES  
+**Attribution:** Developed under VINEXSAH TECHNOLOGIES. All rights reserved.
+
+---
+
+## PHASE 6.5 — ECONEX-NATIVE MERCHANT ACCEPTANCE
+
+Complete the ECONEX-native merchant acceptance environment.
+
+Build a sandbox merchant acceptance system supporting:
+
+1. Merchant identification and verification status.
+2. Merchant wallet registration and linking.
+3. Merchant terminal registration and device management.
+4. Static and dynamic ECONEX QR codes.
+5. Customer payment requests.
+6. Transaction authorization.
+7. Payment confirmation.
+8. Digital transaction receipts.
+9. Refund requests and refund processing.
+10. Transaction history and merchant statements.
+11. Merchant transaction limits and risk controls.
+12. Merchant dispute and complaint references.
+13. Merchant terminal suspension and reactivation.
+14. Merchant reconciliation dashboard.
+
+### QR payment workflow
+
+Implement this complete test workflow:
+
+- Merchant creates a payment request.
+- ECONEX generates a unique payment reference and QR code.
+- Customer scans the QR code.
+- System identifies the merchant and amount.
+- Customer reviews the transaction.
+- Customer authenticates the payment.
+- Server checks account status, currency, available test balance, transaction limits and risk rules.
+- Transaction engine posts balanced ledger entries.
+- Both parties receive transaction confirmation.
+- Merchant dashboard updates.
+- Customer receives a receipt.
+
+The customer must see the merchant name, amount, currency, fees, and transaction reference before confirmation.
+
+### Merchant refund workflow
+
+- Merchant selects an eligible completed transaction.
+- Merchant enters the refund amount and reason.
+- System checks the refundable balance.
+- Refund is linked to the original transaction.
+- Refund approval rules are applied.
+- Ledger entries are posted through a controlled reversal/refund process.
+- Both parties receive updated transaction records.
+- Partial refunds and full refunds are supported.
+- Duplicate refunds must be rejected.
+- Refunds must never create an unbalanced ledger.
+
+All merchant acceptance in V23 must operate in a clearly labelled **SANDBOX / TEST MODE**. Do not represent a simulated merchant payment as an actual settlement of money.
+
+---
+
+## PHASE 7 — VIRTUAL ECONEX CARD INFRASTRUCTURE
+
+Design the architecture for a virtual ECONEX card linked to the user's wallet.
+
+### Virtual card capabilities
+
+- Card creation request.
+- Cardholder identity association.
+- Wallet association.
+- Card status and lifecycle.
+- Card activation and suspension.
+- Card freezing and unfreezing.
+- Card replacement workflow.
+- Spending limits.
+- Transaction notifications.
+- Card transaction history.
+- Merchant category restrictions.
+- Country and currency restrictions.
+- Online purchase controls.
+- Contactless capability configuration.
+- Lost or stolen card reporting.
+- Card cancellation.
+
+### Security requirements
+
+- Never store raw card PINs.
+- Never expose sensitive card credentials in logs.
+- Use tokenized card references.
+- Protect card data with encryption and strict access control.
+- Require step-up authentication for sensitive actions.
+- Apply configurable transaction and velocity limits.
+- Record every card lifecycle event in an audit trail.
+- Prevent unauthorized wallet-to-card association changes.
+
+Create a simulated virtual card interface showing cardholder name, masked card number, expiry placeholder, card status and linked wallet.
+
+Use unmistakably fictional test card data. Do not create valid payment credentials or claim that a virtual card can transact on external networks.
+
+---
+
+## PHASE 8 — PHYSICAL ECONEX WALLET CARD ARCHITECTURE
+
+Design the future physical ECONEX wallet card.
+
+The card should eventually allow eligible users to:
+
+- Pay participating merchants.
+- Receive eligible payment credits.
+- Withdraw cash through authorized channels.
+- Access supported ECONEX services.
+- View card-linked transaction records.
+- Freeze or report a lost card.
+- Link the card to the same permanent ECONEX wallet number.
+
+### Card lifecycle
+
+Implement the software workflow for:
+
+1. Card application.
+2. Identity and eligibility review.
+3. Approval or rejection.
+4. Card production request.
+5. Card personalization status.
+6. Dispatch tracking.
+7. Delivery confirmation.
+8. Activation.
+9. PIN setup through a secure approved process.
+10. Card suspension.
+11. Replacement.
+12. Expiry and renewal.
+13. Cancellation.
+
+### Card architecture
+
+Prepare configurable support for:
+
+- Physical debit-style card architecture, subject to approved issuing model.
+- Virtual card architecture.
+- Chip-enabled card requirements.
+- Contactless requirements.
+- Secure card personalization.
+- Card tokenization.
+- Card lifecycle management.
+- Issuer processing interfaces.
+- Acquirer and merchant acceptance interfaces.
+- ATM processing interfaces.
+- Card settlement and reconciliation interfaces.
+
+Do not claim that ECONEX cards are issued, certified, accepted by banks, accepted by ATMs, or usable on external card networks.
+
+External acceptance may require a licensed issuer, scheme participation, processor, acquirer, settlement arrangements, technical certification and regulatory approvals. Keep those interfaces inactive until approved.
+
+---
+
+## PHASE 9 — UNIVERSAL CROSS-COUNTRY WALLET NETWORK
+
+Build the internal ECONEX network so the same permanent wallet number can identify a participant across all activated ECONEX countries.
+
+### Core principle
+
+A user must not need to create a completely new ECONEX wallet identity when travelling or participating in another ECONEX country.
+
+For example:
+
+- A user registers in Uganda.
+- The user receives one permanent ECONEX wallet number.
+- The user travels to Kenya.
+- The same wallet number identifies the user.
+- The user can receive eligible ECONEX transactions in Kenya.
+- The user's country-specific permissions and currency balances are applied.
+- The user returns to Uganda without losing their original identity or wallet history.
+
+### Country-aware wallet architecture
+
+Create country operating profiles with:
+
+- Country identifier.
+- Country activation status.
+- Supported currencies.
+- Local wallet eligibility rules.
+- Transaction limits.
+- Applicable verification requirements.
+- Applicable fees.
+- Tax and reporting configuration.
+- Local dispute and complaint procedures.
+- Supported card and merchant capabilities.
+- Regulatory approval status.
+- Operational availability status.
+
+Prepare profiles for Uganda, Kenya, Tanzania, Rwanda, Burundi, South Sudan and the Democratic Republic of Congo.
+
+These are configuration targets, not proof of country authorization or live operation.
+
+### Cross-country internal transaction workflow
+
+1. Sender enters the recipient's permanent ECONEX wallet number.
+2. System resolves the recipient through a protected identity directory.
+3. System displays only permitted recipient information.
+4. Sender chooses an eligible source wallet and currency.
+5. Recipient's eligible destination wallet is identified.
+6. System displays amount, currencies, fees and any proposed conversion.
+7. Sender confirms the transaction.
+8. Server validates both wallets and country permissions.
+9. Risk and compliance controls run.
+10. Ledger engine processes the eligible internal transaction.
+11. Both parties receive confirmation.
+12. Reconciliation and audit records are updated.
+
+### Currency handling
+
+Support configurable subaccounts for UGX, KES, TZS, RWF, BIF, SSP, CDF, USD and EUR.
+
+Rules:
+
+- Maintain separate balances by currency.
+- Never silently convert currencies.
+- Never invent exchange rates.
+- Display the exchange-rate source and timestamp when a rate is available.
+- Display fees before confirmation.
+- Require explicit user authorization for conversion.
+- Preserve the original and destination transaction amounts.
+- Record the applied rate and calculation method.
+- Reject unsupported currency combinations.
+- Never use floating-point arithmetic for monetary postings.
+
+A cross-country wallet transfer does not automatically mean that an external bank settlement or international remittance has occurred. Clearly distinguish internal ledger movements from external settlement.
+
+---
+
+## PHASE 10 — ECONEX WALLET INTEGRATION WITH THE ENTIRE ECONOMIC OPERATING SYSTEM
+
+The wallet must become a shared economic capability across ECONEX, not a separate application disconnected from the wider platform.
+
+Integrate the wallet architecture with the existing V1–V22 modules.
+
+### Required integration areas
+
+**A. Universal marketplace**
+- Pay for eligible marketplace orders.
+- Receive eligible commercial credits.
+- Link wallet transactions to order references.
+- Support order cancellations and refunds.
+
+**B. Business operating system**
+- Business payment requests.
+- Customer invoices.
+- Supplier payment obligations.
+- Business transaction records.
+- Cash-flow visibility based on recorded transactions.
+- Business wallet statements.
+
+**C. Procurement**
+- Link approved procurement orders to payment obligations.
+- Track payment status.
+- Record test-mode payment confirmations.
+- Prevent unauthorized procurement payments.
+
+**D. Logistics**
+- Link eligible delivery charges to commercial orders.
+- Record payment obligations and confirmations.
+- Support delivery-related refund references.
+
+**E. Cooperatives**
+- Cooperative wallet identity.
+- Member-level allocation records.
+- Authorized member payments.
+- Cooperative statements.
+- Approval workflows for collective transactions.
+- Member privacy and access isolation.
+
+**F. Projects and construction**
+- Project payment schedules.
+- Contractor payment obligations.
+- Supplier invoices.
+- Milestone-linked payment records.
+- Approval and evidence trails.
+
+**G. Individuals and professionals**
+- Personal wallet overview.
+- Professional service payment requests.
+- Customer receipts.
+- Eligible business and personal transaction separation.
+
+**H. Institutional accounts**
+- Institution wallet profile.
+- Multi-user authorization.
+- Dual approval for high-risk actions.
+- Role-separated statements and audit records.
+
+All integrations must use a common transaction reference and traceable relationship to the originating business activity.
+
+Do not allow a wallet transaction to silently modify a commercial contract, invoice, procurement approval or delivery record without a valid authorized workflow.
+
+---
+
+## PHASE 11 — WALLET EXPERIENCE AND USER INTERFACE
+
+Build a complete, responsive ECONEX Wallet experience.
+
+### Main wallet dashboard
+
+Display:
+
+- Permanent ECONEX wallet number.
+- Participant name or organization name.
+- Verification status.
+- Wallet status.
+- Available balance by currency.
+- Pending balances.
+- Restricted balances where applicable.
+- Recent transactions.
+- Linked cards and card status.
+- Country profile.
+- Transaction alerts.
+- Security and support access.
+
+### Main wallet actions
+
+Create functional interface flows for:
+
+1. Receive.
+2. Send.
+3. Request payment.
+4. Scan QR.
+5. Show my QR.
+6. View transactions.
+7. View statements.
+8. Manage cards.
+9. Manage currencies.
+10. View country settings.
+11. Manage security.
+12. Report a problem.
+
+### Wallet number display
+
+Make the permanent wallet number easy to find and copy.
+
+Allow the user to share the number through a safe sharing interface. Never expose private identity documents or confidential account information through the wallet-number lookup feature.
+
+### Transaction confirmation
+
+Before any transaction is submitted, display:
+
+- Recipient or merchant.
+- Amount.
+- Currency.
+- Source wallet.
+- Destination wallet.
+- Fees.
+- Conversion details, if applicable.
+- Country context.
+- Transaction purpose where required.
+- Final confirmation action.
+
+Do not use a success screen until the server confirms the transaction's actual state.
+
+### User experience requirements
+
+- Mobile-first design.
+- Responsive desktop layout.
+- Clear loading and error states.
+- Accessible controls.
+- Low-bandwidth support.
+- Clear transaction status labels.
+- No misleading balance animations.
+- No fabricated financial data.
+- Preserve the existing ECONEX visual identity and navigation.
+- Do not hide existing dashboards or remove V1–V22 functionality.
+
+---
+
+## PHASE 12 — IDENTITY SECURITY, FRAUD PREVENTION AND FINANCIAL CRIME CONTROLS
+
+Implement a security and compliance architecture suitable for future regulated financial operations.
+
+### Identity and account protection
+
+- Identity verification workflow.
+- Organization verification workflow.
+- Verification status and evidence references.
+- Secure authentication.
+- Multi-factor authentication architecture.
+- Device and session management.
+- Account recovery.
+- Suspicious login detection.
+- Account suspension and reinstatement.
+- User consent records.
+- Role-based access control.
+- Privileged administrator controls.
+
+### Transaction security
+
+- Transaction PIN architecture using secure one-way password hashing.
+- Step-up authentication for high-risk actions.
+- Configurable transaction limits.
+- Velocity and frequency controls.
+- Duplicate transaction detection.
+- Unusual activity alerts.
+- Recipient confirmation.
+- New-device transaction restrictions.
+- Card freeze controls.
+- Transaction hold and review states.
+- Reversal and refund controls.
+- Tamper-evident audit events.
+
+### Compliance architecture
+
+Prepare configurable workflows for:
+
+- Customer due diligence.
+- Business due diligence.
+- Beneficial ownership information.
+- Politically exposed person screening interfaces.
+- Sanctions screening interfaces.
+- Suspicious transaction review.
+- Transaction monitoring.
+- Risk scoring.
+- Escalation to authorized compliance personnel.
+- Record retention.
+- Complaint handling.
+- Regulatory reporting preparation.
+
+Do not claim that a test screening interface performs live sanctions checks or that the platform is legally compliant merely because these screens exist.
+
+Do not automatically reject or freeze a person solely on an unexplained AI risk score. Require appropriate human review, documented reasons and an appeal or complaint pathway.
+
+### Privacy
+
+- Data minimization.
+- Purpose limitation.
+- Access logging.
+- Encryption in transit and at rest.
+- Secure key management architecture.
+- Data export.
+- Data correction requests.
+- Account closure workflow.
+- Retention and deletion policy controls.
+- Restricted administrator access.
+- Separation of identity data from public wallet lookup.
+
+Never display a user's full identity documents, personal contact information or confidential financial history to another wallet holder.
+
+---
+
+## PHASE 13 — TRANSACTION ENGINE RELIABILITY AND FINANCIAL INTEGRITY
+
+Strengthen the transaction engine to withstand retries, concurrency, interruptions and recovery.
+
+### Mandatory ledger rules
+
+1. Every posted transaction must have balanced debit and credit entries.
+2. Posted ledger entries must be immutable.
+3. Corrections must use traceable reversals or compensating entries.
+4. Direct balance editing is prohibited.
+5. Every transaction must have a unique reference.
+6. Every request must support idempotency.
+7. Concurrent transactions must not overspend the same available balance.
+8. Currency accounts must remain isolated.
+9. Test balances must remain separate from any future real-value accounts.
+10. Transaction status must reflect actual posting state.
+
+### Required transaction states
+
+- CREATED
+- PENDING_AUTHORIZATION
+- AUTHORIZED
+- PROCESSING
+- POSTED
+- FAILED
+- REJECTED
+- REVERSED
+- REFUND_PENDING
+- PARTIALLY_REFUNDED
+- REFUNDED
+- UNDER_REVIEW
+- CANCELLED
+
+Enforce valid state transitions on the server. Do not allow frontend code to declare a transaction successful.
+
+### Reliability engineering
+
+Implement or strengthen:
+
+- Atomic ledger posting.
+- Transactional boundaries.
+- Idempotency keys.
+- Duplicate request detection.
+- Concurrency protection.
+- Durable write-ahead logging.
+- Recovery after process interruption.
+- Reconciliation jobs.
+- Outbox and inbox processing patterns where appropriate.
+- Retry policies.
+- Dead-letter handling.
+- Structured transaction audit logs.
+- Correlation IDs.
+- Controlled reversal processing.
+- Operational exception queues.
+
+Never solve a failed transaction by silently changing a wallet balance.
+
+---
+
+## PHASE 14 — OFFLINE AND LOW-CONNECTIVITY WALLET EXPERIENCE
+
+ECONEX must remain accessible in low-connectivity environments without compromising financial integrity.
+
+Implement:
+
+- Offline wallet-number display where safely cached.
+- Offline viewing of permitted cached statements.
+- Offline payment request drafts.
+- Queued payment instructions.
+- Pending synchronization status.
+- Duplicate submission protection.
+- Conflict detection.
+- Secure local storage.
+- Device-level data protection.
+- Clear connectivity indicators.
+- Server-side transaction authorization when connectivity returns.
+
+### Critical financial safety rule
+
+Offline mode must not independently finalize an irreversible real-value transfer or create spendable funds.
+
+A queued transaction must remain clearly marked as pending until the authoritative server validates and posts it.
+
+Prevent two disconnected devices from spending the same balance.
+
+Provide clear messages explaining when a transaction is saved locally, submitted, authorized, posted, rejected or awaiting synchronization.
+
+---
+
+## PHASE 15 — API AND INTERNAL NETWORK ARCHITECTURE
+
+Create a secure, versioned API architecture for ECONEX wallet services.
+
+Organize endpoints around:
+
+- Wallet identity.
+- Wallet lookup.
+- Wallet account management.
+- Currency subaccounts.
+- Transaction creation.
+- Transaction authorization.
+- Transaction status.
+- Transaction history.
+- Statements.
+- Merchant acceptance.
+- QR payment requests.
+- Refunds.
+- Card lifecycle.
+- Country profiles.
+- Limits and fees.
+- Compliance review.
+- Reconciliation.
+- Audit records.
+
+### API requirements
+
+- Server-side authorization.
+- Role and ownership checks.
+- Input validation.
+- Request size limits.
+- Rate limiting.
+- Idempotency.
+- Consistent error codes.
+- Correlation IDs.
+- Versioning.
+- Audit logging.
+- Secure pagination.
+- No sensitive data in URLs.
+- No secrets in frontend bundles.
+- No unauthorized balance access.
+- No unrestricted administrative transaction endpoint.
+
+Prepare documented internal API contracts and example sandbox requests.
+
+Where the existing project supports it, provide an OpenAPI specification. Do not introduce a new infrastructure stack solely for documentation.
+
+### Integration rules
+
+External integrations must be represented as configurable interfaces with explicit states:
+
+- NOT_CONFIGURED
+- CONFIGURED_TEST
+- TEST_VERIFIED
+- PENDING_APPROVAL
+- LIVE_APPROVED
+- SUSPENDED
+
+Do not mark an integration live merely because a configuration field or API interface exists.
+
+---
+
+## PHASE 16 — RESILIENCE, CONTINUITY AND DISASTER RECOVERY
+
+Wallet infrastructure must receive stronger continuity protection than ordinary marketplace features.
+
+### Required safeguards
+
+- Durable transaction journal.
+- Regular encrypted backups.
+- Backup integrity verification.
+- Recovery testing.
+- Ledger reconciliation after recovery.
+- Crash recovery.
+- Database consistency checks.
+- WAL replay verification.
+- Backup rotation.
+- Restricted backup access.
+- Administrative recovery audit.
+- Documented incident response.
+- Service health monitoring.
+- Readiness monitoring.
+- Graceful shutdown.
+- Controlled maintenance mode.
+
+### Failure scenarios to test
+
+1. Application crashes before a transaction is posted.
+2. Application crashes after ledger posting but before response delivery.
+3. Client retries the same request.
+4. Two requests attempt to spend the same balance.
+5. Network connection fails during authorization.
+6. Merchant terminal disconnects.
+7. Backup restoration is interrupted.
+8. WAL replay encounters a damaged record.
+9. A duplicate refund is submitted.
+10. A country profile is suspended during a pending transaction.
+11. A card is frozen while a new authorization request arrives.
+12. A reconciliation job detects an imbalance.
+
+For each scenario, define expected transaction state, recovery procedure, audit evidence and user-facing outcome.
+
+Do not invent recovery-time or recovery-point achievements. Measure and report actual test results.
+
+---
+
+## PHASE 17 — DATA MODEL AND SCHEMA 21
+
+Implement Schema 21 as an additive migration.
+
+Preserve all V1–V22 data and existing collections.
+
+Create or extend data models for:
+
+- Universal participant wallet identities.
+- Wallet number allocation.
+- Wallet accounts.
+- Currency subaccounts.
+- Country wallet profiles.
+- Wallet permissions.
+- Wallet status history.
+- Transaction requests.
+- Transaction authorizations.
+- Ledger postings.
+- Transaction reversals.
+- Refund records.
+- Merchant accounts.
+- Merchant terminals.
+- QR payment requests.
+- Virtual card records.
+- Physical card lifecycle records.
+- Card security events.
+- Risk and compliance reviews.
+- Wallet statements.
+- Reconciliation records.
+- Wallet audit events.
+- Offline transaction queues.
+- Country-specific limits and fee configurations.
+
+### Migration requirements
+
+- Additive and non-destructive.
+- Stable identifiers.
+- Explicit foreign-key relationships where supported.
+- Appropriate indexes.
+- Unique wallet-number constraint.
+- Unique transaction-reference constraint.
+- Currency and country validation.
+- Migration version tracking.
+- Backup before migration.
+- Rollback or safe recovery strategy.
+- No silent data deletion.
+
+The existing local JSON WAL remains authoritative unless a real, validated PostgreSQL migration is completed.
+
+Prepare additive PostgreSQL DDL and migration verification, but do not claim PostgreSQL cutover without a configured database, successful migration, data reconciliation and tested operational readiness.
+
+---
+
+## PHASE 18 — LOCALIZATION AND ACCESSIBILITY
+
+Continue the existing seven ECONEX locales:
+
+- English (en)
+- Luganda (lg)
+- Swahili (sw)
+- Runyankole (nyn)
+- Acholi (ach)
+- Ateso (teo)
+- Lusoga (xog)
+
+Add wallet-related interface keys consistently across all supported locales.
+
+Cover:
+
+- Wallet dashboard.
+- Wallet number.
+- Send and receive.
+- Currency labels.
+- Transaction status.
+- Merchant payment.
+- QR payment.
+- Card management.
+- Security warnings.
+- Refunds.
+- Error messages.
+- Offline transaction messages.
+- Account recovery.
+
+Do not machine-translate critical legal, financial, consent or security language and present it as professionally verified.
+
+Where a translation has not been reviewed, use the approved English fallback and mark the translation as requiring human review.
+
+Ensure the wallet interface remains accessible to users with different levels of digital literacy.
+
+---
+
+## PHASE 19 — COMMERCIAL MODEL AND WALLET ECONOMICS
+
+Create a configurable commercial model for future ECONEX wallet services.
+
+Potential revenue categories may include:
+
+- Merchant service fees.
+- Business account subscriptions.
+- Enterprise wallet services.
+- Merchant tools.
+- Business payment management.
+- Card-related services where legally permitted.
+- Institutional service packages.
+- Premium reconciliation and reporting.
+- Approved integration services.
+
+### Commercial safeguards
+
+- Fees must be configurable by service, country, currency and participant category.
+- Fees must be visible before a user confirms a transaction.
+- No hidden deductions.
+- No arbitrary balance deductions.
+- No interest or investment returns promised.
+- No customer funds treated as ECONEX operating revenue.
+- No revenue recorded from simulated transactions.
+- No fee model that conflicts with applicable local law.
+- Provide fee statements and audit trails.
+
+Build a fee configuration interface and sandbox fee simulator. Clearly separate projected revenue, test transactions and actual recognized revenue.
+
+---
+
+## PHASE 20 — WALLET ADMINISTRATION AND OPERATIONS CONTROL CENTRE
+
+Build a restricted administrative operations area.
+
+### Required operational views
+
+- Wallet registration volume.
+- Wallet verification status.
+- Wallet suspension and recovery queue.
+- Transaction processing status.
+- Failed transaction queue.
+- Reconciliation exceptions.
+- Merchant registration.
+- Merchant terminal status.
+- Card lifecycle status.
+- Country activation status.
+- Currency configuration.
+- Fee configuration.
+- Risk review queue.
+- Customer complaints.
+- System health.
+- Audit events.
+
+### Administrative safeguards
+
+- Least-privilege access.
+- Role separation.
+- Dual approval for sensitive actions.
+- No direct balance-edit capability.
+- No deletion of posted ledger entries.
+- Mandatory reasons for account restrictions.
+- Full audit trail for administrative actions.
+- Restricted access to personal information.
+- Session reauthentication for sensitive operations.
+
+Do not give ordinary administrators unrestricted access to customer funds, identity documents or confidential account data.
+
+---
+
+## PHASE 21 — USER SUPPORT, DISPUTES AND CONSUMER PROTECTION
+
+Create a wallet-specific support and protection framework.
+
+Support:
+
+- Incorrect recipient reports.
+- Missing transaction reports.
+- Duplicate transaction complaints.
+- Unauthorized activity reports.
+- Merchant payment disputes.
+- Refund complaints.
+- Card loss and theft.
+- Account takeover reports.
+- Account recovery.
+- Verification appeals.
+- Wallet suspension appeals.
+- Data correction requests.
+
+Every case must have:
+
+- Case reference.
+- Case category.
+- Linked transaction where applicable.
+- Submission date.
+- Assigned support role.
+- Status.
+- Evidence references.
+- Resolution notes.
+- Escalation history.
+- Closure reason.
+
+Provide clear user-facing information on what ECONEX can investigate and what requires an external licensed provider or competent authority.
+
+Do not promise automatic recovery of funds or guaranteed resolution times.
+
+---
+
+## PHASE 22 — REGULATORY READINESS AND COUNTRY ACTIVATION GATES
+
+Build a regulatory-readiness framework into the product.
+
+The platform must distinguish between:
+
+1. Software functionality implemented.
+2. Sandbox functionality tested.
+3. Legal classification completed.
+4. Licence or authorization obtained where required.
+5. Operational safeguarding and settlement arrangements established.
+6. Independent security and compliance assessments completed.
+7. Country-specific service approved for activation.
+
+For Uganda, the legal review must assess the ECONEX model against the National Payment Systems Act 2020 and applicable regulations. The Act addresses payment-system operation, payment services and payment-instrument issuance, including licensing requirements. The exact classification of the proposed ECONEX wallet, ledger, merchant acceptance, card and withdrawal model must be determined with qualified Ugandan legal counsel and the relevant regulator before real-value operation. See the [National Payment Systems Act](https://ulii.org/en/akn/ug/act/2020/15/eng%402023-12-31) and [Bank of Uganda licensing information](https://bou.or.ug/financial_infrastructure_innovation).
+
+### Mandatory activation gates
+
+Do not enable real-value wallet services until the relevant legal and operational requirements have been satisfied, including as applicable:
+
+- Legal entity and ownership readiness.
+- Regulatory classification.
+- Required licences or approvals.
+- Customer-funds safeguarding arrangements.
+- Settlement arrangements.
+- AML/CFT controls.
+- Customer due diligence.
+- Consumer protection.
+- Operational risk management.
+- Cybersecurity assessment.
+- Data protection requirements.
+- Business continuity and disaster recovery.
+- Independent testing.
+- Country-specific authorization.
+
+Build a country activation checklist with evidence references and authorized sign-off.
+
+A country must remain **NOT ACTIVATED** until its required gates are completed.
+
+Do not represent ECONEX as a licensed bank, electronic-money issuer, card issuer, payment service provider or payment-system operator unless the relevant status has actually been obtained.
+
+---
+
+## PHASE 23 — TESTING AND VERIFICATION
+
+Create a comprehensive V23 verification suite.
+
+**Minimum target:**
+- 500 new V23 assertions.
+- 50 end-to-end scenarios.
+- Sequential, memory-safe test execution.
+- No destructive test against real customer data.
+- All wallet and card tests must use synthetic sandbox data.
+
+### Mandatory test groups
+
+**Identity**
+- Wallet number uniqueness.
+- Wallet number permanence.
+- Wallet number non-reassignment.
+- Identity-to-wallet ownership.
+- Privacy-safe wallet lookup.
+- Recovery and device migration.
+
+**Wallet**
+- Wallet creation.
+- Wallet suspension.
+- Wallet reactivation.
+- Currency subaccount isolation.
+- Multi-country profile handling.
+- Role and ownership access controls.
+
+**Ledger**
+- Balanced debit and credit entries.
+- No direct balance modification.
+- Idempotency.
+- Duplicate request rejection.
+- Concurrent spending protection.
+- Reversal integrity.
+- Partial and full refund integrity.
+- Currency precision.
+- Reconciliation.
+
+**Merchant**
+- Merchant registration.
+- Terminal registration.
+- Static QR payment.
+- Dynamic QR payment.
+- Invalid QR rejection.
+- Payment authorization.
+- Merchant receipt.
+- Refund.
+- Duplicate refund rejection.
+
+**Cards**
+- Virtual card creation.
+- Card-wallet association.
+- Freeze and unfreeze.
+- Card cancellation.
+- Unauthorized card access rejection.
+- Simulated authorization controls.
+
+**Cross-country**
+- Same wallet number across country profiles.
+- Eligible internal transfers.
+- Unsupported country rejection.
+- Unsupported currency rejection.
+- Explicit FX authorization.
+- Fee transparency.
+- Country suspension handling.
+
+**Security and compliance**
+- Unauthorized wallet access.
+- Rate-limit enforcement.
+- Session expiry.
+- Privileged action audit.
+- Suspicious transaction review.
+- Account recovery controls.
+- Sensitive data redaction.
+- Role isolation.
+
+**Continuity**
+- Crash recovery.
+- WAL replay.
+- Duplicate retry.
+- Network interruption.
+- Backup restoration.
+- Reconciliation after recovery.
+- Offline queue safety.
+
+**Integration**
+- Marketplace wallet reference.
+- Business invoice reference.
+- Procurement payment obligation.
+- Cooperative allocation reference.
+- Logistics charge reference.
+- Project payment reference.
+
+### Test reporting
+
+Report separately:
+
+- Tests written.
+- Tests executed.
+- Tests passed.
+- Tests failed.
+- Tests skipped.
+- Tests blocked.
+- UI assertions.
+- End-to-end scenarios.
+- Historical tests preserved.
+
+Do not count a test as passed merely because it exists in the codebase.
+
+Preserve the V11–V22 historical verification baseline of 2,100 sequential CLI tests and 300 legacy UI assertions where the existing test runner can execute them. Report any unavailable or unexecuted historical tests honestly.
+
+---
+
+## PHASE 24 — USER INTERFACE, NAVIGATION AND FINAL INTEGRATION AUDIT
+
+Conduct a complete integration audit across V1–V23.
+
+Confirm:
+
+- Existing ECONEX modules remain accessible.
+- Wallet is integrated into the existing navigation.
+- Role-aware dashboards work.
+- User and organization profiles remain functional.
+- Marketplace remains functional.
+- Business operating tools remain functional.
+- Procurement remains functional.
+- Logistics remains functional.
+- Cooperative functions remain functional.
+- Projects and services remain functional.
+- Operations Hub remains functional.
+- Country profiles remain functional.
+- Search remains functional.
+- Offline workflows remain functional.
+- Existing localization remains functional.
+- Wallet routes are protected by server authorization.
+- No broken navigation links.
+- No blank dashboards.
+- No non-functional action buttons.
+- No fake transaction success messages.
+- No fabricated balances.
+- No test data presented as actual customer funds.
+
+Do not replace the ECONEX universal economic operating system with a wallet-only application.
+
+---
+
+## PHASE 25 — PERFORMANCE, SECURITY AND RELEASE HARDENING
+
+Conduct:
+
+- TypeScript verification.
+- Lint checks where configured.
+- Production build.
+- API validation.
+- Database integrity checks.
+- Secret scanning.
+- Dependency vulnerability review.
+- Authorization tests.
+- Transaction integrity tests.
+- Performance checks.
+- Memory usage review.
+- Startup and shutdown checks.
+- Backup verification.
+- Export archive verification.
+
+Preserve the existing stable project architecture unless a measured technical reason requires change.
+
+Avoid unnecessary dependencies, duplicate modules, oversized data files and destructive migrations.
+
+Do not run every test in parallel if doing so risks workspace memory exhaustion. Use sequential batches and record actual results.
+
+---
+
+## PHASE 26 — DELIVERY, EXPORT AND RELEASE GOVERNANCE
+
+Prepare the V23 release package.
+
+Required deliverables:
+
+1. Updated source code.
+2. Schema 21 migration files.
+3. Wallet architecture documentation.
+4. Universal wallet number specification.
+5. Transaction lifecycle specification.
+6. Ledger integrity specification.
+7. Merchant QR acceptance specification.
+8. Virtual and physical card architecture documentation.
+9. Country activation framework.
+10. Security and compliance architecture.
+11. API documentation.
+12. Test reports.
+13. Operational recovery documentation.
+14. V23 release notes.
+15. Updated ECONEX roadmap.
+
+### Source export
+
+- Generate a clean source archive.
+- Exclude secrets, runtime databases and unnecessary temporary files.
+- Scan for exposed credentials.
+- Verify archive integrity.
+- Record file count, archive size and SHA-256 checksum.
+- Confirm the archive can be extracted.
+- Confirm the extracted source can be rebuilt where practical.
+
+### Git governance
+
+- Preserve the existing repository and history.
+- Commit only verified source changes.
+- Keep generated runtime data and secrets out of source control.
+- Report whether a remote is configured.
+- Report whether GitHub publication actually occurred.
+- Never claim publication when only a local commit exists.
+
+---
+
+## PHASE 27 — FINAL V23 DELIVERY REPORT
+
+At completion, produce a detailed report containing:
+
+### A. Release identity
+- ECONEX V23.0.
+- Release name.
+- Schema version.
+- Build date.
+- Attribution.
+
+### B. Implementation summary
+- Universal wallet identity.
+- Wallet number allocation.
+- Multi-currency account architecture.
+- Internal transaction engine.
+- Merchant QR acceptance.
+- Virtual card architecture.
+- Physical card lifecycle architecture.
+- Cross-country wallet network.
+- Sector integrations.
+- Security and compliance controls.
+- Resilience and continuity.
+- UI and API integration.
+
+### C. Verification results
+- TypeScript result.
+- Production build result.
+- Test totals.
+- Historical test preservation.
+- End-to-end scenario results.
+- Ledger reconciliation results.
+- Security scan results.
+- Archive integrity.
+- Performance observations.
+
+### D. Data and infrastructure
+- Active schema version.
+- Authoritative persistence layer.
+- Migration status.
+- Backup status.
+- PostgreSQL cutover status.
+- Git commit.
+- Export archive and checksum.
+
+### E. Honest external readiness matrix
+
+Report each item independently:
+
+| Status item | Required reporting |
+|---|---|
+| Wallet identity implemented | Actual result |
+| Internal ledger tested | Actual result |
+| Real-value transactions enabled | Must remain FALSE unless legally and operationally approved |
+| Physical cards issued | Actual result; otherwise FALSE |
+| Card scheme certification | Actual result; otherwise FALSE |
+| ATM network live | Actual result; otherwise FALSE |
+| Live merchant acceptance | Actual result; otherwise FALSE |
+| External integrations live | Actual result; otherwise FALSE |
+| PostgreSQL cutover complete | Actual result |
+| Human field validation complete | Actual result |
+| Pilot active | Actual result |
+| Production deployed | Actual result |
+| Regulatory authorization | Evidence-based status |
+
+### F. Required explicit status flags
+
+- `V23_WALLET_IDENTITY_IMPLEMENTED`
+- `V23_INTERNAL_LEDGER_TESTED`
+- `V23_REAL_VALUE_TRANSACTIONS_ENABLED`
+- `V23_PHYSICAL_CARDS_ISSUED`
+- `V23_CARD_SCHEME_CERTIFIED`
+- `V23_ATM_NETWORK_LIVE`
+- `V23_LIVE_MERCHANT_ACCEPTANCE`
+- `V23_EXTERNAL_INTEGRATIONS_LIVE`
+- `V23_POSTGRESQL_CUTOVER_COMPLETE`
+- `V23_HUMAN_FIELD_VALIDATION_COMPLETE`
+- `V23_PILOT_ACTIVE`
+- `V23_PRODUCTION_DEPLOYED`
+
+Never set a flag to TRUE without direct evidence.
+
+### G. Outstanding requirements
+
+List every remaining external dependency, legal requirement, approval, integration, field test and infrastructure requirement.
+
+### H. Final release decision
+
+Choose one:
+
+- `V23_ENGINEERING_COMPLETE`
+- `V23_ENGINEERING_COMPLETE_WITH_EXTERNAL_GATES`
+- `V23_PARTIALLY_COMPLETE`
+- `V23_BLOCKED`
+
+Explain the evidence behind the decision.
+
+---
+
+# FINAL V23 EXECUTION DIRECTIVE
+
+Complete V23 as a major extension of the existing ECONEX Universal Economic Operating System.
+
+The most important strategic outcome is that **every eligible ECONEX participant should have one permanent ECONEX wallet number that can identify their wallet across all activated ECONEX countries**.
+
+The wallet must support a future ecosystem in which individuals, merchants, companies, professionals, cooperatives and institutions can transact within the ECONEX network using a shared internal transaction infrastructure.
+
+ECONEX must own and control its wallet identity architecture, account model, internal ledger, transaction rules, merchant acceptance software and economic-network integration.
+
+Do not make an external money-transfer application a mandatory dependency for ECONEX-to-ECONEX internal ledger functionality.
+
+However, do not confuse internal ledger entries with actual external settlement, cash withdrawal, deposit, electronic-money issuance or card-network acceptance. Keep all real-value operations disabled until the required legal, regulatory, security, safeguarding and settlement conditions have been satisfied.
+
+Preserve the universal, multi-sector ECONEX mission. The wallet must serve the entire economic network, not become a separate agriculture wallet or a standalone mobile-money clone.
+
+**Do not start V24 automatically.** Complete V23, verify it, produce the final delivery report and wait for the next instruction.

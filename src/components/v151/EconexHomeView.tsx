@@ -208,24 +208,86 @@ export const EconexHomeView: React.FC<Props> = ({
         </div>
       </section>
 
-      {/* Unified V20 Operations Hub Entry */}
-      <section className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h2 className="text-base font-semibold text-[#F5F5F5]">
-            Run end-to-end trades, delivery evidence, cooperative pools &amp; reconciliation
-          </h2>
-          <p className="text-sm text-[#A0A0A0]">
-            Connect harvest lots, marketplace enquiries, commercial record summaries, shipments, and sandbox reconciliation in one Unified Operations Hub.
-          </p>
+      {/* Unified V22 Universal Economy, V20 Operations & V21 Field / Onboarding Entry */}
+      <section className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-base font-semibold text-[#F5F5F5]">
+              Universal Multi-Sector Economic Operating System (28+ Sectors)
+            </h2>
+            <p className="text-sm text-[#A0A0A0]">
+              Coordinate goods, services, artisans, rentals, RFQs, milestone projects, invoicing, and field operations across every legitimate sector.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => onNavigate('v22-discover')}
+              className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#F5F5F5] font-medium text-sm cursor-pointer"
+            >
+              28+ Sectors
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('v22-marketplace')}
+              className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#F5F5F5] font-medium text-sm cursor-pointer"
+            >
+              Marketplace 2.0
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('v22-overview')}
+              className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#D4AF37] text-[#050505] font-semibold text-sm hover:bg-[#e5bf43] transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <span>Open Universal Economy Hub</span>
+              <ArrowRight size={16} aria-hidden="true" />
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={() => onNavigate('operations-hub')}
-          className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#D4AF37] text-[#050505] font-semibold text-sm hover:bg-[#e5bf43] transition-colors shrink-0 flex items-center gap-2 cursor-pointer"
-        >
-          <span>Open Unified Operations Hub</span>
-          <ArrowRight size={16} aria-hidden="true" />
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5 pt-3 border-t border-[#27272a]">
+          <button
+            type="button"
+            onClick={() => onNavigate('v22-businesses')}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#C0C0C0] hover:text-[#F5F5F5] text-xs cursor-pointer"
+          >
+            Businesses &amp; Artisans
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('v22-procurement')}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#C0C0C0] hover:text-[#F5F5F5] text-xs cursor-pointer"
+          >
+            Procurement &amp; Projects
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('v22-finance-intel')}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#C0C0C0] hover:text-[#F5F5F5] text-xs cursor-pointer"
+          >
+            Invoicing, FX &amp; AI Assistant
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('v21-field-ops')}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#C0C0C0] hover:text-[#F5F5F5] text-xs cursor-pointer"
+          >
+            Field Operations
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('v21-onboarding')}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#C0C0C0] hover:text-[#F5F5F5] text-xs cursor-pointer"
+          >
+            Register &amp; Verify
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('operations-hub')}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-[#C0C0C0] hover:text-[#F5F5F5] text-xs cursor-pointer"
+          >
+            Operations Hub
+          </button>
+        </div>
       </section>
 
       {/* Optional Business Profile Prompt (for ordinary individuals/farmers) */}

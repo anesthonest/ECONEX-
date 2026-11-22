@@ -29,6 +29,9 @@ import { V17_INITIAL_TESTS, runV17VerificationTests } from './v17NetworkOperatio
 import { V18_INITIAL_TESTS, runV18VerificationTests } from './v18ConsolidationTests';
 import { V19_INITIAL_TESTS, runV19VerificationTests } from './v19StabilityTests';
 import { V20_INITIAL_TESTS, runV20VerificationTests } from './v20UnifiedOperationsTests';
+import { V21_INITIAL_TESTS, runV21VerificationTests } from './v21PilotOperationsTests';
+import { V22_INITIAL_TESTS, runV22VerificationTests } from './v22UniversalEconomyTests';
+import { V23_INITIAL_TESTS, runV23VerificationTests } from './v23WalletNetworkTests';
 
 interface TestCaseResult {
   id: string;
@@ -359,6 +362,9 @@ export const SystemVerificationView: React.FC = () => {
     ...V18_INITIAL_TESTS,
     ...V19_INITIAL_TESTS,
     ...V20_INITIAL_TESTS,
+    ...V21_INITIAL_TESTS,
+    ...V22_INITIAL_TESTS,
+    ...V23_INITIAL_TESTS,
   ];
 
   const [tests, setTests] = useState<TestCaseResult[]>(initialTests);
@@ -7757,6 +7763,18 @@ export const SystemVerificationView: React.FC = () => {
     passedCount += v20Res.passed;
     failedCount += v20Res.failed;
 
+    const v21Res = await runV21VerificationTests(updateTestStatus);
+    passedCount += v21Res.passed;
+    failedCount += v21Res.failed;
+
+    const v22Res = await runV22VerificationTests(updateTestStatus);
+    passedCount += v22Res.passed;
+    failedCount += v22Res.failed;
+
+    const v23Res = await runV23VerificationTests(updateTestStatus);
+    passedCount += v23Res.passed;
+    failedCount += v23Res.failed;
+
     setSummary({
       total: passedCount + failedCount,
       passed: passedCount,
@@ -7776,11 +7794,11 @@ export const SystemVerificationView: React.FC = () => {
                 <Activity size={20} className="text-[#D4AF37]" /> Automated System Verification Suite
               </h1>
               <span className="text-[10px] bg-[#18181b] text-[#D4AF37] border border-[#27272a] px-2 py-0.5 rounded font-mono">
-                1,725 Automated Assertions (V20.0 Unified Operations &amp; V1–V19 Zero-Regression)
+                2,950 Automated Assertions (V23.0 Universal Wallet Network &amp; V1–V22 Zero-Regression)
               </span>
             </div>
             <p className="text-xs text-[#A0A0A0] mt-1">
-              Live end-to-end integration tests verifying V1–V19 baseline (T01–T1525) and V20.0 Marketplace Discovery, 12-Stage Trade Execution, Logistics &amp; Evidence, Reconciliation &amp; Sandbox Payments, Cooperative Pooling, Explainable Reputation &amp; Disputes, Cross-Border &amp; Human-Confirmed AI Copilot, Offline Conflict Resolution, &amp; Pilot Governance (T1526–T1725).
+              Live end-to-end integration tests verifying V1–V22 baseline (T01–T2400) and V23.0 Universal Economic Identity, Wallet Network &amp; Card Infrastructure: Permanent EUWN, 9 Currencies (Integer Minor Units), Atomic Ledger, HMAC Signed QR Acceptance, Virtual &amp; 13-Stage Physical Card Simulations, 7 Country Profiles &amp; 14 Regulatory Gates, 12 Continuity Drills &amp; Schema 21 PostgreSQL Dry-Run (T2401–T2950).
             </p>
           </div>
 
@@ -7793,12 +7811,12 @@ export const SystemVerificationView: React.FC = () => {
             {isRunning ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                <span>Executing 1,725 Automated Tests...</span>
+                <span>Executing 2,950 Automated Tests...</span>
               </>
             ) : (
               <>
                 <Play size={14} fill="currentColor" />
-                <span>Run System Verification Suite (1,725 Tests)</span>
+                <span>Run System Verification Suite (2,950 Tests)</span>
               </>
             )}
           </button>

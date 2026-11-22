@@ -4724,6 +4724,1000 @@ export class ApiClient {
   static async v20GetPilotReport(pilotId: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
     return this.v12Json(`/api/v20/pilots/${encodeURIComponent(pilotId)}/report`, { headers: this.v12Headers(actor) });
   }
+
+  // ==========================================
+  // V21 CONTROLLED PILOT, ONBOARDING, FIELD OPS & MONITORING APIs
+  // ==========================================
+
+  static async v21GetOverview(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/overview', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21GetPilots(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/pilots', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21CreatePilot(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/pilots', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21TransitionPilot(
+    pilotId: string,
+    payload: { targetState: string; reason?: string; closureSummary?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v21/pilots/${encodeURIComponent(pilotId)}/transition`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21GetPilotReport(pilotId: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v21/pilots/${encodeURIComponent(pilotId)}/report`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v21GetOnboardings(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/onboarding', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21SubmitOnboarding(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/onboarding', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21ReviewOnboarding(
+    id: string,
+    payload: { targetStatus: string; note?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v21/onboarding/${encodeURIComponent(id)}/review`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21RequestAccountRecovery(id: string, reason: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v21/onboarding/${encodeURIComponent(id)}/recover`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ reason }),
+    });
+  }
+
+  static async v21ExportParticipantData(id: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v21/onboarding/${encodeURIComponent(id)}/export`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v21GetFieldRecords(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/field/records', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21SaveFieldRecord(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/field/records', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21RetryFieldRecord(id: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v21/field/records/${encodeURIComponent(id)}/retry`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v21GetFieldTasks(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/field/tasks', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21CreateFieldTask(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/field/tasks', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21TransitionFieldTask(
+    taskId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v21/field/tasks/${encodeURIComponent(taskId)}/transition`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21GetControlCentre(
+    params?: { pilotId?: string; district?: string; category?: string; status?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const q = new URLSearchParams();
+    if (params?.pilotId) q.set('pilotId', params.pilotId);
+    if (params?.district) q.set('district', params.district);
+    if (params?.category) q.set('category', params.category);
+    if (params?.status) q.set('status', params.status);
+    return this.v12Json(`/api/v21/monitoring/control-centre${q.toString() ? `?${q.toString()}` : ''}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v21UpdateException(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v21/exceptions/${encodeURIComponent(id)}/update`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21CreateSupportRequest(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/support', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21UpdateSupportRequest(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v21/support/${encodeURIComponent(id)}/update`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v21GetCountries(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/regional/countries', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21GetPostgresAudit(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/postgres/audit', { headers: this.v12Headers(actor) });
+  }
+
+  static async v21RunPostgresDryRun(
+    payload?: { simulateInterruptedRecovery?: boolean },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v21/postgres/dry-run', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload || {}),
+    });
+  }
+
+  static async v21GetGithubReadiness(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v21/github/readiness', { headers: this.v12Headers(actor) });
+  }
+
+  // ==========================================
+  // V22 UNIVERSAL ECONOMIC ACTIVITY & GROWTH ENGINE APIs
+  // ==========================================
+
+  static async v22GetHealth(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/health', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22GetOverview(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/overview', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22GetSectors(
+    params?: { categoryGroup?: string; q?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const q = new URLSearchParams();
+    if (params?.categoryGroup) q.set('categoryGroup', params.categoryGroup);
+    if (params?.q) q.set('q', params.q);
+    return this.v12Json(`/api/v22/sectors${q.toString() ? `?${q.toString()}` : ''}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v22CreateSector(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/sectors', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetBusinesses(
+    params?: { sectorCode?: string; q?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const q = new URLSearchParams();
+    if (params?.sectorCode) q.set('sectorCode', params.sectorCode);
+    if (params?.q) q.set('q', params.q);
+    return this.v12Json(`/api/v22/businesses${q.toString() ? `?${q.toString()}` : ''}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v22CreateBusiness(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/businesses', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22VerifyBusiness(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/businesses/${encodeURIComponent(id)}/verify`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetIndividuals(
+    params?: { sectorCode?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const q = new URLSearchParams();
+    if (params?.sectorCode) q.set('sectorCode', params.sectorCode);
+    return this.v12Json(`/api/v22/individuals${q.toString() ? `?${q.toString()}` : ''}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v22CreateIndividual(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/individuals', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetMarketplace(
+    params?: { sectorCode?: string; offerKind?: string; q?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const q = new URLSearchParams();
+    if (params?.sectorCode) q.set('sectorCode', params.sectorCode);
+    if (params?.offerKind) q.set('offerKind', params.offerKind);
+    if (params?.q) q.set('q', params.q);
+    return this.v12Json(`/api/v22/marketplace${q.toString() ? `?${q.toString()}` : ''}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v22CreateListing(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/marketplace', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetFraudReports(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/marketplace/reports', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22ReportListing(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/marketplace/reports', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22ModerateReport(
+    reportId: string,
+    payload: { decision: 'REMOVE_TARGET' | 'RESTORE_TARGET'; reviewNote?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/marketplace/reports/${encodeURIComponent(reportId)}/moderate`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetActivities(
+    params?: { sectorCode?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const q = new URLSearchParams();
+    if (params?.sectorCode) q.set('sectorCode', params.sectorCode);
+    return this.v12Json(`/api/v22/activities${q.toString() ? `?${q.toString()}` : ''}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v22CreateActivity(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/activities', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22TransitionActivity(
+    activityId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/activities/${encodeURIComponent(activityId)}/transition`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetTenders(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/tenders', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22CreateTender(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/tenders', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22SubmitBid(
+    tenderId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/tenders/${encodeURIComponent(tenderId)}/bids`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22AwardTender(
+    tenderId: string,
+    payload: { bidId: string; evaluationScore?: number; justification: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/tenders/${encodeURIComponent(tenderId)}/award`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetProjects(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/projects', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22CreateProject(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/projects', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22UpdateMilestone(
+    projectId: string,
+    milestoneId: string,
+    payload: { status: string; evidenceNotes?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(
+      `/api/v22/projects/${encodeURIComponent(projectId)}/milestones/${encodeURIComponent(milestoneId)}/update`,
+      {
+        method: 'POST',
+        headers: this.v12Headers(actor),
+        body: JSON.stringify(payload),
+      }
+    );
+  }
+
+  static async v22RequestVariation(
+    projectId: string,
+    payload: { reason: string; scopeDelta: string; budgetDelta?: number; scheduleDeltaDays?: number },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/projects/${encodeURIComponent(projectId)}/variations`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22DecideVariation(
+    projectId: string,
+    variationId: string,
+    decision: 'APPROVED' | 'REJECTED',
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(
+      `/api/v22/projects/${encodeURIComponent(projectId)}/variations/${encodeURIComponent(variationId)}/decision`,
+      {
+        method: 'POST',
+        headers: this.v12Headers(actor),
+        body: JSON.stringify({ decision }),
+      }
+    );
+  }
+
+  static async v22GetInvoices(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/invoices', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22CreateInvoice(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/invoices', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22RecordPaymentRef(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/payment-references', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetFxRates(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/fx-rates', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22UpsertFxRate(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/fx-rates', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetWorkforceTasks(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/workforce/tasks', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22CreateWorkforceTask(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/workforce/tasks', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22UpdateTaskStatus(
+    taskId: string,
+    status: 'TODO' | 'IN_PROGRESS' | 'DONE',
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/workforce/tasks/${encodeURIComponent(taskId)}/status`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ status }),
+    });
+  }
+
+  static async v22GetInsights(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/intelligence/insights', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22AcknowledgeInsight(
+    insightId: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v22/intelligence/insights/${encodeURIComponent(insightId)}/acknowledge`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v22AskAssistant(
+    query: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/intelligence/assistant', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ query }),
+    });
+  }
+
+  static async v22GetRelationships(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/relationships', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22CreateRelationship(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v22/relationships', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v22GetPlans(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/plans', { headers: this.v12Headers(actor) });
+  }
+
+  static async v22Search(query: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v22/search?q=${encodeURIComponent(query)}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v22RunPostgresDryRun(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/postgres/dry-run', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v22GetMigrationStatus(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v22/migration/status', { headers: this.v12Headers(actor) });
+  }
+
+  // ==========================================
+  // V23: UNIVERSAL WALLET NETWORK, CARDS, QR & REGULATORY GATES
+  // ==========================================
+
+  static async v23GetHealth() {
+    return this.v12Json('/api/v23/health');
+  }
+
+  static async v23GetReadinessMatrix(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/readiness-matrix', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23GetOverview(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/overview', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23GetIdentities(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/identities', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23CreateIdentityAndWallet(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/identities', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23UpdatePortability(
+    identityId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/identities/${encodeURIComponent(identityId)}/portability`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23CloseRetainAccount(
+    identityId: string,
+    reason: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/identities/${encodeURIComponent(identityId)}/close-retain`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ reason }),
+    });
+  }
+
+  static async v23LookupEuwn(euwn: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v23/lookup/${encodeURIComponent(euwn)}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v23GetWallets(
+    scope: 'own' | 'all' = 'own',
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/wallets?scope=${scope}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v23EnableSubaccount(
+    walletId: string,
+    currency: string,
+    initialTestMinor = 0,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/wallets/${encodeURIComponent(walletId)}/subaccounts`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ currency, initialTestMinor }),
+    });
+  }
+
+  static async v23UpdateWalletPin(
+    walletId: string,
+    payload: { action: 'VERIFY' | 'CHANGE'; currentPin: string; newPin?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/wallets/${encodeURIComponent(walletId)}/pin`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetWalletStatement(walletId: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v23/wallets/${encodeURIComponent(walletId)}/statement`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v23PreviewFx(
+    payload: { sourceCurrency: string; destinationCurrency: string; sourceAmountMinor: number },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/fx/preview', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23PreviewFees(
+    payload: { serviceType: string; countryCode: string; currency: string; amountMinor: number },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/fees/preview', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetTransactions(walletId?: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    const qs = walletId ? `?walletId=${encodeURIComponent(walletId)}` : '';
+    return this.v12Json(`/api/v23/transactions${qs}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v23PostTransaction(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/transactions', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23RefundOrReverse(
+    transactionId: string,
+    payload: { kind: 'FULL_REVERSAL' | 'PARTIAL_REFUND' | 'FULL_REFUND'; amountMinor?: number; reason: string; merchantId?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/transactions/${encodeURIComponent(transactionId)}/reverse-or-refund`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetMerchants(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/merchants', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23RegisterMerchant(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/merchants', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23SetMerchantStatus(
+    merchantId: string,
+    status: 'ACTIVE_SANDBOX' | 'SUSPENDED',
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/merchants/${encodeURIComponent(merchantId)}/status`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ status }),
+    });
+  }
+
+  static async v23GetTerminals(merchantId?: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    const qs = merchantId ? `?merchantId=${encodeURIComponent(merchantId)}` : '';
+    return this.v12Json(`/api/v23/terminals${qs}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v23CreateTerminal(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/terminals', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetQrRequests(merchantId?: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    const qs = merchantId ? `?merchantId=${encodeURIComponent(merchantId)}` : '';
+    return this.v12Json(`/api/v23/qr${qs}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v23CreateQrRequest(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/qr', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23PayQr(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/qr/pay', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetCards(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/cards', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23IssueVirtualCard(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/cards/virtual', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23SetVirtualCardStatus(
+    cardId: string,
+    payload: { targetStatus: string; reason?: string; newWalletId?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/cards/virtual/${encodeURIComponent(cardId)}/status`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23SimulateVirtualCardAuth(
+    cardId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/cards/virtual/${encodeURIComponent(cardId)}/authorize-sim`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23ApplyPhysicalCard(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/cards/physical', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23AdvancePhysicalCardStage(
+    cardId: string,
+    payload: { targetStage: string; note?: string; simPin?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/cards/physical/${encodeURIComponent(cardId)}/stage`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetCountries(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/countries', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23RegisterCountry(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/countries', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23UpdateCountryGate(
+    countryCode: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/countries/${encodeURIComponent(countryCode)}/gates`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetOfflineQueue(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/offline-queue', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23EnqueueOfflineItem(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/offline-queue', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetCompliance(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/compliance', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23ReviewCompliance(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v23/compliance/${encodeURIComponent(id)}/review`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetRiskEvents(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/risk-events', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23GetAuditEvents(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/audit-events', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23GetSupportCases(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/support-cases', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23CreateSupportCase(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/support-cases', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23GetFees(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/fees', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23GetIntegrations(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/integrations', { headers: this.v12Headers(actor) });
+  }
+
+  static async v23LinkModulePayment(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/integrations/link-payment', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v23RunReconciliation(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/reconciliations/run', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v23RunContinuityDrills(
+    scenarioCode?: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v23/continuity/run', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(scenarioCode ? { scenarioCode } : {}),
+    });
+  }
+
+  static async v23RunPostgresAudit(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v23/postgres-audit', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
 }
 
 export const api = ApiClient;

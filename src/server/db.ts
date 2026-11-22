@@ -368,6 +368,55 @@ import {
   V20PilotProgramme,
   V20InteroperabilityWebhook,
   V20MigrationCheckpoint,
+  V21PilotRecord,
+  V21ParticipantOnboarding,
+  V21FieldActivityRecord,
+  V21FieldOfficerTask,
+  V21OperationalException,
+  V21SupportRequest,
+  V21CountryProfile,
+  V21PostgresMigrationRun,
+  V22SectorDefinition,
+  V22BusinessProfile,
+  V22IndividualProfile,
+  V22ProductOrService,
+  V22FraudReport,
+  V22EconomicActivity,
+  V22ProcurementOpportunity,
+  V22ProcurementBid,
+  V22ProjectRecord,
+  V22InvoiceRecord,
+  V22PaymentReference,
+  V22FxRateRecord,
+  V22WorkforceTask,
+  V22EconomicInsight,
+  V22EconomicRelationship,
+  V22SubscriptionPlan,
+  V22BusinessSubscription,
+  V22InteroperabilityEvent,
+  V23ParticipantIdentity,
+  V23WalletNumberAllocation,
+  V23WalletAccount,
+  V23CurrencySubaccount,
+  V23CountryOperatingProfile,
+  V23WalletTransaction,
+  V23LedgerPosting,
+  V23MerchantAccount,
+  V23MerchantTerminal,
+  V23QrPaymentRequest,
+  V23VirtualCard,
+  V23PhysicalCard,
+  V23ComplianceReview,
+  V23RiskEvent,
+  V23ReconciliationRecord,
+  V23WalletAuditEvent,
+  V23FeeConfiguration,
+  V23SupportDisputeCase,
+  V23OfflineQueueItem,
+  V23IntegrationInterface,
+  V23ReversalOrRefund,
+  V23PostgresMigrationRun,
+  V23ContinuityTestRun,
 } from '../types/index.ts';
 import { seedV11Collections } from './v11Seed.ts';
 import { seedV12Collections } from './v12Seed.ts';
@@ -377,6 +426,9 @@ import { seedV15Collections } from './v15Seed.ts';
 import { seedV16Collections } from './v16Seed.ts';
 import { seedV17Collections } from './v17Seed.ts';
 import { seedV20Collections } from './v20Seed.ts';
+import { seedV21Collections } from './v21Seed.ts';
+import { seedV22Collections } from './v22Seed.ts';
+import { seedV23Collections } from './v23Seed.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -387,6 +439,9 @@ let cachedV14BackupCheck: { mtimeMs: number; size: number; value: any } | null =
 let cachedV15BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
 let cachedV16BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
 let cachedV17BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
+let cachedV18BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
+let cachedV19BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
+let cachedV22BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
 
 
 export interface SessionRecord {
@@ -814,6 +869,61 @@ export class ArosDatabase {
   v20InteroperabilityWebhooks: Map<string, V20InteroperabilityWebhook> = new Map();
   v20MigrationCheckpoints: Map<string, V20MigrationCheckpoint> = new Map();
 
+  // V21 Controlled Pilot Deployment, Field Ops & Commercial Activation (Schema 19)
+  v21Pilots: Map<string, V21PilotRecord> = new Map();
+  v21Onboardings: Map<string, V21ParticipantOnboarding> = new Map();
+  v21FieldRecords: Map<string, V21FieldActivityRecord> = new Map();
+  v21FieldTasks: Map<string, V21FieldOfficerTask> = new Map();
+  v21Exceptions: Map<string, V21OperationalException> = new Map();
+  v21SupportCases: Map<string, V21SupportRequest> = new Map();
+  v21CountryProfiles: Map<string, V21CountryProfile> = new Map();
+  v21PgMigrations: Map<string, V21PostgresMigrationRun> = new Map();
+
+  // V22 Universal Economic Activity & Growth Engine Collections (Schema 20 - 18 Collections)
+  v22Sectors: Map<string, V22SectorDefinition> = new Map();
+  v22Businesses: Map<string, V22BusinessProfile> = new Map();
+  v22Individuals: Map<string, V22IndividualProfile> = new Map();
+  v22MarketplaceItems: Map<string, V22ProductOrService> = new Map();
+  v22FraudReports: Map<string, V22FraudReport> = new Map();
+  v22Activities: Map<string, V22EconomicActivity> = new Map();
+  v22Tenders: Map<string, V22ProcurementOpportunity> = new Map();
+  v22Bids: Map<string, V22ProcurementBid> = new Map();
+  v22Projects: Map<string, V22ProjectRecord> = new Map();
+  v22Invoices: Map<string, V22InvoiceRecord> = new Map();
+  v22PaymentRefs: Map<string, V22PaymentReference> = new Map();
+  v22FxRates: Map<string, V22FxRateRecord> = new Map();
+  v22WorkforceTasks: Map<string, V22WorkforceTask> = new Map();
+  v22Insights: Map<string, V22EconomicInsight> = new Map();
+  v22Relationships: Map<string, V22EconomicRelationship> = new Map();
+  v22Plans: Map<string, V22SubscriptionPlan> = new Map();
+  v22Subscriptions: Map<string, V22BusinessSubscription> = new Map();
+  v22InteropEvents: Map<string, V22InteroperabilityEvent> = new Map();
+
+  // V23 Universal Economic Identity, Wallet Network & Card Infrastructure (Schema 21 - 22 Collections)
+  v23Identities: Map<string, V23ParticipantIdentity> = new Map();
+  v23WalletNumbers: Map<string, V23WalletNumberAllocation> = new Map();
+  v23Wallets: Map<string, V23WalletAccount> = new Map();
+  v23Subaccounts: Map<string, V23CurrencySubaccount> = new Map();
+  v23CountryProfiles: Map<string, V23CountryOperatingProfile> = new Map();
+  v23Transactions: Map<string, V23WalletTransaction> = new Map();
+  v23LedgerPostings: Map<string, V23LedgerPosting> = new Map();
+  v23Merchants: Map<string, V23MerchantAccount> = new Map();
+  v23Terminals: Map<string, V23MerchantTerminal> = new Map();
+  v23QrRequests: Map<string, V23QrPaymentRequest> = new Map();
+  v23VirtualCards: Map<string, V23VirtualCard> = new Map();
+  v23PhysicalCards: Map<string, V23PhysicalCard> = new Map();
+  v23ComplianceReviews: Map<string, V23ComplianceReview> = new Map();
+  v23RiskEvents: Map<string, V23RiskEvent> = new Map();
+  v23Reconciliations: Map<string, V23ReconciliationRecord> = new Map();
+  v23AuditEvents: Map<string, V23WalletAuditEvent> = new Map();
+  v23FeeConfigs: Map<string, V23FeeConfiguration> = new Map();
+  v23SupportCases: Map<string, V23SupportDisputeCase> = new Map();
+  v23OfflineQueue: Map<string, V23OfflineQueueItem> = new Map();
+  v23Integrations: Map<string, V23IntegrationInterface> = new Map();
+  v23Refunds: Map<string, V23ReversalOrRefund> = new Map();
+  v23PgMigrations: Map<string, V23PostgresMigrationRun> = new Map();
+  v23ContinuityRuns: Map<string, V23ContinuityTestRun> = new Map();
+
   private isTransactionLocked = false;
   private saveTimeout: NodeJS.Timeout | null = null;
   private isSavingAsync = false;
@@ -823,13 +933,32 @@ export class ArosDatabase {
 
   constructor() {
     this.ensureDirectories();
-    this.pruneRollingBackups('aros_backup_', 3);
-    this.pruneRollingBackups('aros_v11_verified_', 3);
+    this.cleanupStaleTempFiles();
+    this.pruneRollingBackups('aros_backup_', 1);
+    this.pruneRollingBackups('aros_pre_v13_baseline_', 0);
+    this.pruneRollingBackups('aros_pre_v14_baseline_', 0);
+    this.pruneRollingBackups('aros_pre_v18_migration_', 0);
+    this.pruneRollingBackups('aros_pre_v19_migration_', 1);
+    this.pruneRollingBackups('aros_pre_v20_migration_', 1);
+    this.pruneRollingBackups('aros_v11_verified_', 1);
     if (fs.existsSync(DB_FILE)) {
       this.loadFromDisk();
     } else {
       this.seedDatabase();
       this.persistToDiskSync();
+    }
+  }
+
+  private cleanupStaleTempFiles() {
+    try {
+      if (!fs.existsSync(DATA_DIR)) return;
+      for (const f of fs.readdirSync(DATA_DIR)) {
+        if (f.includes('.tmp.')) {
+          fs.unlinkSync(path.join(DATA_DIR, f));
+        }
+      }
+    } catch {
+      // Non-fatal temp cleanup
     }
   }
 
@@ -1315,6 +1444,57 @@ export class ArosDatabase {
         v20PilotProgrammes: Array.from(this.v20PilotProgrammes.values()),
         v20InteroperabilityWebhooks: Array.from(this.v20InteroperabilityWebhooks.values()),
         v20MigrationCheckpoints: Array.from(this.v20MigrationCheckpoints.values()),
+        v21Pilots: Array.from(this.v21Pilots.values()),
+        v21Onboardings: Array.from(this.v21Onboardings.values()),
+        v21FieldRecords: Array.from(this.v21FieldRecords.values()),
+        v21FieldTasks: Array.from(this.v21FieldTasks.values()),
+        v21Exceptions: Array.from(this.v21Exceptions.values()),
+        v21SupportCases: Array.from(this.v21SupportCases.values()),
+        v21CountryProfiles: Array.from(this.v21CountryProfiles.values()),
+        v21PgMigrations: Array.from(this.v21PgMigrations.values()),
+        // V22 Serialized (Schema 20 - 18 Collections)
+        v22Sectors: Array.from(this.v22Sectors.values()),
+        v22Businesses: Array.from(this.v22Businesses.values()),
+        v22Individuals: Array.from(this.v22Individuals.values()),
+        v22MarketplaceItems: Array.from(this.v22MarketplaceItems.values()),
+        v22FraudReports: Array.from(this.v22FraudReports.values()),
+        v22Activities: Array.from(this.v22Activities.values()),
+        v22Tenders: Array.from(this.v22Tenders.values()),
+        v22Bids: Array.from(this.v22Bids.values()),
+        v22Projects: Array.from(this.v22Projects.values()),
+        v22Invoices: Array.from(this.v22Invoices.values()),
+        v22PaymentRefs: Array.from(this.v22PaymentRefs.values()),
+        v22FxRates: Array.from(this.v22FxRates.values()),
+        v22WorkforceTasks: Array.from(this.v22WorkforceTasks.values()),
+        v22Insights: Array.from(this.v22Insights.values()),
+        v22Relationships: Array.from(this.v22Relationships.values()),
+        v22Plans: Array.from(this.v22Plans.values()),
+        v22Subscriptions: Array.from(this.v22Subscriptions.values()),
+        v22InteropEvents: Array.from(this.v22InteropEvents.values()),
+        // V23 Serialized (Schema 21 - 23 Collections)
+        v23Identities: Array.from(this.v23Identities.values()),
+        v23WalletNumbers: Array.from(this.v23WalletNumbers.values()),
+        v23Wallets: Array.from(this.v23Wallets.values()),
+        v23Subaccounts: Array.from(this.v23Subaccounts.values()),
+        v23CountryProfiles: Array.from(this.v23CountryProfiles.values()),
+        v23Transactions: Array.from(this.v23Transactions.values()),
+        v23LedgerPostings: Array.from(this.v23LedgerPostings.values()),
+        v23Merchants: Array.from(this.v23Merchants.values()),
+        v23Terminals: Array.from(this.v23Terminals.values()),
+        v23QrRequests: Array.from(this.v23QrRequests.values()),
+        v23VirtualCards: Array.from(this.v23VirtualCards.values()),
+        v23PhysicalCards: Array.from(this.v23PhysicalCards.values()),
+        v23ComplianceReviews: Array.from(this.v23ComplianceReviews.values()),
+        v23RiskEvents: Array.from(this.v23RiskEvents.values()),
+        v23Reconciliations: Array.from(this.v23Reconciliations.values()),
+        v23AuditEvents: Array.from(this.v23AuditEvents.values()),
+        v23FeeConfigs: Array.from(this.v23FeeConfigs.values()),
+        v23SupportCases: Array.from(this.v23SupportCases.values()),
+        v23OfflineQueue: Array.from(this.v23OfflineQueue.values()),
+        v23Integrations: Array.from(this.v23Integrations.values()),
+        v23Refunds: Array.from(this.v23Refunds.values()),
+        v23PgMigrations: Array.from(this.v23PgMigrations.values()),
+        v23ContinuityRuns: Array.from(this.v23ContinuityRuns.values()),
       };
   }
 
@@ -1352,7 +1532,7 @@ export class ArosDatabase {
     if (fs.existsSync(DB_FILE)) {
       fs.copyFileSync(DB_FILE, backupFile);
     }
-    this.pruneRollingBackups('aros_backup_', 3);
+    this.pruneRollingBackups('aros_backup_', 1);
     return backupFile;
   }
 
@@ -2455,6 +2635,108 @@ export class ArosDatabase {
       data.v20InteroperabilityWebhooks?.forEach((x: V20InteroperabilityWebhook) => this.v20InteroperabilityWebhooks.set(x.id, x));
       this.v20MigrationCheckpoints.clear();
       data.v20MigrationCheckpoints?.forEach((x: V20MigrationCheckpoint) => this.v20MigrationCheckpoints.set(x.id, x));
+      this.v21Pilots.clear();
+      data.v21Pilots?.forEach((x: V21PilotRecord) => this.v21Pilots.set(x.id, x));
+      this.v21Onboardings.clear();
+      data.v21Onboardings?.forEach((x: V21ParticipantOnboarding) => this.v21Onboardings.set(x.id, x));
+      this.v21FieldRecords.clear();
+      data.v21FieldRecords?.forEach((x: V21FieldActivityRecord) => this.v21FieldRecords.set(x.id, x));
+      this.v21FieldTasks.clear();
+      data.v21FieldTasks?.forEach((x: V21FieldOfficerTask) => this.v21FieldTasks.set(x.id, x));
+      this.v21Exceptions.clear();
+      data.v21Exceptions?.forEach((x: V21OperationalException) => this.v21Exceptions.set(x.id, x));
+      this.v21SupportCases.clear();
+      data.v21SupportCases?.forEach((x: V21SupportRequest) => this.v21SupportCases.set(x.id, x));
+      this.v21CountryProfiles.clear();
+      data.v21CountryProfiles?.forEach((x: V21CountryProfile) => this.v21CountryProfiles.set(x.countryCode, x));
+      this.v21PgMigrations.clear();
+      data.v21PgMigrations?.forEach((x: V21PostgresMigrationRun) => this.v21PgMigrations.set(x.id, x));
+
+      // V22 Collections (Schema 20)
+      this.v22Sectors.clear();
+      data.v22Sectors?.forEach((x: V22SectorDefinition) => this.v22Sectors.set(x.id, x));
+      this.v22Businesses.clear();
+      data.v22Businesses?.forEach((x: V22BusinessProfile) => this.v22Businesses.set(x.id, x));
+      this.v22Individuals.clear();
+      data.v22Individuals?.forEach((x: V22IndividualProfile) => this.v22Individuals.set(x.id, x));
+      this.v22MarketplaceItems.clear();
+      data.v22MarketplaceItems?.forEach((x: V22ProductOrService) => this.v22MarketplaceItems.set(x.id, x));
+      this.v22FraudReports.clear();
+      data.v22FraudReports?.forEach((x: V22FraudReport) => this.v22FraudReports.set(x.id, x));
+      this.v22Activities.clear();
+      data.v22Activities?.forEach((x: V22EconomicActivity) => this.v22Activities.set(x.id, x));
+      this.v22Tenders.clear();
+      data.v22Tenders?.forEach((x: V22ProcurementOpportunity) => this.v22Tenders.set(x.id, x));
+      this.v22Bids.clear();
+      data.v22Bids?.forEach((x: V22ProcurementBid) => this.v22Bids.set(x.id, x));
+      this.v22Projects.clear();
+      data.v22Projects?.forEach((x: V22ProjectRecord) => this.v22Projects.set(x.id, x));
+      this.v22Invoices.clear();
+      data.v22Invoices?.forEach((x: V22InvoiceRecord) => this.v22Invoices.set(x.id, x));
+      this.v22PaymentRefs.clear();
+      data.v22PaymentRefs?.forEach((x: V22PaymentReference) => this.v22PaymentRefs.set(x.id, x));
+      this.v22FxRates.clear();
+      data.v22FxRates?.forEach((x: V22FxRateRecord) => this.v22FxRates.set(x.currencyCode, x));
+      this.v22WorkforceTasks.clear();
+      data.v22WorkforceTasks?.forEach((x: V22WorkforceTask) => this.v22WorkforceTasks.set(x.id, x));
+      this.v22Insights.clear();
+      data.v22Insights?.forEach((x: V22EconomicInsight) => this.v22Insights.set(x.id, x));
+      this.v22Relationships.clear();
+      data.v22Relationships?.forEach((x: V22EconomicRelationship) => this.v22Relationships.set(x.id, x));
+      this.v22Plans.clear();
+      data.v22Plans?.forEach((x: V22SubscriptionPlan) => this.v22Plans.set(x.id, x));
+      this.v22Subscriptions.clear();
+      data.v22Subscriptions?.forEach((x: V22BusinessSubscription) => this.v22Subscriptions.set(x.id, x));
+      this.v22InteropEvents.clear();
+      data.v22InteropEvents?.forEach((x: V22InteroperabilityEvent) => this.v22InteropEvents.set(x.id, x));
+
+      // V23 Collections (Schema 21)
+      this.v23Identities.clear();
+      data.v23Identities?.forEach((x: V23ParticipantIdentity) => this.v23Identities.set(x.id, x));
+      this.v23WalletNumbers.clear();
+      data.v23WalletNumbers?.forEach((x: V23WalletNumberAllocation) => this.v23WalletNumbers.set(x.euwn, x));
+      this.v23Wallets.clear();
+      data.v23Wallets?.forEach((x: V23WalletAccount) => this.v23Wallets.set(x.id, x));
+      this.v23Subaccounts.clear();
+      data.v23Subaccounts?.forEach((x: V23CurrencySubaccount) => this.v23Subaccounts.set(x.id, x));
+      this.v23CountryProfiles.clear();
+      data.v23CountryProfiles?.forEach((x: V23CountryOperatingProfile) => this.v23CountryProfiles.set(x.countryCode, x));
+      this.v23Transactions.clear();
+      data.v23Transactions?.forEach((x: V23WalletTransaction) => this.v23Transactions.set(x.id, x));
+      this.v23LedgerPostings.clear();
+      data.v23LedgerPostings?.forEach((x: V23LedgerPosting) => this.v23LedgerPostings.set(x.id, x));
+      this.v23Merchants.clear();
+      data.v23Merchants?.forEach((x: V23MerchantAccount) => this.v23Merchants.set(x.id, x));
+      this.v23Terminals.clear();
+      data.v23Terminals?.forEach((x: V23MerchantTerminal) => this.v23Terminals.set(x.id, x));
+      this.v23QrRequests.clear();
+      data.v23QrRequests?.forEach((x: V23QrPaymentRequest) => this.v23QrRequests.set(x.id, x));
+      this.v23VirtualCards.clear();
+      data.v23VirtualCards?.forEach((x: V23VirtualCard) => this.v23VirtualCards.set(x.id, x));
+      this.v23PhysicalCards.clear();
+      data.v23PhysicalCards?.forEach((x: V23PhysicalCard) => this.v23PhysicalCards.set(x.id, x));
+      this.v23ComplianceReviews.clear();
+      data.v23ComplianceReviews?.forEach((x: V23ComplianceReview) => this.v23ComplianceReviews.set(x.id, x));
+      this.v23RiskEvents.clear();
+      data.v23RiskEvents?.forEach((x: V23RiskEvent) => this.v23RiskEvents.set(x.id, x));
+      this.v23Reconciliations.clear();
+      data.v23Reconciliations?.forEach((x: V23ReconciliationRecord) => this.v23Reconciliations.set(x.id, x));
+      this.v23AuditEvents.clear();
+      data.v23AuditEvents?.forEach((x: V23WalletAuditEvent) => this.v23AuditEvents.set(x.id, x));
+      this.v23FeeConfigs.clear();
+      data.v23FeeConfigs?.forEach((x: V23FeeConfiguration) => this.v23FeeConfigs.set(x.id, x));
+      this.v23SupportCases.clear();
+      data.v23SupportCases?.forEach((x: V23SupportDisputeCase) => this.v23SupportCases.set(x.id, x));
+      this.v23OfflineQueue.clear();
+      data.v23OfflineQueue?.forEach((x: V23OfflineQueueItem) => this.v23OfflineQueue.set(x.id, x));
+      this.v23Integrations.clear();
+      data.v23Integrations?.forEach((x: V23IntegrationInterface) => this.v23Integrations.set(x.id, x));
+      this.v23Refunds.clear();
+      data.v23Refunds?.forEach((x: V23ReversalOrRefund) => this.v23Refunds.set(x.id, x));
+      this.v23PgMigrations.clear();
+      data.v23PgMigrations?.forEach((x: V23PostgresMigrationRun) => this.v23PgMigrations.set(x.id, x));
+      this.v23ContinuityRuns.clear();
+      data.v23ContinuityRuns?.forEach((x: V23ContinuityTestRun) => this.v23ContinuityRuns.set(x.id, x));
 
       // If V9 collections empty, seed V9 collections
       if (this.federations.size === 0) {
@@ -2627,7 +2909,59 @@ export class ArosDatabase {
         this.schemaVersion = 18;
       }
 
-      console.log(`[ECONEX DB V20] Loaded schema v${this.schemaVersion}: ${this.users.size} users, ${this.tenants.size} tenants, ${this.v17Participants.size} participants, ${this.v20Trades.size} unified trades, ${this.v20PilotProgrammes.size} pilots from ${DB_FILE}`);
+      // Recover or run idempotent Schema 18 -> 19 migration (ECONEX V21.0)
+      if (loadedSchema < 19 || this.v21Pilots.size === 0 || this.v21CountryProfiles.size < 7) {
+        this.migrateV18ToV19(Math.max(loadedSchema, 18));
+      } else {
+        seedV21Collections(this);
+        this.schemaVersion = 19;
+      }
+
+      // Recover or run idempotent Schema 19 -> 20 migration (ECONEX V22.0)
+      const pendingV22 = Array.from(this.v20MigrationCheckpoints.values()).find(
+        (m) => m.toSchemaVersion === 20 && m.status === 'IN_PROGRESS'
+      );
+      if (pendingV22) {
+        seedV22Collections(this);
+        pendingV22.status = 'RECOVERED';
+        pendingV22.completedAt = new Date().toISOString();
+        pendingV22.postCounts = this.getV20CollectionCountsSnapshot();
+        pendingV22.postFinancialTotals = this.getPreservedFinancialTotals();
+        pendingV22.financialTotalsPreserved = true;
+        this.v20MigrationCheckpoints.set(pendingV22.id, pendingV22);
+        this.schemaVersion = 20;
+        this.persistToDiskSync();
+        console.log('[ECONEX DB V22] Recovered interrupted Schema 20 migration cleanly.');
+      } else if (loadedSchema < 20 || this.v22Sectors.size < 28 || this.v22Businesses.size === 0) {
+        this.migrateV19ToV20(Math.max(loadedSchema, 19));
+      } else {
+        seedV22Collections(this);
+        this.schemaVersion = 20;
+      }
+
+      // Recover or run idempotent Schema 20 -> 21 migration (ECONEX V23.0)
+      const pendingV23 = Array.from(this.v20MigrationCheckpoints.values()).find(
+        (m) => m.toSchemaVersion === 21 && m.status === 'IN_PROGRESS'
+      );
+      if (pendingV23) {
+        seedV23Collections(this);
+        pendingV23.status = 'RECOVERED';
+        pendingV23.completedAt = new Date().toISOString();
+        pendingV23.postCounts = this.getV21CollectionCountsSnapshot();
+        pendingV23.postFinancialTotals = this.getPreservedFinancialTotals();
+        pendingV23.financialTotalsPreserved = true;
+        this.v20MigrationCheckpoints.set(pendingV23.id, pendingV23);
+        this.schemaVersion = 21;
+        this.persistToDiskSync();
+        console.log('[ECONEX DB V23] Recovered interrupted Schema 21 migration cleanly.');
+      } else if (loadedSchema < 21 || this.v23Identities.size === 0 || this.v23CountryProfiles.size < 7) {
+        this.migrateV20ToV21(Math.max(loadedSchema, 20));
+      } else {
+        seedV23Collections(this);
+        this.schemaVersion = 21;
+      }
+
+      console.log(`[ECONEX DB V23] Loaded schema v${this.schemaVersion}: ${this.users.size} users, ${this.v22Sectors.size} sectors, ${this.v23Wallets.size} wallets, ${this.v23Subaccounts.size} subaccounts from ${DB_FILE}`);
     } catch (err) {
       console.error('[AROS DB] Failed to parse existing database, re-seeding:', err);
       this.seedDatabase();
@@ -3621,7 +3955,10 @@ export class ArosDatabase {
     seedV16Collections(this);
     seedV17Collections(this);
     seedV20Collections(this);
-    this.schemaVersion = 18;
+    seedV21Collections(this);
+    seedV22Collections(this);
+    seedV23Collections(this);
+    this.schemaVersion = 21;
   }
 
   seedV3Collections() {
@@ -7111,7 +7448,12 @@ export class ArosDatabase {
       if (!coa) {
         throw new Error(`Chart of Account '${line.accountId}' does not exist.`);
       }
-      const rate = line.currency === 'UGX' ? 1.0 : (this.currencies.get(line.currency)?.exchangeRateToUGX || 3750.0);
+      const rate =
+        line.currency === 'UGX'
+          ? 1.0
+          : (this.currencies.get(line.currency)?.exchangeRateToUGX ||
+             this.v22FxRates.get(line.currency)?.rateToUgx ||
+             3750.0);
       const baseUGX = line.amount * rate;
 
       if (line.direction === 'DEBIT') totalDebit += baseUGX;
@@ -7134,13 +7476,20 @@ export class ArosDatabase {
       throw new Error(`Journal entry rejected: Debit (UGX ${totalDebit}) does not equal Credit (UGX ${totalCredit}).`);
     }
 
-    // Now that balancing is verified, mutate account balances atomically
+    // Now that balancing is verified, mutate account balances atomically in each COA account's own functional currency
     const resolvedLines = validatedLines.map(vl => {
       const { coa, direction, amount, currency, rate, baseUGX, memo, id } = vl;
+      const coaRate =
+        coa.currency === 'UGX'
+          ? 1.0
+          : (this.currencies.get(coa.currency)?.exchangeRateToUGX ||
+             this.v22FxRates.get(coa.currency)?.rateToUgx ||
+             3750.0);
+      const coaAmountDelta = coa.currency === currency ? amount : baseUGX / coaRate;
       if (coa.category === 'ASSET' || coa.category === 'EXPENSE') {
-        coa.balance += (direction === 'DEBIT' ? amount : -amount);
+        coa.balance += (direction === 'DEBIT' ? coaAmountDelta : -coaAmountDelta);
       } else {
-        coa.balance += (direction === 'CREDIT' ? amount : -amount);
+        coa.balance += (direction === 'CREDIT' ? coaAmountDelta : -coaAmountDelta);
       }
       coa.updatedAt = new Date().toISOString();
       this.chartOfAccounts.set(coa.id, coa);
@@ -11755,7 +12104,7 @@ export class ArosDatabase {
 
   validateV18SchemaIntegrity() {
     const issues: string[] = [];
-    if (this.schemaVersion !== 18) issues.push(`Expected schemaVersion 18, got ${this.schemaVersion}`);
+    if (this.schemaVersion < 18) issues.push(`Expected schemaVersion >= 18, got ${this.schemaVersion}`);
     if (this.v20Trades.size === 0) issues.push('v20Trades is empty');
     if (this.v20Shipments.size === 0) issues.push('v20Shipments is empty');
     if (this.v20PaymentObligations.size === 0) issues.push('v20PaymentObligations is empty');
@@ -11795,6 +12144,517 @@ export class ArosDatabase {
       v18Counts: this.getV18CollectionCountsSnapshot(),
       integrity,
       v17Integrity,
+    };
+  }
+
+  getV19CollectionCountsSnapshot(): Record<string, number> {
+    return {
+      v21Pilots: this.v21Pilots.size,
+      v21Onboardings: this.v21Onboardings.size,
+      v21FieldRecords: this.v21FieldRecords.size,
+      v21FieldTasks: this.v21FieldTasks.size,
+      v21Exceptions: this.v21Exceptions.size,
+      v21SupportCases: this.v21SupportCases.size,
+      v21CountryProfiles: this.v21CountryProfiles.size,
+      v21PgMigrations: this.v21PgMigrations.size,
+    };
+  }
+
+  migrateV18ToV19(fromVersion = 18): V20MigrationCheckpoint {
+    const existing = Array.from(this.v20MigrationCheckpoints.values()).find(
+      (c) => c.toSchemaVersion === 19 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+    );
+    if (this.schemaVersion === 19 && existing && this.v21Pilots.size > 0 && this.v21CountryProfiles.size >= 7) {
+      return existing;
+    }
+
+    const startedAt = new Date().toISOString();
+    const preCounts = this.getV18CollectionCountsSnapshot();
+    const preFin = this.getPreservedFinancialTotals();
+
+    const v18CanonicalBackup = path.join(DATA_DIR, 'aros_database.v18.backup.json');
+    const preMigBackup = path.join(BACKUP_DIR, `aros_pre_v19_migration_${Date.now()}.json`);
+    if (fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, preMigBackup);
+      this.pruneRollingBackups('aros_pre_v19_migration_', 2);
+      if (!fs.existsSync(v18CanonicalBackup)) {
+        fs.copyFileSync(DB_FILE, v18CanonicalBackup);
+      }
+    }
+
+    const backupFileUsed = fs.existsSync(v18CanonicalBackup) ? v18CanonicalBackup : preMigBackup;
+    const backupBytes = fs.existsSync(backupFileUsed) ? fs.readFileSync(backupFileUsed) : Buffer.from('{}');
+    const backupChecksum = crypto.createHash('sha256').update(backupBytes).digest('hex');
+
+    const ddlPath = path.join(__dirname, 'postgres', 'schema_v19.sql');
+    const ddlBytes = fs.existsSync(ddlPath) ? fs.readFileSync(ddlPath) : Buffer.from('');
+    const migChecksum = crypto.createHash('sha256').update(ddlBytes).digest('hex');
+
+    const cp: V20MigrationCheckpoint = {
+      id: `MIG-V21-${Date.now().toString(36).toUpperCase()}`,
+      fromSchemaVersion: fromVersion,
+      toSchemaVersion: 19,
+      status: 'IN_PROGRESS',
+      v17BackupFilePath: backupFileUsed,
+      v17BackupChecksumSha256: backupChecksum,
+      migrationChecksumSha256: migChecksum,
+      preCounts,
+      postCounts: {},
+      preFinancialTotals: preFin,
+      postFinancialTotals: {},
+      financialTotalsPreserved: false,
+      startedAt,
+    };
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    seedV21Collections(this);
+    this.schemaVersion = 19;
+
+    const postCounts = this.getV19CollectionCountsSnapshot();
+    const postFin = this.getPreservedFinancialTotals();
+    const finBalanced =
+      postFin.journalDebitUgx === preFin.journalDebitUgx &&
+      postFin.journalCreditUgx === preFin.journalCreditUgx &&
+      postFin.finExecTotal === preFin.finExecTotal;
+
+    cp.financialTotalsPreserved = finBalanced;
+    cp.status = finBalanced && this.v21Pilots.size > 0 && this.v21CountryProfiles.size >= 7 ? 'COMPLETED' : 'FAILED';
+    cp.completedAt = new Date().toISOString();
+    cp.postCounts = postCounts;
+    cp.postFinancialTotals = postFin;
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    this.migrationHistory.push({
+      fromVersion,
+      toVersion: 19,
+      migratedAt: cp.completedAt,
+      backupFile: backupFileUsed,
+      preservedRecordsCount:
+        this.users.size +
+        this.tenants.size +
+        this.v17Participants.size +
+        this.v20Trades.size +
+        this.universalJournal.size,
+    });
+
+    this.persistToDiskSync();
+    console.log(`[ECONEX DB V21] Migrated schema v${fromVersion} -> v19 (V18 backup SHA-256: ${backupChecksum.slice(0, 12)})`);
+    return cp;
+  }
+
+  verifyV18BackupAndRollbackReadiness() {
+    const v18Backup = path.join(DATA_DIR, 'aros_database.v18.backup.json');
+    if (!fs.existsSync(v18Backup)) {
+      cachedV18BackupCheck = null;
+      return { v18BackupValid: false, rollbackSupported: false, filePath: v18Backup, checksumSha256: '', bytes: 0 };
+    }
+    const stat = fs.statSync(v18Backup);
+    if (cachedV18BackupCheck && cachedV18BackupCheck.mtimeMs === stat.mtimeMs && cachedV18BackupCheck.size === stat.size) {
+      return cachedV18BackupCheck.value;
+    }
+    const raw = fs.readFileSync(v18Backup);
+    const parsed = JSON.parse(raw.toString('utf8'));
+    const checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+    const valid = Number(parsed.schemaVersion) >= 18 && Array.isArray(parsed.users) && parsed.users.length > 0;
+    const result = { v18BackupValid: valid, rollbackSupported: valid, filePath: v18Backup, checksumSha256, bytes: raw.length };
+    cachedV18BackupCheck = { mtimeMs: stat.mtimeMs, size: stat.size, value: result };
+    return result;
+  }
+
+  validateV19SchemaIntegrity() {
+    const issues: string[] = [];
+    if (this.schemaVersion < 19) issues.push(`Expected schemaVersion >= 19, got ${this.schemaVersion}`);
+    if (this.v21Pilots.size === 0) issues.push('v21Pilots is empty');
+    if (this.v21CountryProfiles.size < 7) issues.push('v21CountryProfiles incomplete (<7 EAC/AfCFTA profiles)');
+    const fin = this.getFinancialIntegrityReport();
+    if (!fin.journalBalanced) issues.push('Double-entry general ledger imbalance detected');
+    return {
+      valid: issues.length === 0,
+      schemaVersion: this.schemaVersion,
+      v21CollectionsInitialized: 8,
+      pilotsCount: this.v21Pilots.size,
+      countryProfilesCount: this.v21CountryProfiles.size,
+      onboardingsCount: this.v21Onboardings.size,
+      financialBalanced: fin.journalBalanced,
+      issues,
+    };
+  }
+
+  verifyV19MigrationCompleteness() {
+    const checkpoint =
+      Array.from(this.v20MigrationCheckpoints.values()).find(
+        (c) => c.toSchemaVersion === 19 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+      ) || null;
+    const rollback = this.verifyV18BackupAndRollbackReadiness();
+    const integrity = this.validateV19SchemaIntegrity();
+    const v18Integrity = this.validateV18SchemaIntegrity();
+    return {
+      complete: Boolean(checkpoint && checkpoint.financialTotalsPreserved && integrity.valid && v18Integrity.valid),
+      schemaVersion: this.schemaVersion,
+      checkpoint,
+      v18RollbackReady: rollback.v18BackupValid,
+      rollbackChecksumSha256: rollback.checksumSha256,
+      v19Counts: this.getV19CollectionCountsSnapshot(),
+      integrity,
+      v18Integrity,
+    };
+  }
+
+  // ==========================================
+  // V22 MIGRATION, CANONICAL V19 BACKUP & SCHEMA 20 INTEGRITY
+  // ==========================================
+
+  getV20CollectionCountsSnapshot(): Record<string, number> {
+    return {
+      v22Sectors: this.v22Sectors.size,
+      v22Businesses: this.v22Businesses.size,
+      v22Individuals: this.v22Individuals.size,
+      v22MarketplaceItems: this.v22MarketplaceItems.size,
+      v22FraudReports: this.v22FraudReports.size,
+      v22Activities: this.v22Activities.size,
+      v22Tenders: this.v22Tenders.size,
+      v22Bids: this.v22Bids.size,
+      v22Projects: this.v22Projects.size,
+      v22Invoices: this.v22Invoices.size,
+      v22PaymentRefs: this.v22PaymentRefs.size,
+      v22FxRates: this.v22FxRates.size,
+      v22WorkforceTasks: this.v22WorkforceTasks.size,
+      v22Insights: this.v22Insights.size,
+      v22Relationships: this.v22Relationships.size,
+      v22Plans: this.v22Plans.size,
+      v22Subscriptions: this.v22Subscriptions.size,
+      v22InteropEvents: this.v22InteropEvents.size,
+    };
+  }
+
+  migrateV19ToV20(fromVersion = 19): V20MigrationCheckpoint {
+    const existing = Array.from(this.v20MigrationCheckpoints.values()).find(
+      (c) => c.toSchemaVersion === 20 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+    );
+    if (this.schemaVersion === 20 && existing && this.v22Sectors.size >= 28 && this.v22Businesses.size > 0) {
+      return existing;
+    }
+
+    const startedAt = new Date().toISOString();
+    const preCounts = this.getV19CollectionCountsSnapshot();
+    const preFin = this.getPreservedFinancialTotals();
+
+    const v19CanonicalBackup = path.join(DATA_DIR, 'aros_database.v19.backup.json');
+    const preMigBackup = path.join(BACKUP_DIR, `aros_pre_v20_migration_${Date.now()}.json`);
+    if (fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, preMigBackup);
+      this.pruneRollingBackups('aros_pre_v20_migration_', 1);
+      if (!fs.existsSync(v19CanonicalBackup)) {
+        fs.copyFileSync(DB_FILE, v19CanonicalBackup);
+      }
+    }
+
+    const backupFileUsed = fs.existsSync(v19CanonicalBackup) ? v19CanonicalBackup : preMigBackup;
+    const backupBytes = fs.existsSync(backupFileUsed) ? fs.readFileSync(backupFileUsed) : Buffer.from('{}');
+    const backupChecksum = crypto.createHash('sha256').update(backupBytes).digest('hex');
+
+    const ddlPath = path.join(__dirname, 'postgres', 'schema_v20.sql');
+    const ddlBytes = fs.existsSync(ddlPath) ? fs.readFileSync(ddlPath) : Buffer.from('');
+    const migChecksum = crypto.createHash('sha256').update(ddlBytes).digest('hex');
+
+    const cp: V20MigrationCheckpoint = {
+      id: `MIG-V22-${Date.now().toString(36).toUpperCase()}`,
+      fromSchemaVersion: fromVersion,
+      toSchemaVersion: 20,
+      status: 'IN_PROGRESS',
+      v17BackupFilePath: backupFileUsed,
+      v17BackupChecksumSha256: backupChecksum,
+      migrationChecksumSha256: migChecksum,
+      preCounts,
+      postCounts: {},
+      preFinancialTotals: preFin,
+      postFinancialTotals: {},
+      financialTotalsPreserved: false,
+      startedAt,
+    };
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    seedV22Collections(this);
+    this.schemaVersion = 20;
+
+    const postCounts = this.getV20CollectionCountsSnapshot();
+    const postFin = this.getPreservedFinancialTotals();
+    const finBalanced =
+      postFin.journalDebitUgx === preFin.journalDebitUgx &&
+      postFin.journalCreditUgx === preFin.journalCreditUgx &&
+      postFin.finExecTotal === preFin.finExecTotal;
+
+    cp.financialTotalsPreserved = finBalanced;
+    cp.status = finBalanced && this.v22Sectors.size >= 28 && this.v22Businesses.size > 0 ? 'COMPLETED' : 'FAILED';
+    cp.completedAt = new Date().toISOString();
+    cp.postCounts = postCounts;
+    cp.postFinancialTotals = postFin;
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    this.migrationHistory.push({
+      fromVersion,
+      toVersion: 20,
+      migratedAt: cp.completedAt,
+      backupFile: backupFileUsed,
+      preservedRecordsCount:
+        this.users.size +
+        this.tenants.size +
+        this.v20Trades.size +
+        this.v21Pilots.size +
+        this.v21Onboardings.size +
+        this.universalJournal.size,
+    });
+
+    this.persistToDiskSync();
+    console.log(`[ECONEX DB V22] Migrated schema v${fromVersion} -> v20 (V19 backup SHA-256: ${backupChecksum.slice(0, 12)})`);
+    return cp;
+  }
+
+  verifyV19BackupAndRollbackReadiness() {
+    const v19Backup = path.join(DATA_DIR, 'aros_database.v19.backup.json');
+    if (!fs.existsSync(v19Backup)) {
+      cachedV19BackupCheck = null;
+      return { v19BackupValid: false, rollbackSupported: false, filePath: v19Backup, checksumSha256: '', bytes: 0 };
+    }
+    const stat = fs.statSync(v19Backup);
+    if (cachedV19BackupCheck && cachedV19BackupCheck.mtimeMs === stat.mtimeMs && cachedV19BackupCheck.size === stat.size) {
+      return cachedV19BackupCheck.value;
+    }
+    const raw = fs.readFileSync(v19Backup);
+    const parsed = JSON.parse(raw.toString('utf8'));
+    const checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+    const valid = Number(parsed.schemaVersion) >= 19 && Array.isArray(parsed.users) && parsed.users.length > 0;
+    const result = { v19BackupValid: valid, rollbackSupported: valid, filePath: v19Backup, checksumSha256, bytes: raw.length };
+    cachedV19BackupCheck = { mtimeMs: stat.mtimeMs, size: stat.size, value: result };
+    return result;
+  }
+
+  validateV20SchemaIntegrity() {
+    const issues: string[] = [];
+    if (this.schemaVersion < 20) issues.push(`Expected schemaVersion >= 20, got ${this.schemaVersion}`);
+    if (this.v22Sectors.size < 28) issues.push(`Expected >= 28 universal sectors, got ${this.v22Sectors.size}`);
+    if (this.v22Businesses.size === 0) issues.push('v22Businesses is empty');
+    if (this.v22Individuals.size === 0) issues.push('v22Individuals is empty');
+    if (this.v22MarketplaceItems.size === 0) issues.push('v22MarketplaceItems is empty');
+    if (this.v22Activities.size === 0) issues.push('v22Activities is empty');
+    if (this.v22Tenders.size === 0) issues.push('v22Tenders is empty');
+    if (this.v22Projects.size === 0) issues.push('v22Projects is empty');
+    if (this.v22FxRates.size < 8) issues.push('v22FxRates incomplete (<8 currencies)');
+    const fin = this.getFinancialIntegrityReport();
+    if (!fin.journalBalanced) issues.push('Double-entry general ledger imbalance detected');
+    return {
+      valid: issues.length === 0,
+      schemaVersion: this.schemaVersion,
+      v22CollectionsInitialized: 18,
+      sectorsCount: this.v22Sectors.size,
+      businessesCount: this.v22Businesses.size,
+      individualsCount: this.v22Individuals.size,
+      marketplaceItemsCount: this.v22MarketplaceItems.size,
+      activitiesCount: this.v22Activities.size,
+      financialBalanced: fin.journalBalanced,
+      issues,
+    };
+  }
+
+  verifyV20MigrationCompleteness() {
+    const checkpoint =
+      Array.from(this.v20MigrationCheckpoints.values()).find(
+        (c) => c.toSchemaVersion === 20 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+      ) || null;
+    const rollback = this.verifyV19BackupAndRollbackReadiness();
+    const integrity = this.validateV20SchemaIntegrity();
+    const v19Integrity = this.validateV19SchemaIntegrity();
+    return {
+      complete: Boolean(checkpoint && checkpoint.financialTotalsPreserved && integrity.valid && v19Integrity.valid),
+      schemaVersion: this.schemaVersion,
+      checkpoint,
+      v19RollbackReady: rollback.v19BackupValid,
+      rollbackChecksumSha256: rollback.checksumSha256,
+      v20Counts: this.getV20CollectionCountsSnapshot(),
+      integrity,
+      v19Integrity,
+    };
+  }
+
+  // ==========================================
+  // V23 MIGRATION, CANONICAL V22 BACKUP & SCHEMA 21 INTEGRITY
+  // ==========================================
+
+  getV21CollectionCountsSnapshot(): Record<string, number> {
+    return {
+      v23Identities: this.v23Identities.size,
+      v23WalletNumbers: this.v23WalletNumbers.size,
+      v23Wallets: this.v23Wallets.size,
+      v23Subaccounts: this.v23Subaccounts.size,
+      v23CountryProfiles: this.v23CountryProfiles.size,
+      v23Transactions: this.v23Transactions.size,
+      v23LedgerPostings: this.v23LedgerPostings.size,
+      v23Merchants: this.v23Merchants.size,
+      v23Terminals: this.v23Terminals.size,
+      v23QrRequests: this.v23QrRequests.size,
+      v23VirtualCards: this.v23VirtualCards.size,
+      v23PhysicalCards: this.v23PhysicalCards.size,
+      v23ComplianceReviews: this.v23ComplianceReviews.size,
+      v23RiskEvents: this.v23RiskEvents.size,
+      v23Reconciliations: this.v23Reconciliations.size,
+      v23AuditEvents: this.v23AuditEvents.size,
+      v23FeeConfigs: this.v23FeeConfigs.size,
+      v23SupportCases: this.v23SupportCases.size,
+      v23OfflineQueue: this.v23OfflineQueue.size,
+      v23Integrations: this.v23Integrations.size,
+      v23Refunds: this.v23Refunds.size,
+      v23PgMigrations: this.v23PgMigrations.size,
+      v23ContinuityRuns: this.v23ContinuityRuns.size,
+    };
+  }
+
+  migrateV20ToV21(fromVersion = 20): V20MigrationCheckpoint {
+    const existing = Array.from(this.v20MigrationCheckpoints.values()).find(
+      (c) => c.toSchemaVersion === 21 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+    );
+    if (this.schemaVersion === 21 && existing && this.v23Identities.size > 0 && this.v23CountryProfiles.size >= 7) {
+      return existing;
+    }
+
+    const startedAt = new Date().toISOString();
+    const preCounts = this.getV20CollectionCountsSnapshot();
+    const preFin = this.getPreservedFinancialTotals();
+
+    const v22CanonicalBackup = path.join(DATA_DIR, 'aros_database.v22.backup.json');
+    const preMigBackup = path.join(BACKUP_DIR, `aros_pre_v21_migration_${Date.now()}.json`);
+    if (fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, preMigBackup);
+      this.pruneRollingBackups('aros_pre_v21_migration_', 1);
+      if (!fs.existsSync(v22CanonicalBackup)) {
+        fs.copyFileSync(DB_FILE, v22CanonicalBackup);
+      }
+    }
+
+    const backupFileUsed = fs.existsSync(v22CanonicalBackup) ? v22CanonicalBackup : preMigBackup;
+    const backupBytes = fs.existsSync(backupFileUsed) ? fs.readFileSync(backupFileUsed) : Buffer.from('{}');
+    const backupChecksum = crypto.createHash('sha256').update(backupBytes).digest('hex');
+
+    const ddlPath = path.join(__dirname, 'postgres', 'schema_v21.sql');
+    const ddlBytes = fs.existsSync(ddlPath) ? fs.readFileSync(ddlPath) : Buffer.from('');
+    const migChecksum = crypto.createHash('sha256').update(ddlBytes).digest('hex');
+
+    const cp: V20MigrationCheckpoint = {
+      id: `MIG-V23-${Date.now().toString(36).toUpperCase()}`,
+      fromSchemaVersion: fromVersion,
+      toSchemaVersion: 21,
+      status: 'IN_PROGRESS',
+      v17BackupFilePath: backupFileUsed,
+      v17BackupChecksumSha256: backupChecksum,
+      migrationChecksumSha256: migChecksum,
+      preCounts,
+      postCounts: {},
+      preFinancialTotals: preFin,
+      postFinancialTotals: {},
+      financialTotalsPreserved: false,
+      startedAt,
+    };
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    seedV23Collections(this);
+    this.schemaVersion = 21;
+
+    const postCounts = this.getV21CollectionCountsSnapshot();
+    const postFin = this.getPreservedFinancialTotals();
+    const finBalanced =
+      postFin.journalDebitUgx === preFin.journalDebitUgx &&
+      postFin.journalCreditUgx === preFin.journalCreditUgx &&
+      postFin.finExecTotal === preFin.finExecTotal;
+
+    cp.financialTotalsPreserved = finBalanced;
+    cp.status = finBalanced && this.v23Identities.size > 0 && this.v23CountryProfiles.size >= 7 ? 'COMPLETED' : 'FAILED';
+    cp.completedAt = new Date().toISOString();
+    cp.postCounts = postCounts;
+    cp.postFinancialTotals = postFin;
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    this.migrationHistory.push({
+      fromVersion,
+      toVersion: 21,
+      migratedAt: cp.completedAt,
+      backupFile: backupFileUsed,
+      preservedRecordsCount:
+        this.users.size +
+        this.tenants.size +
+        this.v22Sectors.size +
+        this.v22Businesses.size +
+        this.v22Activities.size +
+        this.v23Wallets.size +
+        this.universalJournal.size,
+    });
+
+    this.persistToDiskSync();
+    console.log(`[ECONEX DB V23] Migrated schema v${fromVersion} -> v21 (V22 backup SHA-256: ${backupChecksum.slice(0, 12)})`);
+    return cp;
+  }
+
+  verifyV22BackupAndRollbackReadiness() {
+    const v22Backup = path.join(DATA_DIR, 'aros_database.v22.backup.json');
+    if (!fs.existsSync(v22Backup)) {
+      cachedV22BackupCheck = null;
+      return { v22BackupValid: false, rollbackSupported: false, filePath: v22Backup, checksumSha256: '', bytes: 0 };
+    }
+    const stat = fs.statSync(v22Backup);
+    if (cachedV22BackupCheck && cachedV22BackupCheck.mtimeMs === stat.mtimeMs && cachedV22BackupCheck.size === stat.size) {
+      return cachedV22BackupCheck.value;
+    }
+    const raw = fs.readFileSync(v22Backup);
+    const parsed = JSON.parse(raw.toString('utf8'));
+    const checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+    const valid = Number(parsed.schemaVersion) >= 20 && Array.isArray(parsed.users) && parsed.users.length > 0;
+    const result = { v22BackupValid: valid, rollbackSupported: valid, filePath: v22Backup, checksumSha256, bytes: raw.length };
+    cachedV22BackupCheck = { mtimeMs: stat.mtimeMs, size: stat.size, value: result };
+    return result;
+  }
+
+  validateV21SchemaIntegrity() {
+    const issues: string[] = [];
+    if (this.schemaVersion < 21) issues.push(`Expected schemaVersion >= 21, got ${this.schemaVersion}`);
+    if (this.v23Identities.size === 0) issues.push('v23Identities is empty');
+    if (this.v23WalletNumbers.size === 0) issues.push('v23WalletNumbers is empty');
+    if (this.v23Wallets.size === 0) issues.push('v23Wallets is empty');
+    if (this.v23Subaccounts.size === 0) issues.push('v23Subaccounts is empty');
+    if (this.v23CountryProfiles.size < 7) issues.push(`Expected >= 7 country profiles, got ${this.v23CountryProfiles.size}`);
+    if (this.v23Merchants.size === 0) issues.push('v23Merchants is empty');
+    if (this.v23VirtualCards.size === 0) issues.push('v23VirtualCards is empty');
+    if (this.v23PhysicalCards.size === 0) issues.push('v23PhysicalCards is empty');
+    if (this.v23Integrations.size === 0) issues.push('v23Integrations is empty');
+    const fin = this.getFinancialIntegrityReport();
+    if (!fin.journalBalanced) issues.push('Double-entry general ledger imbalance detected');
+    return {
+      valid: issues.length === 0,
+      schemaVersion: this.schemaVersion,
+      v23CollectionsInitialized: 23,
+      identitiesCount: this.v23Identities.size,
+      walletsCount: this.v23Wallets.size,
+      subaccountsCount: this.v23Subaccounts.size,
+      countryProfilesCount: this.v23CountryProfiles.size,
+      financialBalanced: fin.journalBalanced,
+      issues,
+    };
+  }
+
+  verifyV21MigrationCompleteness() {
+    const checkpoint =
+      Array.from(this.v20MigrationCheckpoints.values()).find(
+        (c) => c.toSchemaVersion === 21 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+      ) || null;
+    const rollback = this.verifyV22BackupAndRollbackReadiness();
+    const integrity = this.validateV21SchemaIntegrity();
+    const v20Integrity = this.validateV20SchemaIntegrity();
+    return {
+      complete: Boolean(checkpoint && checkpoint.financialTotalsPreserved && integrity.valid && v20Integrity.valid),
+      schemaVersion: this.schemaVersion,
+      checkpoint,
+      v22RollbackReady: rollback.v22BackupValid,
+      rollbackChecksumSha256: rollback.checksumSha256,
+      v21Counts: this.getV21CollectionCountsSnapshot(),
+      integrity,
+      v20Integrity,
     };
   }
 }
