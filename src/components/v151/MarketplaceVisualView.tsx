@@ -14,23 +14,14 @@ import { MarketplaceListing } from '../../types/index.ts';
 import { ProductCard } from '../ux/DomainCards.tsx';
 import { AccessibleDialog, EmptyState, ErrorRecoveryPanel } from '../ux/CorePrimitives.tsx';
 import { formatMoney } from '../../i18n/econexTranslations.ts';
-
-import coffeeImg from '../../assets/images/uganda_coffee_harvest_1794827462481.jpg';
-import maizeImg from '../../assets/images/uganda_maize_grain_1794827462265.jpg';
-import produceImg from '../../assets/images/uganda_fresh_produce_1794827463494.jpg';
-import truckImg from '../../assets/images/econex_logistics_truck_1794827463870.jpg';
+import { resolveMarketplaceAsset } from '../../config/econexAssetManifest.ts';
 
 export function resolveListingImage(listing: MarketplaceListing): string {
-  if (listing.imageUrl) return listing.imageUrl;
-  const text = `${listing.title} ${listing.category}`.toLowerCase();
-  if (text.includes('coffee') || text.includes('tea') || text.includes('cocoa')) return coffeeImg;
-  if (text.includes('maize') || text.includes('grain') || text.includes('bean') || text.includes('rice') || text.includes('sesame')) {
-    return maizeImg;
-  }
-  if (text.includes('transport') || text.includes('truck') || text.includes('freight') || text.includes('logistics')) {
-    return truckImg;
-  }
-  return produceImg;
+  return resolveMarketplaceAsset({
+    imageUrl: listing.imageUrl,
+    title: listing.title,
+    category: listing.category,
+  }).path;
 }
 
 export const MarketplaceVisualView: React.FC<{ onOrderCreated: () => void; onNavigate: (tab: string) => void }> = ({
@@ -124,7 +115,7 @@ export const MarketplaceVisualView: React.FC<{ onOrderCreated: () => void; onNav
         <div>
           <h1 className="text-2xl font-bold text-[#F5F5F5]">Explore Marketplace</h1>
           <p className="text-sm text-[#A0A0A0] mt-1">
-            Browse real produce, farm inputs, and goods from verified growers and local traders across Uganda and East Africa.
+            Browse verified produce, farm inputs, equipment, and commercial supplies from growers and traders across Uganda and East Africa.
           </p>
         </div>
 
@@ -135,7 +126,7 @@ export const MarketplaceVisualView: React.FC<{ onOrderCreated: () => void; onNav
             <input
               type="search"
               aria-label="Search marketplace products"
-              placeholder="Search maize, coffee, beans, seeds..."
+              placeholder="Search products, maize, coffee, inputs, tools..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-full min-h-[44px] pl-10 pr-4 py-2 rounded-xl bg-[#181818] border border-[#27272a] text-sm text-[#F5F5F5]"
@@ -245,6 +236,7 @@ export const MarketplaceVisualView: React.FC<{ onOrderCreated: () => void; onNav
               availabilityText={`${item.quantityAvailable} ${item.unit.replace('_', ' ')} ready`}
               verifiedSeller={item.isVerifiedSeller}
               imageUrl={resolveListingImage(item)}
+              category={item.category}
               actionLabel={item.sellerId === currentUser?.id ? 'Your Listing' : 'Order Now'}
               onAction={() => {
                 setSelectedListing(item);

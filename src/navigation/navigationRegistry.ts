@@ -146,6 +146,588 @@ export const NAVIGATION_REGISTRY: V18NavItem[] = [
     keywords: ['v24', 'commerce network', 'execution', 'supply chain', 'sectors', 'intelligence', 'ai'],
     showInMobileMore: true,
   },
+  {
+    id: 'v25-command-centre',
+    label: 'V25 Command Centre',
+    description: 'Continental infrastructure telemetry, 22-flag truthfulness matrix, Country Engine, Multi-Currency FX, DR Drill & AI Advisor.',
+    route: '/v25-command-centre',
+    legacyRoutes: ['/v25', '/infrastructure'],
+    parentId: 'home',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'Server',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v25', 'command centre', 'continental', 'telemetry', 'readiness', 'countries', 'fx'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v25-enterprise-org',
+    label: 'V25 Orgs & Identity',
+    description: 'Enterprise multi-organisation hierarchy, strict isolation RBAC, MFA, trusted devices, sessions & 5-tier KYC/KYB compliance.',
+    route: '/v25-enterprise-org',
+    legacyRoutes: ['/v25/organisations'],
+    parentId: 'v25-command-centre',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'Building2',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v25', 'organisations', 'branches', 'rbac', 'mfa', 'sessions', 'kyc', 'kyb'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v25-postgres-migration',
+    label: 'V25 PG16 & Ledger Ops',
+    description: '20-stage PostgreSQL 16 migrator, 0-variance parity reconciliation, ledger state machine, concurrency lock, outbox & jobs.',
+    route: '/v25-postgres-migration',
+    legacyRoutes: ['/v25/postgres'],
+    parentId: 'v25-command-centre',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'Database',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v25', 'postgres', 'schema 23', 'migration', 'ledger', 'outbox', 'dlq', 'jobs'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v25-developer-platform',
+    label: 'V25 APIs, Vault & Security',
+    description: 'OpenAPI 3.1 APIs, scoped API keys, HMAC webhooks, Private Document Vault, 6-stage security incidents & governance plans.',
+    route: '/v25-developer-platform',
+    legacyRoutes: ['/v25/developer', '/v25/vault'],
+    parentId: 'v25-command-centre',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'FileLock2',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v25', 'openapi', 'api keys', 'webhooks', 'vault', 'incidents', 'billing', 'search'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v26-hub',
+    label: 'V26 Activation Command Hub',
+    description: 'Unified onboarding, connected E2E commerce workflows, country/workspace switching & 34-flag readiness matrix.',
+    route: '/v26-hub',
+    legacyRoutes: ['/v26', '/activation-hub'],
+    parentId: 'home',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'Sparkles',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v26', 'activation', 'workflow', 'onboarding', 'business', 'readiness', 'e2e'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v27-network-hub',
+    label: 'Universal Economic Network (V27)',
+    description: 'Connected multi-sector network directory, privacy controls, relationships, referrals & economic activity graph.',
+    route: '/network/hub',
+    legacyRoutes: ['/network-hub', '/v27-network'],
+    parentId: 'home',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'Network',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v27', 'economic network', 'participants', 'graph', 'relationships', 'referrals'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v27-discover',
+    label: 'Network Discovery Search',
+    description: 'Unified privacy-filtered search across verified participants, capabilities & economic opportunities.',
+    route: '/network/discover',
+    legacyRoutes: ['/v27-discover'],
+    parentId: 'v27-network-hub',
+    groupId: 'DISCOVER_MARKETPLACE',
+    groupLabel: 'Discover & Marketplace',
+    iconName: 'Search',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v27', 'search', 'discover', 'saved searches', 'filter'],
+  },
+  {
+    id: 'v27-participants',
+    label: 'Network Participants Directory',
+    description: 'Multi-sector individual, business, cooperative & institutional network profiles with privacy scopes.',
+    route: '/network/participants',
+    parentId: 'v27-network-hub',
+    groupId: 'BUSINESS_ENTERPRISE',
+    groupLabel: 'Business & Enterprise',
+    iconName: 'Users',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['participants', 'directory', 'privacy', 'profiles', 'v27'],
+  },
+  {
+    id: 'v27-relationships',
+    label: 'Network Relationships & Graph',
+    description: 'Trading partner invitations, approved counterparties, referrals & Economic Activity Graph.',
+    route: '/network/relationships',
+    parentId: 'v27-network-hub',
+    groupId: 'BUSINESS_ENTERPRISE',
+    groupLabel: 'Business & Enterprise',
+    iconName: 'Share2',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['relationships', 'partners', 'graph', 'referrals', 'v27'],
+  },
+  {
+    id: 'v27-opportunities',
+    label: 'Economic Opportunity Exchange',
+    description: 'Publish buy requests, supply offers, tenders & freight contracts; submit proposals & award RFQs.',
+    route: '/network/opportunities',
+    legacyRoutes: ['/economic-opportunities'],
+    parentId: 'v27-network-hub',
+    groupId: 'DISCOVER_MARKETPLACE',
+    groupLabel: 'Discover & Marketplace',
+    iconName: 'Briefcase',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['opportunities', 'exchange', 'tenders', 'proposals', 'rfq', 'v27'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v27-matching',
+    label: 'Explainable Matching Engine',
+    description: 'Transparent multi-factor counterparty & opportunity matching with user feedback (paid ads excluded).',
+    route: '/network/matching',
+    parentId: 'v27-network-hub',
+    groupId: 'DISCOVER_MARKETPLACE',
+    groupLabel: 'Discover & Marketplace',
+    iconName: 'GitCompare',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['matching', 'recommendations', 'explainable', 'scoring', 'v27'],
+  },
+  {
+    id: 'v27-suppliers',
+    label: 'Supplier Capabilities Directory',
+    description: 'Explore supplier production capabilities separating user-declared vs independently verified capacity.',
+    route: '/network/suppliers',
+    parentId: 'v27-network-hub',
+    groupId: 'DISCOVER_MARKETPLACE',
+    groupLabel: 'Discover & Marketplace',
+    iconName: 'PackageCheck',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['suppliers', 'capabilities', 'verified capacity', 'v27'],
+  },
+  {
+    id: 'v27-buyers',
+    label: 'Buyer Requirements & Offtake',
+    description: 'Browse verified buyer volume requirements, quality specs & corridor delivery schedules.',
+    route: '/network/buyers',
+    parentId: 'v27-network-hub',
+    groupId: 'TRADE_COMMERCIAL',
+    groupLabel: 'Trade & Orders',
+    iconName: 'ShoppingBag',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['buyers', 'offtake', 'requirements', 'demand', 'v27'],
+  },
+  {
+    id: 'v27-trust',
+    label: 'Trust, Verification & Reputation',
+    description: 'Evidence-backed verification provenance, transaction-linked reviews, appeals & trust moderation.',
+    route: '/network/trust',
+    parentId: 'v27-network-hub',
+    groupId: 'TRUST_VERIFICATION',
+    groupLabel: 'Trust & Compliance',
+    iconName: 'ShieldCheck',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['trust', 'verification', 'reputation', 'reviews', 'appeals', 'v27'],
+  },
+  {
+    id: 'v27-analytics',
+    label: 'Network Growth & Outcome Metrics',
+    description: 'Multi-country network expansion, referral attribution & outcome telemetry with explicit provenance.',
+    route: '/network/analytics',
+    parentId: 'v27-network-hub',
+    groupId: 'INTELLIGENCE_RESILIENCE',
+    groupLabel: 'Intelligence & Prices',
+    iconName: 'TrendingUp',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['analytics', 'outcomes', 'referrals', 'growth', 'v27'],
+  },
+  {
+    id: 'v27-economic-intelligence',
+    label: 'Economic Intelligence Centre (V27)',
+    description: 'Cross-sector intelligence, EAC country matrix & grounded AI advisor blocking autonomous actions.',
+    route: '/economic-intelligence',
+    parentId: 'v27-network-hub',
+    groupId: 'INTELLIGENCE_RESILIENCE',
+    groupLabel: 'Intelligence & Prices',
+    iconName: 'BrainCircuit',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['intelligence', 'ai advisor', 'eac', 'afcfta', 'provenance', 'v27'],
+  },
+  {
+    id: 'v27-crm',
+    label: 'Commercial Pipeline, CRM & Promotions',
+    description: 'Organisation-isolated CRM pipeline, sponsored promotions & commercial coordination threads.',
+    route: '/crm',
+    legacyRoutes: ['/network/crm'],
+    parentId: 'v27-network-hub',
+    groupId: 'BUSINESS_ENTERPRISE',
+    groupLabel: 'Business & Enterprise',
+    iconName: 'ClipboardList',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['crm', 'leads', 'pipeline', 'promotions', 'messaging', 'v27'],
+  },
+  {
+    id: 'v27-pilot-operations',
+    label: 'Controlled Pilot Operations (V27)',
+    description: 'Pilot cohort activation checklists enforcing field sign-off before non-simulated ACTIVE status.',
+    route: '/pilot-operations',
+    legacyRoutes: ['/network/pilots'],
+    parentId: 'v18-control-center',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Flag',
+    requiredRoles: ['COOPERATIVE_ADMIN', 'PLATFORM_ADMIN'],
+    minExperienceMode: 'PROFESSIONAL',
+    availability: 'ADMIN_ONLY',
+    keywords: ['pilot', 'cohort', 'rollout', 'governance', 'v27'],
+  },
+  {
+    id: 'v27-field-operations',
+    label: 'Field Validation & Offline Sync',
+    description: 'Field officer verification assignments, offline inspection queue & supervisor review.',
+    route: '/field-operations',
+    legacyRoutes: ['/network/field'],
+    parentId: 'v18-control-center',
+    groupId: 'LOGISTICS_SUPPLY',
+    groupLabel: 'Logistics & Corridors',
+    iconName: 'MapPin',
+    requiredRoles: ['AGRO_DEALER', 'COOPERATIVE_ADMIN', 'TRANSPORTER', 'PLATFORM_ADMIN'],
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['field validation', 'officer', 'offline', 'inspection', 'v27'],
+  },
+  {
+    id: 'v27-integration-centre',
+    label: 'Integration & Moderation Governance',
+    description: 'External partner lifecycle gating LIVE status behind credentials/audit & trust moderation desk.',
+    route: '/integration-centre',
+    legacyRoutes: ['/network/integrations'],
+    parentId: 'v18-control-center',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Plug',
+    requiredRoles: ADMIN_ONLY_ROLES,
+    minExperienceMode: 'ADMINISTRATOR',
+    availability: 'ADMIN_ONLY',
+    keywords: ['integration', 'partners', 'moderation', 'governance', 'v27'],
+  },
+  // V28 Universal Economic Execution, Interoperability & Continental Operations (20 Routes)
+  {
+    id: 'v28-execution-hub',
+    label: 'Universal Execution Hub (V28)',
+    description: 'End-to-end execution workflow state machine (DISCOVER -> EVALUATE), unified workspace summary & readiness.',
+    route: '/v28/execution',
+    legacyRoutes: ['/v28', '/execution'],
+    parentId: 'home',
+    groupId: 'HOME_PERSONAL',
+    groupLabel: 'Home & Personal',
+    iconName: 'Workflow',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'execution', 'workflow', 'state machine', 'continental'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v28-workspace',
+    label: '18-Section Entity Workspace (V28)',
+    description: 'Universal individual, SME, cooperative, carrier & institutional 18-section operational profile workspace.',
+    route: '/v28/workspace',
+    parentId: 'v28-execution-hub',
+    groupId: 'BUSINESS_ENTERPRISE',
+    groupLabel: 'Business & Enterprise',
+    iconName: 'Building2',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'workspace', '18 sections', 'participant', 'enterprise'],
+  },
+  {
+    id: 'v28-contracts',
+    label: 'Contracts & Milestones (V28)',
+    description: 'Commercial contracts, versioned terms, dual-party acknowledgment & milestone tracking (sandbox non-eIDAS).',
+    route: '/v28/contracts',
+    parentId: 'v28-execution-hub',
+    groupId: 'TRADE_COMMERCIAL',
+    groupLabel: 'Trade & Orders',
+    iconName: 'ScrollText',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'contracts', 'agreements', 'milestones', 'sha256'],
+  },
+  {
+    id: 'v28-obligations',
+    label: 'Contractual Obligations (V28)',
+    description: 'Deliverable, payment & inspection obligations linked cleanly to V28 contracts and settlement references.',
+    route: '/v28/obligations',
+    parentId: 'v28-contracts',
+    groupId: 'TRADE_COMMERCIAL',
+    groupLabel: 'Trade & Orders',
+    iconName: 'CheckCircle2',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'obligations', 'milestones', 'deliverables'],
+  },
+  {
+    id: 'v28-procurement',
+    label: 'Enterprise Procurement (V28)',
+    description: 'Annual procurement plans, requisitions, COI declarations, supplier evaluation & 3-way match checks.',
+    route: '/v28/procurement',
+    parentId: 'v28-execution-hub',
+    groupId: 'TRADE_COMMERCIAL',
+    groupLabel: 'Trade & Orders',
+    iconName: 'ClipboardList',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'procurement', 'requisitions', '3-way match', 'coi'],
+  },
+  {
+    id: 'v28-procurement-approvals',
+    label: 'Procurement SoD Approvals (V28)',
+    description: 'Segregation-of-Duties approval desk blocking requester self-approval and COI conflicts.',
+    route: '/v28/procurement/approvals',
+    parentId: 'v28-procurement',
+    groupId: 'TRADE_COMMERCIAL',
+    groupLabel: 'Trade & Orders',
+    iconName: 'ShieldCheck',
+    requiredRoles: ENTERPRISE_ROLES,
+    minExperienceMode: 'PROFESSIONAL',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'sod', 'approvals', 'procurement', 'governance'],
+  },
+  {
+    id: 'v28-fulfilment',
+    label: 'Connected Fulfilment (V28)',
+    description: 'Carrier execution plans, waypoint progression & shipment proof (without live GPS telemetry claims).',
+    route: '/v28/fulfilment',
+    parentId: 'v28-execution-hub',
+    groupId: 'LOGISTICS_SUPPLY',
+    groupLabel: 'Logistics & Corridors',
+    iconName: 'Truck',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'fulfilment', 'shipment', 'delivery', 'logistics'],
+  },
+  {
+    id: 'v28-inventory',
+    label: 'Inventory Reservations (V28)',
+    description: 'Available-to-promise reservations enforcing non-negative stock guards and return restoration.',
+    route: '/v28/inventory',
+    parentId: 'v28-fulfilment',
+    groupId: 'LOGISTICS_SUPPLY',
+    groupLabel: 'Logistics & Corridors',
+    iconName: 'PackageCheck',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'inventory', 'reservations', 'atp', 'stock'],
+  },
+  {
+    id: 'v28-cross-border',
+    label: 'Cross-Border Operations (V28)',
+    description: 'EAC & AfCFTA 7-country readiness profiles, export document checklists & corridor workflows.',
+    route: '/v28/cross-border',
+    parentId: 'v28-execution-hub',
+    groupId: 'LOGISTICS_SUPPLY',
+    groupLabel: 'Logistics & Corridors',
+    iconName: 'Globe',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'cross-border', 'corridors', 'eac', 'afcfta'],
+  },
+  {
+    id: 'v28-wallet-coordination',
+    label: 'Wallet Coordination & Reversals (V28)',
+    description: 'Integer minor-unit idempotent sandbox transfers, escrow releases & compensating reversals.',
+    route: '/v28/wallet-coordination',
+    parentId: 'v28-execution-hub',
+    groupId: 'FINANCIAL_COORDINATION',
+    groupLabel: 'Finance & Accounting',
+    iconName: 'Wallet',
+    requiredRoles: COMMERCIAL_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'SANDBOX_ONLY',
+    keywords: ['v28', 'wallet', 'sandbox', 'idempotent', 'reversal'],
+  },
+  {
+    id: 'v28-interoperability',
+    label: 'Interoperability Gateway (V28)',
+    description: '12 connector categories, 9 lifecycle states, dual-approval ACTIVE gate & HMAC-SHA256 webhook verification.',
+    route: '/v28/interoperability',
+    parentId: 'v28-execution-hub',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Plug',
+    requiredRoles: ENTERPRISE_ROLES,
+    minExperienceMode: 'PROFESSIONAL',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'interoperability', 'connectors', 'hmac', 'webhooks'],
+  },
+  {
+    id: 'v28-events',
+    label: 'Domain Events & DLQ Replay (V28)',
+    description: 'Outbox domain event stream, dead-letter queue inspection and safe idempotent replay.',
+    route: '/v28/events',
+    parentId: 'v28-interoperability',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Activity',
+    requiredRoles: ENTERPRISE_ROLES,
+    minExperienceMode: 'PROFESSIONAL',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'events', 'dlq', 'replay', 'outbox'],
+  },
+  {
+    id: 'v28-vault',
+    label: 'Document & Evidence Vault (V28)',
+    description: 'SHA-256 checksummed records, immutable access logs and legal hold protection against premature purge.',
+    route: '/v28/vault',
+    parentId: 'v28-execution-hub',
+    groupId: 'TRUST_VERIFICATION',
+    groupLabel: 'Trust & Compliance',
+    iconName: 'FileLock2',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'vault', 'evidence', 'legal hold', 'sha256'],
+  },
+  {
+    id: 'v28-intelligence',
+    label: 'Continental Intelligence (V28)',
+    description: '6-category data provenance & k-anonymity (k >= 3) protected cross-corridor economic metrics.',
+    route: '/v28/intelligence',
+    parentId: 'v28-execution-hub',
+    groupId: 'INTELLIGENCE_RESILIENCE',
+    groupLabel: 'Intelligence & Prices',
+    iconName: 'TrendingUp',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'intelligence', 'provenance', 'k-anonymity', 'continental'],
+  },
+  {
+    id: 'v28-ai-orchestrator',
+    label: 'Guarded AI Orchestrator (V28)',
+    description: 'Human-checkpointed AI operational drafts blocking prompt injection and autonomous value movement.',
+    route: '/v28/ai',
+    parentId: 'v28-intelligence',
+    groupId: 'INTELLIGENCE_RESILIENCE',
+    groupLabel: 'Intelligence & Prices',
+    iconName: 'BrainCircuit',
+    requiredRoles: ENTERPRISE_ROLES,
+    minExperienceMode: 'PROFESSIONAL',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'ai', 'orchestrator', 'guardrails', 'human checkpoint'],
+  },
+  {
+    id: 'v28-control-centre',
+    label: 'Continental Ops Control Centre (V28)',
+    description: 'Platform-wide operational exception triage, Schema 26 integrity & 27-flag truthful readiness matrix.',
+    route: '/v28/control-centre',
+    parentId: 'v18-control-center',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Server',
+    requiredRoles: ADMIN_ONLY_ROLES,
+    minExperienceMode: 'ADMINISTRATOR',
+    availability: 'ADMIN_ONLY',
+    keywords: ['v28', 'control centre', 'exceptions', 'readiness', 'ops'],
+  },
+  {
+    id: 'v28-dual-approvals',
+    label: 'Dual-Approval SoD Desk (V28)',
+    description: 'Two-person authorization enforcement preventing requester self-approval across sensitive transitions.',
+    route: '/v28/dual-approvals',
+    parentId: 'v28-control-centre',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Lock',
+    requiredRoles: ADMIN_ONLY_ROLES,
+    minExperienceMode: 'ADMINISTRATOR',
+    availability: 'ADMIN_ONLY',
+    keywords: ['v28', 'dual approval', 'sod', 'governance', 'authorization'],
+  },
+  {
+    id: 'v28-field-offline',
+    label: 'Field Offline Sync & Conflicts (V28)',
+    description: 'Version-checked offline capture detecting stale edits into explicit CONFLICT review instead of silent overwrite.',
+    route: '/v28/field-offline',
+    parentId: 'v28-execution-hub',
+    groupId: 'LOGISTICS_SUPPLY',
+    groupLabel: 'Logistics & Corridors',
+    iconName: 'MapPin',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'STANDARD',
+    availability: 'AVAILABLE',
+    keywords: ['v28', 'field', 'offline', 'conflict', 'sync'],
+  },
+  {
+    id: 'v28-security',
+    label: 'Security & Truthfulness Governance (V28)',
+    description: 'Security controls, legal-hold posture, RBAC guardrails & 9 mandatory pre-production honesty flags.',
+    route: '/v28/security',
+    parentId: 'v28-control-centre',
+    groupId: 'TRUST_VERIFICATION',
+    groupLabel: 'Trust & Compliance',
+    iconName: 'Eye',
+    requiredRoles: ADMIN_ONLY_ROLES,
+    minExperienceMode: 'ADMINISTRATOR',
+    availability: 'ADMIN_ONLY',
+    keywords: ['v28', 'security', 'rbac', 'truthfulness', 'compliance'],
+  },
+  {
+    id: 'v28-repository-health',
+    label: 'GitHub & Sync Diagnostics (V28)',
+    description: 'Honest local repository diagnostics, CI workflow repair status, .gitignore vault exclusion & export SHA-256 checks.',
+    route: '/v28/repository-health',
+    parentId: 'v28-control-centre',
+    groupId: 'NETWORK_ADMIN',
+    groupLabel: 'System & Network Admin',
+    iconName: 'Database',
+    requiredRoles: ADMIN_ONLY_ROLES,
+    minExperienceMode: 'ADMINISTRATOR',
+    availability: 'ADMIN_ONLY',
+    keywords: ['v28', 'github', 'sync', 'ci', 'repository', 'export'],
+  },
 
   // B. Discover & Marketplace
   {
@@ -499,6 +1081,22 @@ export const NAVIGATION_REGISTRY: V18NavItem[] = [
     minExperienceMode: 'SIMPLE',
     availability: 'AVAILABLE',
     keywords: ['workspace', 'role dashboard', 'operations', 'daily view'],
+    showInMobileMore: true,
+  },
+  {
+    id: 'v26-reports',
+    label: 'Reports, Exports & Document Vault',
+    description: 'Downloadable CSV, JSON & PDF reports, expiring share links, and verifiable document vault access.',
+    route: '/reports',
+    legacyRoutes: ['/v26-reports', '/documents/vault'],
+    parentId: 'business-simple',
+    groupId: 'BUSINESS_ENTERPRISE',
+    groupLabel: 'Business & Enterprise',
+    iconName: 'FileText',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['reports', 'csv', 'pdf', 'export', 'vault', 'documents', 'share'],
     showInMobileMore: true,
   },
   {
@@ -1423,6 +2021,22 @@ export const NAVIGATION_REGISTRY: V18NavItem[] = [
     keywords: ['account', 'settings', 'language', 'accessibility', 'contrast', 'text size', 'offline'],
     isPrimaryMobile: true,
   },
+  {
+    id: 'v26-audit',
+    label: 'Control Audit & Route Inventory',
+    description: 'Live interactive control audit registry, 98+ route inventory, workflow coverage & Schema 24 migration check.',
+    route: '/v26-audit',
+    legacyRoutes: ['/audit', '/route-inventory'],
+    parentId: 'help',
+    groupId: 'HELP_ACCOUNT',
+    groupLabel: 'Help, Tasks & Account',
+    iconName: 'CheckCircle2',
+    requiredRoles: ALL_USER_ROLES,
+    minExperienceMode: 'SIMPLE',
+    availability: 'AVAILABLE',
+    keywords: ['audit', 'routes', 'controls', 'schema 24', 'inventory', 'v26'],
+    showInMobileMore: true,
+  },
 ];
 
 export function normalizeRoutePath(rawPath: string): string {
@@ -1531,3 +2145,275 @@ export function searchNavRegistry(
     .slice(0, limit)
     .map((x) => x.item);
 }
+
+// ==========================================
+// V29.0 ORGANIZED 6-CATEGORY MENU & AUDIENCE SEPARATION
+// Preserves all 133 canonical routes while separating ordinary user tools from admin/developer consoles
+// ==========================================
+
+export type V29MenuCategoryId =
+  | 'BUSINESS'
+  | 'TRADE'
+  | 'FINANCE'
+  | 'NETWORK'
+  | 'SUPPORT'
+  | 'ADMINISTRATION';
+
+export interface V29MenuCategory {
+  id: V29MenuCategoryId;
+  label: string;
+  description: string;
+  items: Array<V18NavItem & { displayLabel: string }>;
+}
+
+const V29_ADMIN_OR_TECHNICAL_IDS = new Set<string>([
+  'v26-hub',
+  'v26-audit',
+  'v25-command-centre',
+  'v25-enterprise-org',
+  'v25-postgres-migration',
+  'v25-developer-platform',
+  'v28-control-centre',
+  'v28-dual-approvals',
+  'v28-interoperability',
+  'v28-events',
+  'v28-security',
+  'v28-repository-health',
+  'v28-intelligence',
+  'v28-ai-orchestrator',
+  'v27-pilot-operations',
+  'v27-integration-centre',
+  'v23-wallet-admin',
+  'operations-hub',
+  'v24-execution-hub',
+  'workflow-orchestration',
+  'v18-control-center',
+  'v20-pilots',
+  'v21-command-centre',
+  'v19-diagnostics',
+  'v17-control-center',
+  'v16-control-center',
+  'global-operations',
+  'v13-infrastructure',
+  'universal-overview',
+  'global-network',
+  'global-execution',
+  'global-federation',
+  'integration-adapters',
+  'events',
+  'developer',
+  'performance',
+  'admin',
+  'tests',
+  'compliance',
+  'fraud-jurisdiction',
+  'regional',
+  'global-intelligence',
+  'observatory',
+  'universal-commerce',
+]);
+
+const V29_PLAIN_LABELS: Record<string, string> = {
+  home: 'Home',
+  explore: 'Explore Marketplace',
+  'v22-discover': 'Economic Sectors (28+)',
+  'v22-overview': 'Universal Economy Hub',
+  'v22-marketplace': 'Goods & Services Market',
+  marketplace: 'Commodities & Bulk Trade',
+  'v24-marketplace-rfq': 'RFQs & Trade Agreements',
+  activity: 'My Orders & Activity',
+  orders: 'Order Lifecycle & Delivery',
+  'v24-orders-inventory': 'Orders & Stock Inventory',
+  'business-simple': 'My Business',
+  'v22-businesses': 'Businesses & Skilled Artisans',
+  dashboard: 'Operations Workspace',
+  'v26-reports': 'Reports & Documents',
+  'v22-procurement': 'Procurement & Projects',
+  'v24-procurement-logistics': 'Logistics & Supply Projects',
+  'v24-documents-settlement': 'Trade Documents & Settlement',
+  'v23-wallet': 'Universal Wallet',
+  'v23-merchant': 'Merchant QR Pay',
+  'v23-cards': 'ECONEX Cards',
+  'v23-country-network': 'Country & Corridor Network',
+  payments: 'Payments & Escrow',
+  'v22-finance-intel': 'Invoicing & Currency Rates',
+  'v27-network-hub': 'Business Network',
+  'v27-participants': 'Network Members',
+  'v27-relationships': 'Partner Relationships',
+  'v27-analytics': 'Network Growth & Outcomes',
+  'v27-discover': 'Discover Counterparties',
+  'discovery-matching': 'Partner Matching',
+  opportunities: 'Opportunities & Tenders',
+  'v27-opportunities': 'Opportunity Exchange',
+  'v27-matching': 'Partner Matching',
+  'v27-suppliers': 'Verified Suppliers',
+  'v27-buyers': 'Buyer Requirements',
+  'v27-crm': 'Customer & Deal Pipeline',
+  'v27-economic-intelligence': 'Sector Market Insights',
+  'v27-field-operations': 'Field Operations & Checks',
+  'economic-network': 'Partner Graph',
+  'trust-identity': 'Verification & Trust',
+  'v27-trust': 'Trust & Reputation',
+  'prices-simple': 'Market Prices',
+  help: 'Help & Support Centre',
+  tasks: 'Tasks & Action Queue',
+  messages: 'Messages & Alerts',
+  account: 'Account & Language',
+  logistics: 'Transport & Haulage',
+  corridors: 'Cross-Border Corridors',
+  'farmer-simple': 'Producer & Farm Hub',
+  'agro-dealer': 'Inputs & Equipment',
+  warehouses: 'Warehouses & Storage',
+  work: 'Work & Services',
+  'work-income': 'Work, Payroll & Services',
+  'v21-field-ops': 'Field Operations',
+  'v28-execution-hub': 'Commercial Execution Desk',
+  'v28-workspace': 'Role Workspace',
+  'v28-contracts': 'Contracts & Agreements',
+  'v28-obligations': 'Trade Obligations',
+  'v28-procurement': 'Procurement Orders',
+  'v28-procurement-approvals': 'Procurement Approvals',
+  'v28-fulfilment': 'Fulfilment & Delivery',
+  'v28-inventory': 'Stock & Warehousing',
+  'v28-cross-border': 'Cross-Border & Customs',
+  'v28-wallet-coordination': 'Escrow & Wallet Milestones',
+  'v28-vault': 'Document Vault',
+  'v28-field-offline': 'Offline Field Sync',
+};
+
+export function getV29DisplayLabel(item: V18NavItem): string {
+  return V29_PLAIN_LABELS[item.id] || item.label.replace(/\s*\(V\d+(?:\.\d+)?\)/g, '');
+}
+
+export function isV29AdminOrTechnicalRoute(item: V18NavItem): boolean {
+  return (
+    item.groupId === 'NETWORK_ADMIN' ||
+    item.availability === 'ADMIN_ONLY' ||
+    item.minExperienceMode === 'ADMINISTRATOR' ||
+    V29_ADMIN_OR_TECHNICAL_IDS.has(item.id)
+  );
+}
+
+export function resolveV29MenuCategory(item: V18NavItem): V29MenuCategoryId {
+  if (isV29AdminOrTechnicalRoute(item)) return 'ADMINISTRATION';
+
+  if (
+    item.groupId === 'HELP_ACCOUNT' ||
+    item.id === 'tasks' ||
+    item.id === 'messages'
+  ) {
+    return 'SUPPORT';
+  }
+  if (
+    item.groupId === 'FINANCIAL_COORDINATION' ||
+    item.id === 'v28-wallet-coordination'
+  ) {
+    return 'FINANCE';
+  }
+  if (
+    item.groupId === 'DISCOVER_MARKETPLACE' ||
+    item.groupId === 'TRADE_COMMERCIAL' ||
+    item.groupId === 'LOGISTICS_SUPPLY' ||
+    item.id === 'v27-field-operations' ||
+    item.id === 'v28-execution-hub' ||
+    item.id === 'v28-contracts' ||
+    item.id === 'v28-obligations' ||
+    item.id === 'v28-procurement' ||
+    item.id === 'v28-procurement-approvals' ||
+    item.id === 'v28-fulfilment' ||
+    item.id === 'v28-inventory' ||
+    item.id === 'v28-cross-border' ||
+    item.id === 'v28-field-offline'
+  ) {
+    return 'TRADE';
+  }
+  if (
+    item.id === 'v27-network-hub' ||
+    item.id === 'v27-discover' ||
+    item.id === 'v27-participants' ||
+    item.id === 'v27-relationships' ||
+    item.id === 'v27-analytics' ||
+    item.id === 'v27-matching' ||
+    item.id === 'v27-suppliers' ||
+    item.id === 'v27-trust' ||
+    item.id === 'v27-economic-intelligence' ||
+    item.id === 'v28-vault' ||
+    item.id === 'economic-network' ||
+    item.id === 'trust-identity' ||
+    item.id === 'v21-onboarding' ||
+    item.groupId === 'INTELLIGENCE_RESILIENCE'
+  ) {
+    return 'NETWORK';
+  }
+  return 'BUSINESS';
+}
+
+export function getV29MenuCategories(
+  role: UserRole,
+  mode: ExperienceModeLevel,
+  options?: { includeTechnicalForAdmin?: boolean }
+): V29MenuCategory[] {
+  const isAdmin = role === 'PLATFORM_ADMIN';
+  const showAdminCategory = isAdmin && (mode === 'ADMINISTRATOR' || options?.includeTechnicalForAdmin === true);
+
+  const defs: Record<V29MenuCategoryId, { label: string; description: string }> = {
+    BUSINESS: {
+      label: 'Business',
+      description: 'Manage your workspace, listings, operations, projects, and reports',
+    },
+    TRADE: {
+      label: 'Trade',
+      description: 'Explore 28+ sectors, buy & sell, track orders, procurement, and delivery',
+    },
+    FINANCE: {
+      label: 'Finance',
+      description: 'Universal wallet, sandbox transfers, invoicing, and currency overview',
+    },
+    NETWORK: {
+      label: 'Network',
+      description: 'Connect with verified partners, trust profiles, prices, and opportunities',
+    },
+    SUPPORT: {
+      label: 'Support',
+      description: 'Plain-language guides, tasks, messages, language, and account settings',
+    },
+    ADMINISTRATION: {
+      label: 'Administration',
+      description: 'Platform governance, diagnostics, system audits, and developer documentation',
+    },
+  };
+
+  const order: V29MenuCategoryId[] = showAdminCategory
+    ? ['BUSINESS', 'TRADE', 'FINANCE', 'NETWORK', 'SUPPORT', 'ADMINISTRATION']
+    : ['BUSINESS', 'TRADE', 'FINANCE', 'NETWORK', 'SUPPORT'];
+
+  const buckets: Record<V29MenuCategoryId, Array<V18NavItem & { displayLabel: string }>> = {
+    BUSINESS: [],
+    TRADE: [],
+    FINANCE: [],
+    NETWORK: [],
+    SUPPORT: [],
+    ADMINISTRATION: [],
+  };
+
+  for (const item of NAVIGATION_REGISTRY) {
+    if (!hasRolePermission(item, role)) continue;
+    const cat = resolveV29MenuCategory(item);
+    if (cat === 'ADMINISTRATION' && !showAdminCategory) continue;
+    if (cat !== 'ADMINISTRATION' && !meetsExperienceMode(item, mode)) continue;
+    buckets[cat].push({
+      ...item,
+      displayLabel: getV29DisplayLabel(item),
+    });
+  }
+
+  return order
+    .map((id) => ({
+      id,
+      label: defs[id].label,
+      description: defs[id].description,
+      items: buckets[id],
+    }))
+    .filter((cat) => cat.items.length > 0);
+}
+

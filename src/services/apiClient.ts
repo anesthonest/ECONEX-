@@ -5718,6 +5718,1772 @@ export class ApiClient {
       body: JSON.stringify({}),
     });
   }
+
+  // ==========================================
+  // V24 UNIVERSAL COMMERCE, SUPPLY CHAIN & EXECUTION NETWORK
+  // ==========================================
+
+  static async v24GetSectors() {
+    return this.v12Json('/api/v24/sectors', { headers: this.v12Headers() });
+  }
+
+  static async v24GetCorridors() {
+    return this.v12Json('/api/v24/corridors', { headers: this.v12Headers() });
+  }
+
+  static async v24GetReadinessMatrix() {
+    return this.v12Json('/api/v24/readiness-matrix', { headers: this.v12Headers() });
+  }
+
+  static async v24GetParticipants(
+    filters?: { sectorId?: string; countryCode?: string; organizationType?: string; verificationStatus?: string },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const qs = new URLSearchParams();
+    if (filters?.sectorId) qs.set('sectorId', filters.sectorId);
+    if (filters?.countryCode) qs.set('countryCode', filters.countryCode);
+    if (filters?.organizationType) qs.set('organizationType', filters.organizationType);
+    if (filters?.verificationStatus) qs.set('verificationStatus', filters.verificationStatus);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return this.v12Json(`/api/v24/participants${suffix}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v24RegisterParticipant(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/participants', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetListings(filters?: {
+    keyword?: string;
+    q?: string;
+    sectorId?: string;
+    countryCode?: string;
+    listingType?: string;
+    verifiedOnly?: boolean;
+    deliveryAvailable?: boolean;
+    maxPriceMinor?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (filters?.keyword) qs.set('keyword', filters.keyword);
+    if (filters?.q) qs.set('q', filters.q);
+    if (filters?.sectorId) qs.set('sectorId', filters.sectorId);
+    if (filters?.countryCode) qs.set('countryCode', filters.countryCode);
+    if (filters?.listingType) qs.set('listingType', filters.listingType);
+    if (filters?.verifiedOnly) qs.set('verifiedOnly', 'true');
+    if (filters?.deliveryAvailable) qs.set('deliveryAvailable', 'true');
+    if (filters?.maxPriceMinor !== undefined) qs.set('maxPriceMinor', String(filters.maxPriceMinor));
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return this.v12Json(`/api/v24/listings${suffix}`, { headers: this.v12Headers() });
+  }
+
+  static async v24CreateListing(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/listings', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetSavedSearches(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/saved-searches', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24SaveSearch(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/saved-searches', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetRfqs(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/rfqs', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateRfq(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/rfqs', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetQuotations(rfqId?: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    const suffix = rfqId ? `?rfqId=${encodeURIComponent(rfqId)}` : '';
+    return this.v12Json(`/api/v24/quotations${suffix}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v24SubmitQuotation(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/quotations', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24DecideQuotation(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/quotations/${encodeURIComponent(id)}/decide`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetNegotiations(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/negotiations', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24PostNegotiationMessage(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/negotiations/messages', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetAgreements(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/agreements', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateAgreement(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/agreements', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24TransitionAgreement(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/agreements/${encodeURIComponent(id)}/transition`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetOrders(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/orders', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateOrder(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/orders', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24TransitionOrder(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/orders/${encodeURIComponent(id)}/transition`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetWarehouses(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/warehouses', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24GetInventory(warehouseId?: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    const suffix = warehouseId ? `?warehouseId=${encodeURIComponent(warehouseId)}` : '';
+    return this.v12Json(`/api/v24/inventory${suffix}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v24ReceiveInventory(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/inventory/receive', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24AdjustInventory(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/inventory/adjust', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetInventoryMovements(
+    inventoryItemId?: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    const suffix = inventoryItemId ? `?inventoryItemId=${encodeURIComponent(inventoryItemId)}` : '';
+    return this.v12Json(`/api/v24/inventory/movements${suffix}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v24ReconcileInventory(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/inventory/reconcile', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24GetProcurementRequests(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/procurement', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateProcurementRequest(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/procurement', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24ApproveProcurementRequest(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/procurement/${encodeURIComponent(id)}/approve`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetPurchaseOrders(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/purchase-orders', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24PerformThreeWayMatch(
+    poId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/purchase-orders/${encodeURIComponent(poId)}/three-way-match`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetBoms(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/boms', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24GetProductionOrders(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/production-orders', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24ExecuteProductionBatch(
+    poId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/production-orders/${encodeURIComponent(poId)}/execute`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetShipments(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/shipments', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateShipment(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/shipments', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24TransitionShipment(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/shipments/${encodeURIComponent(id)}/transition`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetDocuments(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/documents', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateDocument(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/documents', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24ShareDocument(
+    docId: string,
+    ttlHours: number,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/documents/${encodeURIComponent(docId)}/share`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({ ttlHours }),
+    });
+  }
+
+  static async v24GetObligations(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/obligations', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24PayObligation(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/obligations/${encodeURIComponent(id)}/pay`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24RefundObligation(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/obligations/${encodeURIComponent(id)}/refund`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetProjects(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/projects', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24CreateProject(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/projects', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24TransitionMilestone(
+    projectId: string,
+    milestoneId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(
+      `/api/v24/projects/${encodeURIComponent(projectId)}/milestones/${encodeURIComponent(milestoneId)}/transition`,
+      {
+        method: 'POST',
+        headers: this.v12Headers(actor),
+        body: JSON.stringify(payload),
+      }
+    );
+  }
+
+  static async v24GetReviews(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/reviews', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24SubmitReview(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/reviews', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24AppealReview(
+    reviewId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/reviews/${encodeURIComponent(reviewId)}/appeal`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetTrustProfile(
+    participantId: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/trust/${encodeURIComponent(participantId)}`, {
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v24GetThreads(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/threads', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24PostThreadMessage(
+    threadId: string,
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v24/threads/${encodeURIComponent(threadId)}/messages`, {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetOfflineDrafts(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/offline-drafts', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24SyncOfflineDraft(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/offline-drafts/sync', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetIntelligence(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/intelligence', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24Search(q: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v24/search?q=${encodeURIComponent(q)}`, { headers: this.v12Headers(actor) });
+  }
+
+  static async v24AskAiAssist(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/ai/assist', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24GetApiCredentials(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/api-credentials', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24IssueApiCredential(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/api-credentials', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24RevokeApiCredential(id: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v24/api-credentials/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: this.v12Headers(actor),
+    });
+  }
+
+  static async v24GetWebhooks(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/webhooks', { headers: this.v12Headers(actor) });
+  }
+
+  static async v24DeliverWebhook(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v24/webhooks/deliver', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v24RunPostgresAudit(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/postgres-audit', {
+      method: 'POST',
+      headers: this.v12Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v24GetRollbackReadiness(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v24/rollback-readiness', { headers: this.v12Headers(actor) });
+  }
+
+  // ==========================================
+  // V25 CONTINENTAL INFRASTRUCTURE & SOVEREIGN PLATFORM
+  // ==========================================
+
+  private static v25Headers(
+    actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ): Record<string, string> {
+    const base = this.v12Headers(actor);
+    if (actor?.organisationId) base['x-org-id'] = actor.organisationId;
+    if (actor?.countryCode) base['x-country-code'] = actor.countryCode;
+    return base;
+  }
+
+  static async v25GetHealth() {
+    return this.v12Json('/api/v25/health', { headers: this.v25Headers() });
+  }
+
+  static async v25GetTelemetry(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/telemetry', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25GetReadinessMatrix() {
+    return this.v12Json('/api/v25/readiness-matrix', { headers: this.v25Headers() });
+  }
+
+  static async v25GetOpenApiSpec() {
+    return this.v12Json('/api/v25/openapi.json', { headers: this.v25Headers() });
+  }
+
+  static async v25GetPostgresStatus(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/postgres/status', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25RunPostgresMigration(
+    payload?: { simulateInterruptAtStage?: number; resumeFromRunId?: string; attemptLivePg?: boolean },
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v25/postgres/migrate', {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify(payload || {}),
+    });
+  }
+
+  static async v25GetOrganisations(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/organisations', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25CreateOrganisation(
+    payload: Record<string, any>,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v25/organisations', {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v25SwitchOrganisation(
+    organisationId: string,
+    actor?: { tenantId?: string; userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v25/organisations/switch', {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify({ organisationId }),
+    });
+  }
+
+  static async v25CreateBusinessUnit(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/organisations/business-units', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25CreateBranch(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/organisations/branches', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GrantMembership(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/organisations/memberships', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25EvaluateRbac(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/rbac/evaluate', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GetIdentitySecurityState(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/identity/security-state', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25RegisterDevice(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/identity/devices', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25CreateSession(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/identity/sessions', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25RevokeSession(sessionId: string, revokeAllForUser = false, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v25/identity/sessions/${encodeURIComponent(sessionId)}/revoke`, {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify({ revokeAllForUser }),
+    });
+  }
+
+  static async v25IssueMfaChallenge(payload?: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/identity/mfa/challenge', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload || {}) });
+  }
+
+  static async v25VerifyMfaChallenge(payload: { challengeId: string; code: string; userId?: string }, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/identity/mfa/verify', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GetLedgerTransactions(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/ledger/transactions', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25InitiateLedgerTransaction(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/ledger/transactions', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25TransitionLedgerTransaction(id: string, targetState: string, note: string, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v25/ledger/transactions/${encodeURIComponent(id)}/transition`, {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify({ targetState, note }),
+    });
+  }
+
+  static async v25RunConcurrencyProof(payload?: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/ledger/concurrency-proof', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload || {}) });
+  }
+
+  static async v25GetOutboxAndAudit(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/outbox/events', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25DispatchOutboxEvent(eventId: string, payload?: { consumerName?: string; simulateFailure?: boolean }, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v25/outbox/events/${encodeURIComponent(eventId)}/dispatch`, {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify(payload || {}),
+    });
+  }
+
+  static async v25ReplayDeadLetter(dlqId: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v25/outbox/dlq/${encodeURIComponent(dlqId)}/replay`, { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify({}) });
+  }
+
+  static async v25GetJobs(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/jobs', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25EnqueueJob(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/jobs', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GetDeveloperPlatform(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/developer/platform', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25CreateApiApp(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/developer/apps', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25IssueScopedApiKey(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/developer/keys', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25RevokeApiKey(keyId: string, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v25/developer/keys/${encodeURIComponent(keyId)}/revoke`, { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify({}) });
+  }
+
+  static async v25RegisterWebhook(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/developer/webhooks', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25DeliverWebhook(endpointId: string, payload?: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v25/developer/webhooks/${encodeURIComponent(endpointId)}/deliver`, {
+      method: 'POST',
+      headers: this.v25Headers(actor),
+      body: JSON.stringify(payload || {}),
+    });
+  }
+
+  static async v25GetCountries(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/countries', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25RegisterCountry(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/countries', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25ActivateCountry(code: string, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v25/countries/${encodeURIComponent(code)}/activate`, { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify({}) });
+  }
+
+  static async v25GetFxQuotes(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/fx/quotes', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25CreateFxQuote(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/fx/quotes', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25ExecuteFxClearing(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/fx/clear', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GetVaultDocuments(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/vault/documents', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25UploadVaultDocument(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/vault/documents', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25IssueVaultDownloadToken(docId: string, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v25/vault/documents/${encodeURIComponent(docId)}/download-token`, { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify({}) });
+  }
+
+  static async v25RedeemVaultDownloadToken(token: string, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v25/vault/download/${encodeURIComponent(token)}`, { headers: this.v25Headers(actor) });
+  }
+
+  static async v25GetSecurityIncidents(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/security/incidents', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25CreateSecurityIncident(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/security/incidents', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25AdvanceSecurityIncident(id: string, payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v25/security/incidents/${encodeURIComponent(id)}/advance`, { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GetComplianceRecords(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/compliance/records', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25UpsertComplianceRecord(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/compliance/records', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25GetPlatformBilling(actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/billing/plans', { headers: this.v25Headers(actor) });
+  }
+
+  static async v25SubscribePlan(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/billing/subscribe', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v25Search(q: string, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v25/search?q=${encodeURIComponent(q)}`, { headers: this.v25Headers(actor) });
+  }
+
+  static async v25RunBackupDrill(actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/resilience/backup-drill', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify({}) });
+  }
+
+  static async v25RunLoadBenchmark(payload?: { concurrency?: number; totalRequests?: number }, actor?: { tenantId?: string; userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v25/resilience/load-benchmark', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload || {}) });
+  }
+
+  static async v25AskAiAssist(payload: Record<string, any>, actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v25/ai/assist', { method: 'POST', headers: this.v25Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  // ==========================================
+  // V26 UNIVERSAL PLATFORM ACTIVATION & COMPLETE WORKFLOWS
+  // ==========================================
+
+  private static v26Headers(
+    actor?: { tenantId?: string; userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ): Record<string, string> {
+    const base = this.v25Headers(actor);
+    if (!base['x-country-code']) {
+      const savedCountry = typeof localStorage !== 'undefined' ? localStorage.getItem('econex_active_country') : null;
+      if (savedCountry) base['x-country-code'] = savedCountry;
+    }
+    if (!base['x-org-id']) {
+      const savedOrg = typeof localStorage !== 'undefined' ? localStorage.getItem('econex_active_workspace') : null;
+      if (savedOrg) base['x-org-id'] = savedOrg;
+    }
+    return base;
+  }
+
+  static async v26GetHealth() {
+    return this.v12Json('/api/v26/health', { headers: this.v26Headers() });
+  }
+
+  static async v26GetReadinessMatrix() {
+    return this.v12Json('/api/v26/readiness-matrix', { headers: this.v26Headers() });
+  }
+
+  static async v26GetOpenApiSpec() {
+    return this.v12Json('/api/v26/openapi.json', { headers: this.v26Headers() });
+  }
+
+  static async v26GetLocalization() {
+    return this.v12Json('/api/v26/localization', { headers: this.v26Headers() });
+  }
+
+  static async v26GetHomeSummary(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v26/home-summary', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26GetPreferences(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v26/preferences', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26UpdatePreferences(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v26/preferences', {
+      method: 'PUT',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26GetUserOnboarding(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/onboarding/user', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26UpdateUserOnboarding(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v26/onboarding/user', {
+      method: 'PUT',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26UpdateAccountProfile(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/account/profile', {
+      method: 'PUT',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26RequestRecoveryOrVerification(
+    payload: { requestType?: 'CONTACT_VERIFY' | 'ACCESS_RECOVERY'; contactChannel?: 'EMAIL' | 'PHONE_SMS'; contactTarget?: string },
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/account/recovery/request', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26VerifyRecoveryOrContact(
+    payload: { requestId: string; code: string },
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/account/recovery/verify', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26GetDevicesAndSessions(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/account/devices-sessions', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26ListBusinessOnboardings(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v26/onboarding/business', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26OnboardBusinessEntity(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v26/onboarding/business', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26GetWorkspaces(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v26/workspaces/active', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26SwitchWorkspace(
+    organisationId: string,
+    actor?: { userId?: string; userRole?: string; organisationId?: string }
+  ) {
+    return this.v12Json('/api/v26/workspaces/switch', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify({ organisationId }),
+    });
+  }
+
+  static async v26GetCommerceWorkflows(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v26/workflows/commerce-e2e', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26StartCommerceWorkflow(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string }
+  ) {
+    return this.v12Json('/api/v26/workflows/commerce-e2e', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26AdvanceCommerceWorkflow(
+    id: string,
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string }
+  ) {
+    return this.v12Json(`/api/v26/workflows/${encodeURIComponent(id)}/advance`, {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26GetSavedItems(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/marketplace/saved', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26CreateSavedItem(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/marketplace/saved', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26DeleteSavedItem(id: string, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v26/marketplace/saved/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: this.v26Headers(actor),
+    });
+  }
+
+  static async v26GetNotifications(
+    filters?: { unreadOnly?: boolean; archived?: 'true' | 'false' | 'all'; category?: string },
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    const params = new URLSearchParams();
+    if (filters?.unreadOnly) params.set('unreadOnly', 'true');
+    if (filters?.archived) params.set('archived', filters.archived);
+    if (filters?.category && filters.category !== 'ALL') params.set('category', filters.category);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return this.v12Json(`/api/v26/notifications${qs}`, { headers: this.v26Headers(actor) });
+  }
+
+  static async v26CreateNotification(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/notifications', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26MarkAllNotificationsRead(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/notifications/mark-all-read', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v26MarkNotificationRead(id: string, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v26/notifications/${encodeURIComponent(id)}/read`, {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v26ArchiveNotification(id: string, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v26/notifications/${encodeURIComponent(id)}/archive`, {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v26GetNotificationPreferences(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/notifications/preferences', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26UpdateNotificationPreferences(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/notifications/preferences', {
+      method: 'PUT',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26Search(q: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v26/search?q=${encodeURIComponent(q)}`, { headers: this.v26Headers(actor) });
+  }
+
+  static async v26GetQuickActions(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/quick-actions', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26GetDocuments(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v26/documents', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26ShareDocument(
+    payload: { documentId: string; permission?: 'VIEW' | 'DOWNLOAD'; ttlHours?: number; targetUserId?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string }
+  ) {
+    return this.v12Json('/api/v26/documents/share', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26RevokeDocumentShare(shareId: string, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v26/documents/shares/${encodeURIComponent(shareId)}/revoke`, {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v26ResolveDocumentShare(token: string) {
+    return this.v12Json(`/api/v26/documents/share/${encodeURIComponent(token)}`, { headers: this.v26Headers() });
+  }
+
+  static async v26GetReports(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v26/reports', { headers: this.v26Headers(actor) });
+  }
+
+  static async v26GenerateReport(
+    payload: { reportType: string; format: 'CSV' | 'JSON' | 'PDF' },
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json('/api/v26/reports/generate', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26DownloadReportBlob(
+    reportId: string,
+    actor?: { userId?: string; userRole?: string }
+  ): Promise<{ blob: Blob; filename: string; contentType: string; sha256: string | null }> {
+    const res = await fetch(`/api/v26/reports/${encodeURIComponent(reportId)}/download`, {
+      headers: this.v26Headers(actor),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `Report download failed (${res.status})`);
+    }
+    const blob = await res.blob();
+    const disp = res.headers.get('Content-Disposition') || '';
+    const match = disp.match(/filename="([^"]+)"/);
+    return {
+      blob,
+      filename: match ? match[1] : `ECONEX-${reportId}`,
+      contentType: res.headers.get('Content-Type') || 'application/octet-stream',
+      sha256: res.headers.get('X-Content-SHA256'),
+    };
+  }
+
+  static async v26GetSupportTickets(statusFilter = 'ALL', actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v26/support/tickets?status=${encodeURIComponent(statusFilter)}`, {
+      headers: this.v26Headers(actor),
+    });
+  }
+
+  static async v26CreateSupportTicket(
+    payload: { subject: string; description?: string; details?: string; category?: string; priority?: string; linkedOrderId?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string }
+  ) {
+    return this.v12Json('/api/v26/support/tickets', {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26ReplySupportTicket(
+    ticketId: string,
+    payload: { messageBody: string; isInternalNote?: boolean },
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v26/support/tickets/${encodeURIComponent(ticketId)}/reply`, {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26UpdateSupportTicketStatus(
+    ticketId: string,
+    payload: { status: 'OPEN' | 'IN_REVIEW' | 'RESOLVED' | 'CLOSED'; resolutionNote?: string },
+    actor?: { userId?: string; userRole?: string }
+  ) {
+    return this.v12Json(`/api/v26/support/tickets/${encodeURIComponent(ticketId)}/status`, {
+      method: 'POST',
+      headers: this.v26Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v26GetAuditControls(filters?: { status?: string; module?: string; q?: string }) {
+    const params = new URLSearchParams();
+    if (filters?.status && filters.status !== 'ALL') params.set('status', filters.status);
+    if (filters?.module && filters.module !== 'ALL') params.set('module', filters.module);
+    if (filters?.q) params.set('q', filters.q);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return this.v12Json(`/api/v26/audit/controls${qs}`, { headers: this.v26Headers() });
+  }
+
+  static async v26GetAuditRoutes(roleFilter?: string) {
+    const qs = roleFilter ? `?role=${encodeURIComponent(roleFilter)}` : '';
+    return this.v12Json(`/api/v26/audit/routes${qs}`, { headers: this.v26Headers() });
+  }
+
+  static async v26GetAuditWorkflows() {
+    return this.v12Json('/api/v26/audit/workflows', { headers: this.v26Headers() });
+  }
+
+  static async v26GetMigrationStatus() {
+    return this.v12Json('/api/v26/migration/status', { headers: this.v26Headers() });
+  }
+
+  static async v26VerifyV25Backup() {
+    return this.v12Json('/api/v26/migration/backup-verify', { headers: this.v26Headers() });
+  }
+
+  // ==========================================
+  // V27 UNIVERSAL ECONOMIC NETWORK, TRUST, OPPORTUNITIES & GOVERNANCE
+  // ==========================================
+
+  private static v27Headers(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v26Headers(actor);
+  }
+
+  static async v27GetHealth() {
+    return this.v12Json('/api/v27/health', { headers: this.v27Headers() });
+  }
+
+  static async v27GetReadinessMatrix() {
+    return this.v12Json('/api/v27/readiness-matrix', { headers: this.v27Headers() });
+  }
+
+  static async v27GetParticipants(
+    filters?: { q?: string; countryCode?: string; sectorId?: string; participantType?: string; verifiedOnly?: boolean },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    const p = new URLSearchParams();
+    if (filters?.q) p.set('q', filters.q);
+    if (filters?.countryCode && filters.countryCode !== 'ALL') p.set('countryCode', filters.countryCode);
+    if (filters?.sectorId && filters.sectorId !== 'ALL') p.set('sectorId', filters.sectorId);
+    if (filters?.participantType && filters.participantType !== 'ALL') p.set('participantType', filters.participantType);
+    if (filters?.verifiedOnly) p.set('verifiedOnly', 'true');
+    const qs = p.toString() ? `?${p.toString()}` : '';
+    return this.v12Json(`/api/v27/participants${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateParticipant(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v27/participants', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27UpdatePrivacy(profileId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/participants/${encodeURIComponent(profileId)}/privacy`, {
+      method: 'PUT',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v27GetRelationships(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/relationships', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27InviteRelationship(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/relationships', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27RespondRelationship(relId: string, decision: 'ACCEPTED' | 'REJECTED', reason?: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/relationships/${encodeURIComponent(relId)}/respond`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify({ decision, reason }),
+    });
+  }
+
+  static async v27GetVerificationRecords(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/verification', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27SubmitVerification(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/verification', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27DecideVerification(recordId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/verification/${encodeURIComponent(recordId)}/decision`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v27GetReputationReviews(targetProfileId?: string, actor?: { userId?: string; userRole?: string }) {
+    const qs = targetProfileId ? `?targetProfileId=${encodeURIComponent(targetProfileId)}` : '';
+    return this.v12Json(`/api/v27/reputation/reviews${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27SubmitReputationReview(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/reputation/reviews', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetReputationAppeals(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/reputation/appeals', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27FileReputationAppeal(payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/reputation/appeals', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27Discover(filters?: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    const p = new URLSearchParams();
+    Object.entries(filters || {}).forEach(([k, v]) => {
+      if (v !== undefined && v !== '' && v !== 'ALL') p.set(k, String(v));
+    });
+    const qs = p.toString() ? `?${p.toString()}` : '';
+    return this.v12Json(`/api/v27/discover${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27GetSavedSearches(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/saved-searches', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27SaveSearch(payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/saved-searches', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetMatches(sectorId?: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    const qs = sectorId && sectorId !== 'ALL' ? `?sectorId=${encodeURIComponent(sectorId)}` : '';
+    return this.v12Json(`/api/v27/matching/recommendations${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27SubmitMatchFeedback(payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/matching/feedback', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetOpportunities(filters?: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    const p = new URLSearchParams();
+    Object.entries(filters || {}).forEach(([k, v]) => {
+      if (v !== undefined && v !== '' && v !== 'ALL') p.set(k, String(v));
+    });
+    const qs = p.toString() ? `?${p.toString()}` : '';
+    return this.v12Json(`/api/v27/opportunities${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateOpportunity(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v27/opportunities', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27RespondOpportunity(oppId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/opportunities/${encodeURIComponent(oppId)}/responses`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v27AwardOpportunity(oppId: string, responseId: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/opportunities/${encodeURIComponent(oppId)}/award`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify({ responseId }),
+    });
+  }
+
+  static async v27LinkOpportunityObligation(oppId: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/opportunities/${encodeURIComponent(oppId)}/link-obligation`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+    });
+  }
+
+  static async v27GetBuyerRequirements(sectorId?: string, actor?: { userId?: string; userRole?: string }) {
+    const qs = sectorId && sectorId !== 'ALL' ? `?sectorId=${encodeURIComponent(sectorId)}` : '';
+    return this.v12Json(`/api/v27/buyer-requirements${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateBuyerRequirement(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/buyer-requirements', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetSupplierCapabilities(sectorId?: string, actor?: { userId?: string; userRole?: string }) {
+    const qs = sectorId && sectorId !== 'ALL' ? `?sectorId=${encodeURIComponent(sectorId)}` : '';
+    return this.v12Json(`/api/v27/supplier-capabilities${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateSupplierCapability(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/supplier-capabilities', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetCrmLeads(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/crm/leads', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateCrmLead(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/crm/leads', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27UpdateCrmStage(leadId: string, stage: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/crm/leads/${encodeURIComponent(leadId)}/stage`, {
+      method: 'PUT',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify({ stage }),
+    });
+  }
+
+  static async v27GetPromotions(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/promotions', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreatePromotion(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/promotions', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetThreads(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/threads', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateThread(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/threads', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27PostThreadMessage(threadId: string, body: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json(`/api/v27/threads/${encodeURIComponent(threadId)}/messages`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify({ body }),
+    });
+  }
+
+  static async v27GetGraph(profileId?: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    const qs = profileId ? `?profileId=${encodeURIComponent(profileId)}` : '';
+    return this.v12Json(`/api/v27/graph${qs}`, { headers: this.v27Headers(actor) });
+  }
+
+  static async v27GetIntelligenceSummary(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/intelligence/summary', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27GetCountryMatrix() {
+    return this.v12Json('/api/v27/intelligence/countries', { headers: this.v27Headers() });
+  }
+
+  static async v27AiAssist(payload: { taskType?: string; prompt: string; countryCode?: string }, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/intelligence/ai-assist', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27GetReferrals(actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/referrals', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27CreateReferral(referredEmail: string, actor?: { userId?: string; userRole?: string; organisationId?: string }) {
+    return this.v12Json('/api/v27/referrals', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify({ referredEmail }) });
+  }
+
+  static async v27GetOutcomes(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/outcomes', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27GetPilots(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/pilots', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27TransitionPilotStatus(pilotId: string, status: string, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v27/pilots/${encodeURIComponent(pilotId)}/status`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify({ status }),
+    });
+  }
+
+  static async v27GetFieldAssignments(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/field/assignments', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27GetFieldReports(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/field/reports', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27SyncFieldReport(payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/field/reports', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27ReviewFieldReport(reportId: string, decision: string, reviewDecisionNote: string, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v27/field/reports/${encodeURIComponent(reportId)}/review`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify({ decision, reviewDecisionNote }),
+    });
+  }
+
+  static async v27GetPartners(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/partners', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27TransitionPartner(partnerId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v27/partners/${encodeURIComponent(partnerId)}/status`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v27GetModerationCases(actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/moderation/cases', { headers: this.v27Headers(actor) });
+  }
+
+  static async v27ReportModerationCase(payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json('/api/v27/moderation/cases', { method: 'POST', headers: this.v27Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v27DecideModerationCase(caseId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string }) {
+    return this.v12Json(`/api/v27/moderation/cases/${encodeURIComponent(caseId)}/decide`, {
+      method: 'POST',
+      headers: this.v27Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // ==========================================
+  // V28 UNIVERSAL ECONOMIC EXECUTION, INTEROPERABILITY & CONTINENTAL OPERATIONS
+  // ==========================================
+
+  private static v28Headers(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v27Headers(actor);
+  }
+
+  static async v28GetHealth() {
+    return this.v12Json('/api/v28/health', { headers: this.v28Headers() });
+  }
+
+  static async v28GetReadinessMatrix() {
+    return this.v12Json('/api/v28/readiness-matrix', { headers: this.v28Headers() });
+  }
+
+  static async v28GetMigrationStatus() {
+    return this.v12Json('/api/v28/migration/status', { headers: this.v28Headers() });
+  }
+
+  static async v28GetBackupVerify() {
+    return this.v12Json('/api/v28/migration/backup-verify', { headers: this.v28Headers() });
+  }
+
+  static async v28GetWorkspace(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/workspace', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28GetExecutions(
+    filters?: { stage?: string; status?: string; countryCode?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    const p = new URLSearchParams();
+    if (filters?.stage && filters.stage !== 'ALL') p.set('stage', filters.stage);
+    if (filters?.status && filters.status !== 'ALL') p.set('status', filters.status);
+    if (filters?.countryCode && filters.countryCode !== 'ALL') p.set('countryCode', filters.countryCode);
+    const qs = p.toString() ? `?${p.toString()}` : '';
+    return this.v12Json(`/api/v28/executions${qs}`, { headers: this.v28Headers(actor) });
+  }
+
+  static async v28CreateExecution(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/executions', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28TransitionExecution(workflowId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/executions/${encodeURIComponent(workflowId)}/transition`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28GetContracts(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/contracts', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28CreateContract(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/contracts', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28TransitionContract(contractId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/contracts/${encodeURIComponent(contractId)}/transition`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28CreateContractObligation(contractId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/contracts/${encodeURIComponent(contractId)}/obligations`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28GetProcurement(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/procurement', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28CreateProcurementPlan(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/procurement/plans', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28CreateProcurementRequisition(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/procurement/requisitions', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28DecideProcurementRequisition(reqId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/procurement/requisitions/${encodeURIComponent(reqId)}/decide`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28EvaluateProcurementRequisition(reqId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/procurement/requisitions/${encodeURIComponent(reqId)}/evaluate`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28GetFulfilment(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/fulfilment', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28ReserveFulfilmentStock(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/fulfilment/reserve', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28RecordFulfilmentMilestone(planId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/fulfilment/${encodeURIComponent(planId)}/record`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28GetCrossBorder(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/cross-border', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28CreateCrossBorder(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/cross-border', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28GetWalletCoordination(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/wallet/coordination', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28ExecuteSandboxTransfer(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/wallet/transfer', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28ReverseSandboxTransfer(txId: string, reason: string, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/wallet/reverse/${encodeURIComponent(txId)}`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify({ reason }),
+    });
+  }
+
+  static async v28GetConnectors(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/interoperability/connectors', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28TransitionConnector(connectorId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/interoperability/connectors/${encodeURIComponent(connectorId)}/transition`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28SignWebhook(payload: Record<string, any>, secret: string, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/interoperability/webhook-sign', {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify({ payload, secret }),
+    });
+  }
+
+  static async v28GetEvents(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/events', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28ReplayDlqEvent(dlqId: string, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/events/dlq/${encodeURIComponent(dlqId)}/replay`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+    });
+  }
+
+  static async v28GetVaultDocuments(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/vault/documents', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28RegisterVaultDocument(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/vault/documents', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28UpdateVaultGovernance(docId: string, action: string, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/vault/documents/${encodeURIComponent(docId)}/governance`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify({ action }),
+    });
+  }
+
+  static async v28GetContinentalIntelligence(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/intelligence/continental', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28RunAiOrchestration(payload: { taskType: string; prompt: string }, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/ai/orchestrate', { method: 'POST', headers: this.v28Headers(actor), body: JSON.stringify(payload) });
+  }
+
+  static async v28GetAiRuns(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/ai/runs', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28GetControlCentre(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/operations/control-centre', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28ResolveException(exceptionId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/operations/exceptions/${encodeURIComponent(exceptionId)}/resolve`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28CreateDualApproval(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/operations/dual-approvals', {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28DecideDualApproval(requestId: string, decision: 'APPROVE' | 'REJECT', actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/operations/dual-approvals/${encodeURIComponent(requestId)}/decide`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify({ decision }),
+    });
+  }
+
+  static async v28GetFieldOfflineRecords(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/field/offline-records', { headers: this.v28Headers(actor) });
+  }
+
+  static async v28SyncFieldOfflineRecord(payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v28/field/offline-records', {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28ResolveFieldConflict(recordId: string, payload: Record<string, any>, actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json(`/api/v28/field/offline-records/${encodeURIComponent(recordId)}/resolve`, {
+      method: 'POST',
+      headers: this.v28Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v28GetRepositoryHealth() {
+    return this.v12Json('/api/v28/developer/repository-health', { headers: this.v28Headers() });
+  }
 }
 
 export const api = ApiClient;

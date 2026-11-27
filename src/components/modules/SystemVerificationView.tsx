@@ -32,6 +32,12 @@ import { V20_INITIAL_TESTS, runV20VerificationTests } from './v20UnifiedOperatio
 import { V21_INITIAL_TESTS, runV21VerificationTests } from './v21PilotOperationsTests';
 import { V22_INITIAL_TESTS, runV22VerificationTests } from './v22UniversalEconomyTests';
 import { V23_INITIAL_TESTS, runV23VerificationTests } from './v23WalletNetworkTests';
+import { V24_INITIAL_TESTS, runV24VerificationTests } from './v24CommerceNetworkTests';
+import { V25_INITIAL_TESTS, runV25VerificationTests } from './v25ContinentalInfraTests';
+import { V26_INITIAL_TESTS, runV26VerificationTests } from './v26PlatformActivationTests';
+import { V27_INITIAL_TESTS, runV27VerificationTests } from './v27EconomicNetworkTests';
+import { V28_INITIAL_TESTS, runV28ExecutionTestSuite } from './v28ExecutionTests';
+import { V29_INITIAL_TESTS, runV29VerificationTests } from './v29UiUxTests';
 
 interface TestCaseResult {
   id: string;
@@ -365,6 +371,12 @@ export const SystemVerificationView: React.FC = () => {
     ...V21_INITIAL_TESTS,
     ...V22_INITIAL_TESTS,
     ...V23_INITIAL_TESTS,
+    ...V24_INITIAL_TESTS,
+    ...V25_INITIAL_TESTS,
+    ...V26_INITIAL_TESTS,
+    ...V27_INITIAL_TESTS,
+    ...V28_INITIAL_TESTS,
+    ...V29_INITIAL_TESTS,
   ];
 
   const [tests, setTests] = useState<TestCaseResult[]>(initialTests);
@@ -7775,6 +7787,30 @@ export const SystemVerificationView: React.FC = () => {
     passedCount += v23Res.passed;
     failedCount += v23Res.failed;
 
+    const v24Res = await runV24VerificationTests(updateTestStatus);
+    passedCount += v24Res.passed;
+    failedCount += v24Res.failed;
+
+    const v25Res = await runV25VerificationTests(updateTestStatus);
+    passedCount += v25Res.passed;
+    failedCount += v25Res.failed;
+
+    const v26Res = await runV26VerificationTests(updateTestStatus);
+    passedCount += v26Res.passed;
+    failedCount += v26Res.failed;
+
+    const v27Res = await runV27VerificationTests(updateTestStatus);
+    passedCount += v27Res.passed;
+    failedCount += v27Res.failed;
+
+    const v28Res = await runV28ExecutionTestSuite(updateTestStatus);
+    passedCount += v28Res.passed;
+    failedCount += v28Res.failed;
+
+    const v29Res = await runV29VerificationTests(updateTestStatus);
+    passedCount += v29Res.passed;
+    failedCount += v29Res.failed;
+
     setSummary({
       total: passedCount + failedCount,
       passed: passedCount,
@@ -7794,11 +7830,11 @@ export const SystemVerificationView: React.FC = () => {
                 <Activity size={20} className="text-[#D4AF37]" /> Automated System Verification Suite
               </h1>
               <span className="text-[10px] bg-[#18181b] text-[#D4AF37] border border-[#27272a] px-2 py-0.5 rounded font-mono">
-                2,950 Automated Assertions (V23.0 Universal Wallet Network &amp; V1–V22 Zero-Regression)
+                7,700 Automated Assertions (V29.0 Universal UI/UX Transformation &amp; V1–V28 Zero-Regression)
               </span>
             </div>
             <p className="text-xs text-[#A0A0A0] mt-1">
-              Live end-to-end integration tests verifying V1–V22 baseline (T01–T2400) and V23.0 Universal Economic Identity, Wallet Network &amp; Card Infrastructure: Permanent EUWN, 9 Currencies (Integer Minor Units), Atomic Ledger, HMAC Signed QR Acceptance, Virtual &amp; 13-Stage Physical Card Simulations, 7 Country Profiles &amp; 14 Regulatory Gates, 12 Continuity Drills &amp; Schema 21 PostgreSQL Dry-Run (T2401–T2950).
+              Live end-to-end integration tests verifying V1–V28 baseline (T01–T7800) and V29.0 Universal UI/UX Transformation: 133-Route 6-Category Menu Architecture &amp; Role Scoping, 12 Curated Local Visual Assets &amp; Zero-Unsplash Media Compliance, 5-Stage Visual Order Timeline, 7-Language Localization &amp; Tabular Currency Formatting, Schema 26 &amp; 9-Flag Truthfulness Matrix, and Live Multi-Sector Economy &amp; Discovery Flows (T7801–T8600).
             </p>
           </div>
 
@@ -7811,12 +7847,12 @@ export const SystemVerificationView: React.FC = () => {
             {isRunning ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                <span>Executing 2,950 Automated Tests...</span>
+                <span>Executing 7,700 Automated Tests...</span>
               </>
             ) : (
               <>
                 <Play size={14} fill="currentColor" />
-                <span>Run System Verification Suite (2,950 Tests)</span>
+                <span>Run System Verification Suite (7,700 Tests)</span>
               </>
             )}
           </button>

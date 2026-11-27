@@ -1,0 +1,42 @@
+# ECONEX V28.0 — Automated Security & Hygiene Verification Workflow
+# Developed under VINEXSAH TECHNOLOGIES. All rights reserved.
+
+name: ECONEX V28 Security Scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  security-hygiene:
+    name: Secret Scan, Dependency Audit & Export Hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies cleanly
+        run: npm install --no-audit --no-fund
+
+      - name: Scan source tree for leaked credentials
+        run: npm run security:scan
+
+      - name: Check production archive exclusions
+        run: npm run export:zip && npm run export:check
+
+      - name: Verify no runtime database or secret files tracked
+        run: |
+          test ! -f .env || (echo ".env must never be committed" && exit 1)
+          echo "Repository hygiene verified."

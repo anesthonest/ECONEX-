@@ -36,30 +36,30 @@ interface Props {
 
 const LISTING_TYPES: V24ListingType[] = [
   'SELL',
-  'BUY',
-  'REQUEST_FOR_QUOTATION',
-  'SERVICE_OFFER',
-  'SERVICE_REQUEST',
-  'WHOLESALE_OFFER',
-  'BULK_ORDER',
-  'PROCUREMENT_NOTICE',
-  'LONG_TERM_SUPPLY',
-  'PARTNERSHIP_OPPORTUNITY',
+  'BUY_REQUEST',
+  'OFFER_SERVICE',
+  'REQUEST_SERVICE',
+  'RENT_OR_LEASE',
+  'SUPPLY_CONTRACT',
+  'MANUFACTURING_CAPACITY',
+  'TRANSPORT_FREIGHT',
+  'WAREHOUSE_SPACE',
+  'WHOLESALE_BUNDLE',
 ];
 
 const AGREEMENT_TYPES: V24AgreementType[] = [
   'GOODS_SUPPLY',
-  'SERVICE',
-  'MANUFACTURING',
-  'DISTRIBUTION',
-  'WHOLESALE',
-  'CONSTRUCTION',
-  'LOGISTICS',
-  'MAINTENANCE',
-  'PROCUREMENT',
-  'LONG_TERM_SUPPLY',
-  'COOPERATIVE_TRADING',
-  'PROFESSIONAL_SERVICE',
+  'SERVICE_AGREEMENT',
+  'EQUIPMENT_RENTAL',
+  'FREIGHT_TRANSPORT',
+  'STORAGE_WAREHOUSING',
+  'MANUFACTURING_OFFTAKE',
+  'COOPERATIVE_DELIVERY',
+  'WHOLESALE_DISTRIBUTION',
+  'PROJECT_WORK',
+  'SUBCONTRACTING',
+  'FRAMEWORK_STANDING',
+  'PARTNERSHIP_JOINT_VENTURE',
 ];
 
 function fmtMinor(minor: number, currency = 'UGX'): string {
@@ -105,7 +105,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
   const [rfqTitle, setRfqTitle] = useState<string>('');
   const [rfqProduct, setRfqProduct] = useState<string>('');
   const [rfqQty, setRfqQty] = useState<number>(20);
-  const [rfqSector, setRfqSector] = useState<string>('SEC-MANU');
+  const [rfqSector, setRfqSector] = useState<string>('SEC-MANUF');
 
   // Quote submission
   const [quoteRfqId, setQuoteRfqId] = useState<string>('RFQ-V24-001');
@@ -210,10 +210,9 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
       const res = await ApiClient.v24SaveSearch(
         {
           label: keyword ? `Search: ${keyword}` : `Sector ${sectorFilter || 'All'}`,
-          keyword: keyword || undefined,
+          query: keyword || undefined,
           sectorId: sectorFilter || undefined,
           listingType: typeFilter || undefined,
-          verifiedOnly,
         },
         actor
       );
@@ -240,7 +239,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
           specifications: rfqProduct || rfqTitle,
           quantity: rfqQty,
           unitOfMeasure: 'UNIT',
-          targetCurrency: 'UGX',
+          currency: 'UGX',
           countryCode: 'UG',
           deliveryLocation: 'Kampala, Uganda',
           visibility: 'PUBLIC',
@@ -306,7 +305,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
         {
           rfqId: negRfqId,
           senderParticipantId: myParticipant?.id,
-          kind: 'MESSAGE',
+          kind: 'CLARIFICATION',
           body: negBody,
         },
         actor
@@ -341,7 +340,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
         },
         actor
       );
-      setFeedback(`Created agreement ${res.agreement?.agreementReference} (${res.agreement?.status}).`);
+      setFeedback(`Created agreement ${res.agreement?.agreementNumber} (${res.agreement?.status}).`);
       setAgrTitle('');
       await loadData();
     } catch (err: any) {
@@ -356,7 +355,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
     setError(null);
     try {
       await ApiClient.v24TransitionAgreement(agr.id, { nextStatus, acceptSignature }, actor);
-      setFeedback(`Agreement ${agr.agreementReference} moved to ${nextStatus}.`);
+      setFeedback(`Agreement ${agr.agreementNumber} moved to ${nextStatus}.`);
       await loadData();
     } catch (err: any) {
       setError(err?.message || 'Transition rejected.');
@@ -598,9 +597,9 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
                   </div>
                   <div className="text-xs text-[#A0A0A0]">
                     {item.listingType} · {item.location} · Available:{' '}
-                    <span className="font-mono tabular-nums text-[#F5F5F5]">{item.availableQuantity}</span>{' '}
-                    {item.unitOfMeasure} · {item.supplierVerificationStatus} · Expires{' '}
-                    <span className="font-mono">{item.expiresAt.slice(0, 10)}</span>
+                    <span className="font-mono tabular-nums text-[#F5F5F5]">{item.totalQuantityOrCapacity}</span>{' '}
+                    {item.unitOfMeasure} · {item.verificationStatus} · Expires{' '}
+                    <span className="font-mono">{(item.expiresAt || 'Open-ended').slice(0, 10)}</span>
                   </div>
                 </div>
               ))}
@@ -739,7 +738,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
                   <div key={q.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="font-medium text-[#F5F5F5]">
-                        {q.id} · Rev {q.revisionNumber} · {q.productOrService}
+                        {q.id} · Rev {q.revisionNumber} · {q.supplierName}
                       </div>
                       <div className="text-[#A0A0A0] font-mono tabular-nums">
                         Total: {fmtMinor(q.totalPriceMinor, q.currency)} · Delivery: {q.deliveryEstimateDays}d ·{' '}
@@ -828,7 +827,7 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
                   <span className="font-mono text-[#D4AF37]">
                     {n.id} · RFQ {n.rfqId}
                   </span>
-                  <span className="font-mono text-[#A0A0A0]">{n.status}</span>
+                  <span className="font-mono text-[#A0A0A0]">{n.messages.length} msgs</span>
                 </div>
                 <div className="space-y-1.5 pl-3 border-l border-[#27272a]">
                   {n.messages.map((m) => (
@@ -912,50 +911,50 @@ export const V24MarketplaceRfqContractsView: React.FC<Props> = ({ onNavigate }) 
                 <div key={agr.id} className="py-4 space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="font-medium text-sm text-[#F5F5F5]">
-                      {agr.agreementReference} · {agr.title}
+                      {agr.agreementNumber} · {agr.title}
                     </div>
                     <div className="font-mono text-[#D4AF37]">{agr.status}</div>
                   </div>
                   <div className="text-[#A0A0A0] font-mono tabular-nums">
-                    {agr.agreementType} · Value: {fmtMinor(agr.totalValueMinor, agr.currency)} · v{agr.version} ·
-                    Signatures: {agr.electronicAcceptances.length} · regulatedEscrowIncluded:{' '}
+                    {agr.agreementType} · Value: {fmtMinor(agr.totalValueMinor, agr.currency)} · Revisions: {agr.history.length} ·
+                    Signatures: {[agr.buyerSignedAt, agr.sellerSignedAt].filter(Boolean).length}/2 · regulatedEscrowIncluded:{' '}
                     {String(agr.regulatedEscrowIncluded)}
                   </div>
                   <div className="flex flex-wrap gap-2 pt-1">
                     {agr.status === 'DRAFT' && (
                       <button
                         type="button"
-                        onClick={() => handleAdvanceAgreement(agr, 'INTERNAL_REVIEW')}
+                        onClick={() => handleAdvanceAgreement(agr, 'UNDER_REVIEW')}
                         className="px-3 py-1.5 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
                       >
-                        Send to Internal Review
+                        Send to Review
                       </button>
                     )}
-                    {agr.status === 'INTERNAL_REVIEW' && (
+                    {agr.status === 'UNDER_REVIEW' && (
                       <button
                         type="button"
-                        onClick={() => handleAdvanceAgreement(agr, 'COUNTERPARTY_REVIEW')}
+                        onClick={() => handleAdvanceAgreement(agr, 'PENDING_SIGNATURE')}
                         className="px-3 py-1.5 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
                       >
-                        Send to Counterparty
+                        Request Signatures
                       </button>
                     )}
-                    {(agr.status === 'COUNTERPARTY_REVIEW' || agr.status === 'APPROVED') && (
-                      <button
-                        type="button"
-                        onClick={() => handleAdvanceAgreement(agr, 'ACCEPTED', true)}
-                        className="px-3 py-1.5 rounded bg-[#D4AF37] text-[#050505] font-semibold cursor-pointer"
-                      >
-                        Electronic Sign & Accept
-                      </button>
-                    )}
-                    {agr.status === 'ACCEPTED' && (
+                    {agr.status === 'PENDING_SIGNATURE' && (
                       <button
                         type="button"
                         onClick={() => handleAdvanceAgreement(agr, 'ACTIVE', true)}
+                        className="px-3 py-1.5 rounded bg-[#D4AF37] text-[#050505] font-semibold cursor-pointer"
+                      >
+                        Electronic Sign & Activate
+                      </button>
+                    )}
+                    {agr.status === 'ACTIVE' && (
+                      <button
+                        type="button"
+                        onClick={() => handleAdvanceAgreement(agr, 'COMPLETED')}
                         className="px-3 py-1.5 rounded bg-emerald-600 text-white font-semibold cursor-pointer"
                       >
-                        Sign & Activate
+                        Mark Completed
                       </button>
                     )}
                   </div>

@@ -9479,6 +9479,2850 @@ export interface V23ContinuityTestRun {
   executedAt: string;
 }
 
+// ==========================================
+// V24.0 UNIVERSAL COMMERCE, SUPPLY CHAIN & ECONOMIC EXECUTION NETWORK TYPES (SCHEMA 22)
+// ==========================================
+
+export type V24ParticipantOrgType =
+  | 'INDIVIDUAL'
+  | 'SOLE_PROPRIETOR'
+  | 'SOLE_TRADER'
+  | 'SME'
+  | 'LARGE_ENTERPRISE'
+  | 'MANUFACTURER'
+  | 'COOPERATIVE'
+  | 'WHOLESALER'
+  | 'DISTRIBUTOR'
+  | 'RETAILER'
+  | 'IMPORTER'
+  | 'EXPORTER'
+  | 'SERVICE_PROVIDER'
+  | 'CONTRACTOR'
+  | 'PROFESSIONAL_FIRM'
+  | 'LOGISTICS_CARRIER'
+  | 'LOGISTICS_PROVIDER'
+  | 'WAREHOUSE_OPERATOR'
+  | 'INSTITUTION'
+  | 'PUBLIC_PROCUREMENT_ENTITY'
+  | 'NGO'
+  | 'EXPORTER_IMPORTER';
+
+export interface V24SectorClassification {
+  id: string;
+  code: string;
+  name: string;
+  groupName: string;
+  description: string;
+  primaryActivities: string[];
+  supportedParticipantCategories: V24ParticipantOrgType[];
+  supportsGoods: boolean;
+  supportsServices: boolean;
+  supportsManufacturing: boolean;
+  isAgricultural: boolean;
+}
+
+export interface V24CommercialParticipant {
+  id: string;
+  tenantId: string;
+  userId: string;
+  v23IdentityId?: string;
+  v23WalletId?: string;
+  v23Euwn?: string;
+  euwn?: string;
+  authorizedRepresentatives: { userId: string; role: string }[];
+  displayName: string;
+  legalName: string;
+  organizationType: V24ParticipantOrgType;
+  sectorIds: string[];
+  primarySectorId: string;
+  operatingCountries: string[];
+  operatingLocations: string[];
+  description: string;
+  productsAndServices: string[];
+  capabilities: string[];
+  verificationStatus: 'SELF_DECLARED' | 'DOCUMENT_REVIEWED' | 'VERIFIED';
+  identityVerificationStatus: 'UNVERIFIED' | 'PENDING_REVIEW' | 'VERIFIED';
+  legalRegistrationStatus: 'UNVERIFIED_SELF_DECLARED' | 'REGISTRY_DOCUMENT_SUBMITTED' | 'HUMAN_REVIEWED';
+  operationalCapabilityStatus: 'SELF_DECLARED' | 'INSPECTED_SANDBOX';
+  consentGiven: boolean;
+  consentTimestamp: string;
+  isTestRecord: boolean;
+  completedOrdersCount: number;
+  onTimeDeliveryRatePct: number;
+  disputeCount: number;
+  paidBadgesForbidden: true;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V24ListingType =
+  | 'SELL'
+  | 'BUY_REQUEST'
+  | 'OFFER_SERVICE'
+  | 'REQUEST_SERVICE'
+  | 'RENT_OR_LEASE'
+  | 'SUPPLY_CONTRACT'
+  | 'MANUFACTURING_CAPACITY'
+  | 'TRANSPORT_FREIGHT'
+  | 'WAREHOUSE_SPACE'
+  | 'WHOLESALE_BUNDLE';
+
+export interface V24CommerceListing {
+  id: string;
+  tenantId: string;
+  participantId: string;
+  participantName: string;
+  listingType: V24ListingType;
+  title: string;
+  description: string;
+  sectorId: string;
+  unitOfMeasure: string;
+  totalQuantityOrCapacity: number;
+  minOrderQty: number;
+  priceMinor: number;
+  currency: V23CurrencyCode;
+  countryCode: string;
+  location: string;
+  deliveryAvailable: boolean;
+  inspectionAvailable: boolean;
+  verificationStatus: 'SELF_DECLARED' | 'DOCUMENT_REVIEWED' | 'VERIFIED';
+  status: 'ACTIVE' | 'PAUSED' | 'EXPIRED' | 'CLOSED';
+  tags: string[];
+  expiresAt?: string;
+  isTestRecord: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24SavedSearch {
+  id: string;
+  tenantId: string;
+  userId: string;
+  label: string;
+  query?: string;
+  sectorId?: string;
+  countryCode?: string;
+  listingType?: V24ListingType;
+  maxPriceMinor?: number;
+  createdAt: string;
+}
+
+export interface V24RequestForQuotation {
+  id: string;
+  tenantId: string;
+  buyerParticipantId: string;
+  buyerName: string;
+  title: string;
+  sectorId: string;
+  productOrService: string;
+  specifications: string;
+  quantity: number;
+  unitOfMeasure: string;
+  budgetMaxMinor?: number;
+  currency: V23CurrencyCode;
+  visibility: 'PUBLIC' | 'INVITED_ONLY';
+  invitedParticipantIds: string[];
+  deliveryLocation: string;
+  deadlineAt: string;
+  status: 'OPEN' | 'AWARDED' | 'EXPIRED' | 'CANCELLED';
+  awardedQuotationId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24Quotation {
+  id: string;
+  tenantId: string;
+  rfqId: string;
+  supplierParticipantId: string;
+  supplierName: string;
+  revisionNumber: number;
+  parentQuotationId?: string;
+  unitPriceMinor: number;
+  quantity: number;
+  taxMinor: number;
+  deliveryChargeMinor: number;
+  discountMinor: number;
+  totalAmountMinor: number;
+  totalPriceMinor: number;
+  currency: V23CurrencyCode;
+  leadTimeDays: number;
+  deliveryEstimateDays: number;
+  validityDays: number;
+  termsNote: string;
+  status: 'SUBMITTED' | 'SUPERSEDED' | 'ACCEPTED' | 'REJECTED';
+  immutableSnapshotHash?: string;
+  decidedAt?: string;
+  decidedByUserId?: string;
+  decisionReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24NegotiationMessage {
+  id: string;
+  senderParticipantId: string;
+  senderUserId: string;
+  kind: 'CLARIFICATION' | 'COUNTER_OFFER' | 'TERM_NOTE';
+  body: string;
+  proposedUnitPriceMinor?: number;
+  createdAt: string;
+}
+
+export interface V24NegotiationThread {
+  id: string;
+  tenantId: string;
+  rfqId: string;
+  quotationId?: string;
+  agreementId?: string;
+  participantIds: string[];
+  messages: V24NegotiationMessage[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V24AgreementType =
+  | 'GOODS_SUPPLY'
+  | 'SERVICE_AGREEMENT'
+  | 'EQUIPMENT_RENTAL'
+  | 'FREIGHT_TRANSPORT'
+  | 'STORAGE_WAREHOUSING'
+  | 'MANUFACTURING_OFFTAKE'
+  | 'COOPERATIVE_DELIVERY'
+  | 'WHOLESALE_DISTRIBUTION'
+  | 'PROJECT_WORK'
+  | 'SUBCONTRACTING'
+  | 'FRAMEWORK_STANDING'
+  | 'PARTNERSHIP_JOINT_VENTURE';
+
+export type V24AgreementStatus =
+  | 'DRAFT'
+  | 'UNDER_REVIEW'
+  | 'PENDING_SIGNATURE'
+  | 'ACTIVE'
+  | 'COMPLETED'
+  | 'TERMINATED'
+  | 'DISPUTED';
+
+export interface V24CommercialAgreement {
+  id: string;
+  tenantId: string;
+  agreementNumber: string;
+  agreementType: V24AgreementType;
+  title: string;
+  buyerParticipantId: string;
+  sellerParticipantId: string;
+  linkedRfqId?: string;
+  linkedQuotationId?: string;
+  itemsSummary: { name: string; quantity: number; unitOfMeasure: string; unitPriceMinor: number }[];
+  totalValueMinor: number;
+  currency: V23CurrencyCode;
+  governingJurisdiction: string;
+  termsText: string;
+  status: V24AgreementStatus;
+  regulatedEscrowIncluded: false;
+  buyerSignedAt?: string;
+  buyerSignedBy?: string;
+  sellerSignedAt?: string;
+  sellerSignedBy?: string;
+  immutableDocumentHash: string;
+  history: { fromStatus: string | null; toStatus: string; actorUserId: string; note: string; timestamp: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V24OrderType =
+  | 'B2B'
+  | 'B2C'
+  | 'C2C'
+  | 'WHOLESALE'
+  | 'RETAIL'
+  | 'SERVICE'
+  | 'RENTAL_BOOKING'
+  | 'MANUFACTURING'
+  | 'INSTITUTIONAL'
+  | 'RECURRING_SUPPLY';
+
+export type V24OrderStatus =
+  | 'ORDER_DRAFT'
+  | 'ORDER_SUBMITTED'
+  | 'ORDER_ACCEPTED'
+  | 'ORDER_CONFIRMED'
+  | 'ORDER_SCHEDULED'
+  | 'ORDER_IN_PREPARATION'
+  | 'ORDER_DISPATCHED'
+  | 'ORDER_IN_TRANSIT'
+  | 'ORDER_PARTIALLY_FULFILLED'
+  | 'ORDER_DELIVERED'
+  | 'ORDER_INSPECTED'
+  | 'ORDER_COMPLETED'
+  | 'ORDER_CANCELLED'
+  | 'ORDER_REJECTED'
+  | 'ORDER_RETURN_REQUESTED'
+  | 'ORDER_RETURNED'
+  | 'ORDER_DISPUTED'
+  | 'ORDER_REFUNDED';
+
+export interface V24OrderLineItem {
+  id: string;
+  title: string;
+  inventoryItemId?: string;
+  quantityOrdered: number;
+  quantityFulfilled: number;
+  unitOfMeasure: string;
+  unitPriceMinor: number;
+  lineTotalMinor: number;
+}
+
+export interface V24CommercialOrder {
+  id: string;
+  tenantId: string;
+  orderNumber: string;
+  orderType: V24OrderType;
+  buyerParticipantId: string;
+  sellerParticipantId: string;
+  linkedListingId?: string;
+  linkedAgreementId?: string;
+  items: V24OrderLineItem[];
+  subtotalMinor: number;
+  taxMinor: number;
+  deliveryChargeMinor: number;
+  totalMinor: number;
+  currency: V23CurrencyCode;
+  allowPartialFulfilment: boolean;
+  deliveryLocation: string;
+  deliveryEvidenceRef?: string;
+  inspectionResult?: 'PASSED' | 'PARTIAL_DEFECT' | 'FAILED';
+  status: V24OrderStatus;
+  paymentObligationId?: string;
+  history: { fromStatus: string | null; toStatus: string; actorUserId: string; reason: string; timestamp: string }[];
+  isTestRecord: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24WarehouseFacility {
+  id: string;
+  tenantId: string;
+  ownerParticipantId: string;
+  code: string;
+  name: string;
+  countryCode: string;
+  districtOrCity: string;
+  facilityType: 'GENERAL_WAREHOUSE' | 'COLD_CHAIN_HUB' | 'AGGREGATION_DEPOT' | 'FACTORY_STORE' | 'BONDED_TRANSIT';
+  maxCapacityUnits: number;
+  usedCapacityUnits: number;
+  temperatureControlled: boolean;
+  status: 'ACTIVE' | 'MAINTENANCE';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24InventoryItem {
+  id: string;
+  tenantId: string;
+  warehouseId: string;
+  ownerParticipantId: string;
+  sku: string;
+  name: string;
+  sectorId: string;
+  unitOfMeasure: string;
+  physicalQty: number;
+  reservedQty: number;
+  availableToPromiseQty: number;
+  reorderThresholdQty: number;
+  unitValuationMinor: number;
+  currency: V23CurrencyCode;
+  batchNumber?: string;
+  expiryDate?: string;
+  reservationExpiresAt?: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V24StockMovementType =
+  | 'RECEIVE'
+  | 'RESERVE'
+  | 'RELEASE_RESERVATION'
+  | 'DISPATCH'
+  | 'RETURN'
+  | 'ADJUSTMENT'
+  | 'DAMAGED'
+  | 'EXPIRED'
+  | 'TRANSFER_OUT'
+  | 'TRANSFER_IN'
+  | 'PRODUCTION_CONSUME'
+  | 'PRODUCTION_OUTPUT';
+
+export interface V24StockMovement {
+  id: string;
+  tenantId: string;
+  inventoryItemId: string;
+  warehouseId: string;
+  targetWarehouseId?: string;
+  sku: string;
+  movementType: V24StockMovementType;
+  quantityDeltaPhysical: number;
+  quantityDeltaReserved: number;
+  referenceType?: string;
+  referenceId?: string;
+  reason: string;
+  actorUserId: string;
+  createdAt: string;
+}
+
+export type V24ProcurementCategory =
+  | 'ENTERPRISE_INTERNAL'
+  | 'COOPERATIVE_BULK'
+  | 'INSTITUTIONAL_SUPPLY'
+  | 'NGO_PROJECT'
+  | 'PUBLIC_PREPARATION';
+
+export interface V24ProcurementRequest {
+  id: string;
+  tenantId: string;
+  requestNumber: string;
+  buyerParticipantId: string;
+  requesterUserId: string;
+  category: V24ProcurementCategory;
+  title: string;
+  specifications: string;
+  budgetReference: string;
+  estimatedBudgetMinor: number;
+  currency: V23CurrencyCode;
+  conflictOfInterestDeclared: boolean;
+  conflictDeclarationNote: string;
+  requiresDualApproval: boolean;
+  isPublicPreparationNotice: boolean;
+  officialGovernmentPlatformClaimed: false;
+  status: 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'PO_ISSUED';
+  approverUserId?: string;
+  approvalNote?: string;
+  approvedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24PurchaseOrder {
+  id: string;
+  tenantId: string;
+  poNumber: string;
+  procurementRequestId: string;
+  buyerParticipantId: string;
+  supplierParticipantId: string;
+  items: { title: string; quantity: number; unitOfMeasure: string; unitPriceMinor: number; lineTotalMinor: number }[];
+  totalAmountMinor: number;
+  currency: V23CurrencyCode;
+  status: 'ISSUED' | 'ACKNOWLEDGED' | 'GOODS_RECEIVED' | 'MATCHED' | 'CLOSED';
+  threeWayMatchStatus: 'PENDING' | 'MATCHED' | 'VARIANCE_FLAGGED';
+  matchedGrnId?: string;
+  matchedInvoiceId?: string;
+  matchVarianceMinor: number;
+  createdByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24BillOfMaterials {
+  id: string;
+  tenantId: string;
+  manufacturerParticipantId: string;
+  productName: string;
+  finishedSku: string;
+  workCentre: string;
+  components: {
+    sku: string;
+    inventoryItemId?: string;
+    name: string;
+    quantityPerUnit: number;
+    unitOfMeasure: string;
+    estimatedUnitCostMinor: number;
+  }[];
+  estimatedUnitCostMinor: number;
+  currency: V23CurrencyCode;
+  costStatementNotice: 'ESTIMATED_OPERATIONAL_COST_NOT_AUDITED_FINANCIAL_STATEMENT';
+  createdAt: string;
+}
+
+export interface V24ProductionOrder {
+  id: string;
+  tenantId: string;
+  productionNumber: string;
+  bomId: string;
+  manufacturerParticipantId: string;
+  productName: string;
+  finishedSku: string;
+  workCentre: string;
+  targetQuantity: number;
+  producedGoodQty: number;
+  rejectedOrWastageQty: number;
+  finishedBatchNumber: string;
+  finishedInventoryItemId?: string;
+  qualityInspectionStatus: 'PENDING' | 'PASSED' | 'PARTIAL_REJECTED' | 'FAILED';
+  estimatedCostMinor: number;
+  actualOperationalCostMinor: number;
+  costVarianceMinor: number;
+  currency: V23CurrencyCode;
+  costStatementNotice: 'ESTIMATED_OPERATIONAL_COST_NOT_AUDITED_FINANCIAL_STATEMENT';
+  status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24RegionalCorridorGuide {
+  corridorCode: string;
+  name: string;
+  originCountry: string;
+  destinationCountry: string;
+  borderPost: string;
+  distanceKmEstimate: number;
+  requiredGuidanceDocs: string[];
+  customsClearanceClaimed: false;
+  externalAuthorityNotice: string;
+}
+
+export type V24ShipmentStatus =
+  | 'CREATED'
+  | 'BOOKED'
+  | 'ASSIGNED'
+  | 'PICKUP_PENDING'
+  | 'PICKED_UP'
+  | 'IN_TRANSIT'
+  | 'ARRIVED_HUB'
+  | 'ARRIVED_BORDER'
+  | 'CUSTOMS_COORDINATION_NOTE'
+  | 'OUT_FOR_DELIVERY'
+  | 'DELAYED'
+  | 'DELIVERED'
+  | 'FAILED_DELIVERY'
+  | 'RETURNED';
+
+export interface V24ShipmentEvent {
+  id: string;
+  status: V24ShipmentStatus;
+  reportedLocation: string;
+  locationSource: 'CARRIER_SELF_REPORT' | 'CHECKPOINT_AGENT_REPORT' | 'WAYBILL_SCAN_ENTRY';
+  gpsClaimed: false;
+  notes: string;
+  actorUserId: string;
+  timestamp: string;
+}
+
+export interface V24LogisticsShipment {
+  id: string;
+  tenantId: string;
+  shipmentRef: string;
+  linkedOrderId?: string;
+  providerParticipantId: string;
+  providerCategory: string;
+  corridorCode?: string;
+  originCountry: string;
+  destinationCountry: string;
+  originLocation: string;
+  destinationLocation: string;
+  freightFeeMinor: number;
+  currency: V23CurrencyCode;
+  status: V24ShipmentStatus;
+  proofOfCollectionRef?: string;
+  proofOfDeliveryRef?: string;
+  exceptionNotes: string[];
+  events: V24ShipmentEvent[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V24DocumentType =
+  | 'QUOTATION'
+  | 'PROFORMA_INVOICE'
+  | 'PURCHASE_ORDER'
+  | 'SALES_ORDER'
+  | 'CONTRACT_AGREEMENT'
+  | 'INVOICE'
+  | 'CREDIT_NOTE'
+  | 'DEBIT_NOTE'
+  | 'RECEIPT'
+  | 'DELIVERY_NOTE'
+  | 'PACKING_LIST'
+  | 'GOODS_RECEIVED_NOTE'
+  | 'WAYBILL'
+  | 'STATEMENT_OF_ACCOUNT';
+
+export interface V24CommercialDocument {
+  id: string;
+  tenantId: string;
+  documentNumber: string;
+  documentType: V24DocumentType;
+  issuingParticipantId: string;
+  receivingParticipantId: string;
+  linkedEntityType: 'COMMERCIAL_ORDER' | 'PURCHASE_ORDER' | 'AGREEMENT' | 'SHIPMENT' | 'PROJECT';
+  linkedEntityId: string;
+  lineItems: { description: string; quantity: number; unitPriceMinor: number; lineTotalMinor: number }[];
+  subtotalMinor: number;
+  taxMinor: number;
+  totalAmountMinor: number;
+  currency: V23CurrencyCode;
+  status: 'DRAFT' | 'ISSUED' | 'ACKNOWLEDGED' | 'PAID' | 'VOID';
+  taxFilingNotice: 'ECONEX_COMMERCIAL_RECORD_NOT_OFFICIAL_GOVERNMENT_TAX_FILING';
+  documentHashSha256: string;
+  issuedAt: string;
+  updatedAt: string;
+}
+
+export interface V24DocumentShare {
+  token: string;
+  documentId: string;
+  tenantId: string;
+  createdByUserId: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
+export type V24ObligationStatus =
+  | 'UNPAID'
+  | 'PENDING_CONFIRMATION'
+  | 'PAYMENT_POSTED'
+  | 'PAYMENT_FAILED'
+  | 'PAYMENT_REVERSED'
+  | 'DISPUTED';
+
+export interface V24PaymentObligation {
+  id: string;
+  obligationRef: string;
+  tenantId: string;
+  sourceEntityType: 'COMMERCIAL_ORDER' | 'PROJECT_MILESTONE' | 'SHIPMENT' | 'AGREEMENT';
+  sourceEntityId: string;
+  payerParticipantId: string;
+  payeeParticipantId: string;
+  payerEuwn: string;
+  payeeEuwn: string;
+  amountMinor: number;
+  paidMinor: number;
+  refundedMinor: number;
+  currency: V23CurrencyCode;
+  status: V24ObligationStatus;
+  sandboxOnly: true;
+  v23TransactionIds: string[];
+  v23RefundIds: string[];
+  lastFailureReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V24ProjectType =
+  | 'CONSTRUCTION'
+  | 'EQUIPMENT_INSTALLATION'
+  | 'MAINTENANCE_CONTRACT'
+  | 'SOLAR_DEPLOYMENT'
+  | 'AGRICULTURAL_PROCESSING_SETUP'
+  | 'IT_INFRASTRUCTURE'
+  | 'CREATIVE_DELIVERY'
+  | 'COMMUNITY_DEVELOPMENT';
+
+export type V24MilestoneStatus = 'PLANNED' | 'IN_PROGRESS' | 'SUBMITTED' | 'ACCEPTED' | 'REJECTED';
+
+export interface V24ProjectMilestone {
+  id: string;
+  title: string;
+  deliverableSummary: string;
+  budgetMinor: number;
+  status: V24MilestoneStatus;
+  evidenceRef?: string;
+  linkedPaymentObligationId?: string;
+  updatedAt: string;
+}
+
+export interface V24CommercialProject {
+  id: string;
+  tenantId: string;
+  projectCode: string;
+  title: string;
+  projectType: V24ProjectType;
+  clientParticipantId: string;
+  contractorParticipantId: string;
+  scope: string;
+  totalBudgetMinor: number;
+  currency: V23CurrencyCode;
+  autoEscrowRelease: false;
+  milestones: V24ProjectMilestone[];
+  status: 'ACTIVE' | 'COMPLETED' | 'ON_HOLD';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24TrustReview {
+  id: string;
+  tenantId: string;
+  orderId: string;
+  reviewerParticipantId: string;
+  subjectParticipantId: string;
+  rating: number;
+  comment: string;
+  appealStatus: 'NONE' | 'APPEALED' | 'UPHELD' | 'REMOVED';
+  appealReason?: string;
+  adminResolutionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24CommercialThread {
+  id: string;
+  tenantId: string;
+  linkedEntityType: string;
+  linkedEntityId: string;
+  title: string;
+  participantIds: string[];
+  blockedParticipantIds: string[];
+  messages: { id: string; senderParticipantId: string; senderUserId: string; body: string; createdAt: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24OfflineDraft {
+  id: string;
+  tenantId: string;
+  userId: string;
+  clientDraftId: string;
+  entityKind: 'LISTING_DRAFT' | 'ORDER_DRAFT' | 'DELIVERY_NOTE_DRAFT' | 'INVENTORY_COUNT' | 'COMMERCIAL_ORDER';
+  targetEntityId?: string;
+  baseVersion?: number;
+  attemptedAction?: string;
+  payload: Record<string, any>;
+  syncState: 'QUEUED' | 'SYNCED' | 'CONFLICT' | 'REJECTED';
+  conflictFields?: string[];
+  serverResolutionNote?: string;
+  createdAt: string;
+  syncedAt?: string;
+}
+
+export interface V24ApiClientCredential {
+  id: string;
+  tenantId: string;
+  organizationParticipantId: string;
+  label: string;
+  keyPrefix: string;
+  keyHashSha256: string;
+  scopes: string[];
+  environment: 'SANDBOX';
+  status: 'ACTIVE' | 'REVOKED';
+  createdByUserId: string;
+  createdAt: string;
+  revokedAt?: string;
+}
+
+export type V24AdapterState = 'NOT_CONFIGURED' | 'SANDBOX_ACTIVE' | 'PAUSED' | 'LIVE_APPROVED';
+
+export interface V24WebhookSubscription {
+  id: string;
+  tenantId: string;
+  organizationParticipantId: string;
+  adapterCategory: string;
+  endpointUrl: string;
+  targetUrl: string;
+  eventTypes: string[];
+  adapterState: V24AdapterState;
+  signingSecretHint: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V24WebhookDelivery {
+  id: string;
+  subscriptionId: string;
+  eventType: string;
+  idempotencyKey: string;
+  payload: Record<string, any>;
+  signatureSha256: string;
+  status: 'DELIVERED_SANDBOX' | 'BLOCKED_NOT_CONFIGURED';
+  createdAt: string;
+}
+
+export interface V24AuditEvent {
+  id: string;
+  tenantId: string;
+  actorUserId: string;
+  actorRole: UserRole;
+  action: string;
+  targetType: string;
+  targetId: string;
+  summary: string;
+  prevHash: string;
+  entryHash: string;
+  createdAt: string;
+}
+
+export interface V24PostgresDryRunReport {
+  id: string;
+  schemaVersionTarget: 22;
+  activeAuthority: 'LOCAL_JSON_WAL_AUTHORITATIVE';
+  postgresCutoverComplete: false;
+  tablesAudited: number;
+  tableMappings: { collectionName: string; postgresTable: string; recordCount: number; checksumSha256: string }[];
+  rollbackVerified: boolean;
+  ledgerBalanced: boolean;
+  inventoryBalanced: boolean;
+  notes: string;
+  executedAt: string;
+}
+
+// ==========================================
+// V25.0 — CONTINENTAL INFRASTRUCTURE, CLOUD TRANSFORMATION & SOVEREIGN PLATFORM (SCHEMA 23)
+// ==========================================
+
+export type V25EnvironmentProfile =
+  | 'LOCAL_DEVELOPMENT'
+  | 'AUTOMATED_TESTING'
+  | 'STAGING'
+  | 'PRODUCTION';
+
+export type V25DataClassification =
+  | 'PUBLIC'
+  | 'SHARED_COUNTERPARTY'
+  | 'ORG_INTERNAL'
+  | 'OWNER_CONFIDENTIAL'
+  | 'REGULATED_COMPLIANCE';
+
+export type V25OrgLifecycleStatus = 'ACTIVE' | 'SUSPENDED' | 'REVOKED' | 'PENDING_REVIEW';
+
+export interface V25Organisation {
+  id: string;
+  tenantId: string;
+  code: string;
+  legalName: string;
+  displayName: string;
+  orgType: 'HOLDING_COMPANY' | 'ENTERPRISE' | 'COOPERATIVE' | 'SME' | 'INSTITUTION' | 'LOGISTICS_OPERATOR';
+  parentOrganisationId?: string;
+  countryCode: string;
+  defaultCurrency: V23CurrencyCode;
+  ownerUserId: string;
+  status: V25OrgLifecycleStatus;
+  dataClassificationDefault: V25DataClassification;
+  complianceTier: V25ComplianceTier;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V25BusinessUnit {
+  id: string;
+  organisationId: string;
+  tenantId: string;
+  code: string;
+  name: string;
+  sectorId: string;
+  countryCode: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+}
+
+export interface V25Branch {
+  id: string;
+  organisationId: string;
+  businessUnitId: string;
+  tenantId: string;
+  code: string;
+  name: string;
+  countryCode: string;
+  cityOrDistrict: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+}
+
+export interface V25Department {
+  id: string;
+  organisationId: string;
+  branchId: string;
+  tenantId: string;
+  code: string;
+  name: string;
+  costCenterCode: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+}
+
+export interface V25Team {
+  id: string;
+  organisationId: string;
+  departmentId: string;
+  tenantId: string;
+  name: string;
+  leadUserId: string;
+  memberUserIds: string[];
+  createdAt: string;
+}
+
+export type V25OrgMemberRole =
+  | 'ORG_OWNER'
+  | 'ORG_ADMIN'
+  | 'FINANCE_CONTROLLER'
+  | 'TREASURY_APPROVER'
+  | 'BRANCH_MANAGER'
+  | 'PROCUREMENT_OFFICER'
+  | 'OPERATOR'
+  | 'AUDITOR_READ_ONLY';
+
+export interface V25OrgMembership {
+  id: string;
+  organisationId: string;
+  tenantId: string;
+  userId: string;
+  memberRole: V25OrgMemberRole;
+  allowedBranchIds: string[];
+  allowedDepartmentIds: string[];
+  allowedCountries: string[];
+  approvalLimitMinor: number;
+  delegatedByUserId?: string;
+  delegationExpiresAt?: string;
+  status: 'ACTIVE' | 'SUSPENDED' | 'REVOKED';
+  isActiveContext: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V25RolePermissionGrant {
+  id: string;
+  roleCode: V25OrgMemberRole | UserRole;
+  resource: string;
+  actions: string[];
+  requireMfaForSensitive: boolean;
+  requireSameOrganisation: boolean;
+  requireSameCountry: boolean;
+  description: string;
+}
+
+export interface V25MfaConfig {
+  userId: string;
+  enabled: boolean;
+  method: 'TOTP_AUTHENTICATOR' | 'HARDWARE_KEY' | 'SMS_OTP_FALLBACK';
+  secretFingerprint: string;
+  recoveryCodesRemaining: number;
+  lastVerifiedAt?: string;
+  pendingChallengeId?: string;
+  pendingChallengeCodeHash?: string;
+  pendingChallengeExpiresAt?: string;
+  updatedAt: string;
+}
+
+export interface V25UserDevice {
+  id: string;
+  userId: string;
+  deviceLabel: string;
+  fingerprintHash: string;
+  userAgent: string;
+  countryCode: string;
+  trusted: boolean;
+  status: 'ACTIVE' | 'SUSPENDED' | 'REVOKED';
+  lastSeenAt: string;
+  registeredAt: string;
+}
+
+export interface V25UserSession {
+  id: string;
+  userId: string;
+  activeOrganisationId: string;
+  deviceId: string;
+  tokenHash: string;
+  refreshTokenHash: string;
+  refreshRotationCount: number;
+  ipAddress: string;
+  countryCode: string;
+  suspiciousFlag: boolean;
+  suspiciousReason?: string;
+  mfaVerified: boolean;
+  status: 'ACTIVE' | 'REVOKED' | 'EXPIRED';
+  expiresAt: string;
+  createdAt: string;
+  lastActivityAt: string;
+  revokedAt?: string;
+}
+
+export type V25LedgerTxState =
+  | 'CREATED'
+  | 'VALIDATING'
+  | 'PENDING'
+  | 'APPROVED'
+  | 'POSTED'
+  | 'REJECTED'
+  | 'FAILED'
+  | 'EXPIRED'
+  | 'CANCELLED'
+  | 'REVERSED'
+  | 'REFUNDED';
+
+export interface V25LedgerTransactionRecord {
+  id: string;
+  idempotencyKey: string;
+  tenantId: string;
+  organisationId: string;
+  countryCode: string;
+  fromEuwn: string;
+  toEuwn: string;
+  amountMinor: number;
+  currency: V23CurrencyCode;
+  valueMode: 'INTERNAL_SANDBOX_LEDGER';
+  realValueSettlementClaimed: false;
+  state: V25LedgerTxState;
+  requiresDualApproval: boolean;
+  approvedByUserId?: string;
+  v23TransactionId?: string;
+  spendLockAcquired: boolean;
+  failureReason?: string;
+  stateHistory: {
+    fromState: V25LedgerTxState | null;
+    toState: V25LedgerTxState;
+    actorUserId: string;
+    note: string;
+    timestamp: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V25RegulatoryLimitRule {
+  id: string;
+  countryCode: string;
+  currency: V23CurrencyCode;
+  complianceTier: V25ComplianceTier;
+  singleTxMaxMinor: number;
+  dailyTxMaxMinor: number;
+  dualApprovalThresholdMinor: number;
+  active: boolean;
+  updatedAt: string;
+}
+
+export interface V25ConcurrencyProofRun {
+  id: string;
+  euwn: string;
+  currency: V23CurrencyCode;
+  startingBalanceMinor: number;
+  attemptedWorkers: number;
+  attemptAmountMinor: number;
+  succeededCount: number;
+  blockedCount: number;
+  endingBalanceMinor: number;
+  doubleSpendPrevented: boolean;
+  executedAt: string;
+}
+
+export interface V25OutboxEvent {
+  id: string;
+  eventType: string;
+  aggregateType: string;
+  aggregateId: string;
+  tenantId: string;
+  organisationId: string;
+  correlationId: string;
+  idempotencyKey: string;
+  payload: Record<string, any>;
+  status: 'PENDING' | 'DISPATCHED' | 'CONSUMED' | 'FAILED' | 'DLQ';
+  attempts: number;
+  maxAttempts: number;
+  lastError?: string;
+  consumedByConsumers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V25DeadLetterRecord {
+  id: string;
+  outboxEventId: string;
+  eventType: string;
+  reason: string;
+  attemptsAtFailure: number;
+  replayed: boolean;
+  replayedAt?: string;
+  createdAt: string;
+}
+
+export interface V25BackgroundJob {
+  id: string;
+  jobType:
+    | 'FX_RATE_REFRESH'
+    | 'RESERVATION_EXPIRY_SWEEP'
+    | 'RECONCILIATION_VERIFY'
+    | 'WEBHOOK_RETRY_DISPATCH'
+    | 'PG_SHADOW_SYNC'
+    | 'VAULT_RETENTION_AUDIT'
+    | 'BACKUP_CHECKPOINT';
+  idempotencyLockKey: string;
+  tenantId: string;
+  organisationId?: string;
+  status: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'RETRY_SCHEDULED';
+  attempts: number;
+  maxRetries: number;
+  aiAutoApproveAllowed: false;
+  payload: Record<string, any>;
+  resultSummary?: string;
+  lastError?: string;
+  scheduledAt: string;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+export interface V25AuditTrailRecord {
+  id: string;
+  tenantId: string;
+  organisationId: string;
+  countryCode: string;
+  actorUserId: string;
+  actorRole: string;
+  action: string;
+  resourceType: string;
+  resourceId: string;
+  classification: V25DataClassification;
+  correlationId: string;
+  summary: string;
+  prevHash: string;
+  entryHash: string;
+  createdAt: string;
+}
+
+export interface V25ApiApplication {
+  id: string;
+  tenantId: string;
+  organisationId: string;
+  name: string;
+  description: string;
+  environment: 'SANDBOX';
+  ownerUserId: string;
+  status: 'ACTIVE' | 'SUSPENDED';
+  rateLimitPerMin: number;
+  createdAt: string;
+}
+
+export interface V25ScopedApiKey {
+  id: string;
+  appId: string;
+  organisationId: string;
+  tenantId: string;
+  label: string;
+  keyPrefix: string;
+  keyHashSha256: string;
+  scopes: string[];
+  environment: 'SANDBOX';
+  secretDisplayedOnceAtCreation: true;
+  secretRetrievableAfterCreation: false;
+  status: 'ACTIVE' | 'REVOKED';
+  createdByUserId: string;
+  createdAt: string;
+  lastUsedAt?: string;
+  revokedAt?: string;
+}
+
+export interface V25WebhookEndpoint {
+  id: string;
+  appId: string;
+  organisationId: string;
+  tenantId: string;
+  targetUrl: string;
+  eventTypes: string[];
+  signingSecretHash: string;
+  signingSecretPrefix: string;
+  status: 'ACTIVE' | 'PAUSED' | 'DISABLED';
+  createdAt: string;
+}
+
+export interface V25WebhookDeliveryRecord {
+  id: string;
+  endpointId: string;
+  outboxEventId: string;
+  eventType: string;
+  idempotencyKey: string;
+  signatureHmacSha256: string;
+  attemptCount: number;
+  status: 'DELIVERED_SANDBOX' | 'FAILED_RETRYING' | 'DLQ';
+  responseCode: number;
+  createdAt: string;
+}
+
+export type V25AdapterCategory =
+  | 'BANKING_RAIL'
+  | 'PSP_GATEWAY'
+  | 'MOBILE_MONEY'
+  | 'CARD_PROCESSOR'
+  | 'KYC_PROVIDER'
+  | 'LOGISTICS_CARRIER'
+  | 'ERP_CONNECTOR'
+  | 'GOVT_TAX_PORTAL';
+
+export interface V25ExternalAdapterBoundary {
+  id: string;
+  category: V25AdapterCategory;
+  providerName: string;
+  countryCode: string;
+  adapterState: 'NOT_CONFIGURED' | 'SANDBOX_SIMULATOR' | 'REQUIRES_CREDENTIALS_AND_LICENSE';
+  liveProductionEnabled: false;
+  requiredEnvVars: string[];
+  lastHealthCheckAt: string;
+  notes: string;
+}
+
+export interface V25CountryProfile {
+  countryCode: string;
+  countryName: string;
+  regionBloc: 'EAC' | 'SADC' | 'ECOWAS' | 'AFCFTA_GENERAL';
+  defaultCurrency: V23CurrencyCode;
+  supportedCurrencies: V23CurrencyCode[];
+  vatStandardRatePct: number;
+  regulatoryAuthorityNote: string;
+  paymentRailsConfigured: string[];
+  readinessStatus: 'PILOT_READY' | 'SANDBOX_STAGING' | 'CONFIGURED_INACTIVE';
+  activated: boolean;
+  approvedByUserId?: string;
+  approvedAt?: string;
+  updatedAt: string;
+}
+
+export interface V25CountryReadinessReport {
+  id: string;
+  countryCode: string;
+  checks: {
+    checkName: string;
+    passed: boolean;
+    detail: string;
+  }[];
+  overallScorePct: number;
+  readyForControlledActivation: boolean;
+  liveExternalRailsConnected: false;
+  generatedAt: string;
+}
+
+export interface V25FxQuote {
+  id: string;
+  baseCurrency: V23CurrencyCode;
+  quoteCurrency: V23CurrencyCode;
+  rateNumeric: number;
+  inverseRateNumeric: number;
+  quoteType: 'INDICATIVE' | 'EXECUTABLE';
+  rateSource: string;
+  rateTimestamp: string;
+  validUntil: string;
+  spreadBps: number;
+  silentConversionForbidden: true;
+  status: 'ACTIVE' | 'EXPIRED' | 'EXECUTED';
+  createdAt: string;
+}
+
+export interface V25FxClearingRecord {
+  id: string;
+  quoteId: string;
+  organisationId: string;
+  sourceCurrency: V23CurrencyCode;
+  targetCurrency: V23CurrencyCode;
+  sourceAmountMinor: number;
+  targetAmountMinor: number;
+  rateApplied: number;
+  clearingFeeMinor: number;
+  reconciled: boolean;
+  executedByUserId: string;
+  createdAt: string;
+}
+
+export interface V25VaultDocument {
+  id: string;
+  tenantId: string;
+  organisationId: string;
+  countryCode: string;
+  ownerUserId: string;
+  classification: V25DataClassification;
+  title: string;
+  originalFilename: string;
+  storageRelativePath: string;
+  mimeType: string;
+  sizeBytes: number;
+  sha256Checksum: string;
+  version: number;
+  previousVersionId?: string;
+  malwareScanStatus: 'PASSED_SANDBOX_HEURISTIC' | 'QUARANTINED' | 'PENDING_EXTERNAL_CLAMAV';
+  retentionPolicyDays: number;
+  retentionExpiresAt: string;
+  linkedEntityType?: string;
+  linkedEntityId?: string;
+  createdAt: string;
+}
+
+export interface V25VaultDownloadToken {
+  token: string;
+  documentId: string;
+  issuedToUserId: string;
+  organisationId: string;
+  expiresAt: string;
+  usedCount: number;
+  maxUses: number;
+  createdAt: string;
+}
+
+export interface V25VaultAccessLog {
+  id: string;
+  documentId: string;
+  actorUserId: string;
+  organisationId: string;
+  action: 'UPLOAD' | 'DOWNLOAD_TOKEN_ISSUED' | 'DOWNLOAD_GRANTED' | 'ACCESS_DENIED';
+  reason: string;
+  createdAt: string;
+}
+
+export interface V25SecurityEvent {
+  id: string;
+  eventType:
+    | 'FAILED_LOGIN_BURST'
+    | 'SUSPICIOUS_COUNTRY_SESSION'
+    | 'CROSS_TENANT_ACCESS_BLOCKED'
+    | 'PRIVILEGE_ESCALATION_BLOCKED'
+    | 'PROMPT_INJECTION_BLOCKED'
+    | 'API_KEY_REVOKED'
+    | 'VAULT_ACCESS_DENIED';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  tenantId: string;
+  organisationId?: string;
+  actorUserId?: string;
+  sourceIp: string;
+  summary: string;
+  blocked: boolean;
+  createdAt: string;
+}
+
+export type V25IncidentStage =
+  | 'DETECTION'
+  | 'CLASSIFICATION'
+  | 'CONTAINMENT'
+  | 'INVESTIGATION'
+  | 'RECOVERY'
+  | 'POST_INCIDENT_REVIEW';
+
+export interface V25SecurityIncident {
+  id: string;
+  title: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  stage: V25IncidentStage;
+  relatedEventIds: string[];
+  affectedOrganisationId?: string;
+  containmentActions: string[];
+  leadResponderUserId: string;
+  postMortemSummary?: string;
+  stageHistory: {
+    fromStage: V25IncidentStage | null;
+    toStage: V25IncidentStage;
+    actorUserId: string;
+    note: string;
+    timestamp: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V25ComplianceTier =
+  | 'USER_SUBMITTED'
+  | 'AUTO_VALIDATED'
+  | 'THIRD_PARTY_VERIFIED'
+  | 'HUMAN_REVIEWED'
+  | 'GOVERNMENT_VERIFIED';
+
+export interface V25ComplianceRecord {
+  id: string;
+  subjectType: 'INDIVIDUAL' | 'ORGANISATION';
+  subjectId: string;
+  organisationId: string;
+  countryCode: string;
+  verificationCategory: 'KYC' | 'KYB' | 'SANCTIONS_AML' | 'TAX_CLEARANCE';
+  tier: V25ComplianceTier;
+  evidenceSummary: string;
+  vaultDocumentIds: string[];
+  sanctionsScreeningStatus: 'CLEAR_SANDBOX_CHECK' | 'FLAGGED_FOR_REVIEW' | 'NOT_SCREENED_EXTERNALLY';
+  reviewedByUserId?: string;
+  reviewNotes?: string;
+  governmentRegistryAuthority?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V25PlatformPlan {
+  id: string;
+  code: string;
+  name: string;
+  tier: 'STARTER' | 'GROWTH' | 'ENTERPRISE' | 'CONTINENTAL_INSTITUTION';
+  monthlyPriceMinor: number;
+  currency: V23CurrencyCode;
+  includedApiRequestsPerMonth: number;
+  includedBranches: number;
+  includedVaultMb: number;
+  walletBalanceSeparated: true;
+  active: boolean;
+}
+
+export interface V25OrgSubscription {
+  id: string;
+  organisationId: string;
+  planId: string;
+  status: 'ACTIVE' | 'TRIAL' | 'SUSPENDED' | 'CANCELLED';
+  billingCycleStart: string;
+  billingCycleEnd: string;
+  apiUsageCount: number;
+  walletBalanceSeparated: true;
+  updatedAt: string;
+}
+
+export interface V25PlatformInvoice {
+  id: string;
+  invoiceNumber: string;
+  organisationId: string;
+  subscriptionId: string;
+  planId: string;
+  amountMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  currency: V23CurrencyCode;
+  status: 'ISSUED' | 'PAID_SANDBOX' | 'VOID';
+  walletBalanceSeparated: true;
+  createdAt: string;
+}
+
+export interface V25PostgresMigrationStage {
+  stageNumber: number;
+  stageCode: string;
+  description: string;
+  recordsProcessed: number;
+  checksumSha256: string;
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'SKIPPED_NO_PG';
+  durationMs: number;
+}
+
+export interface V25PostgresMigrationRun {
+  id: string;
+  mode: 'DRY_RUN_REHEARSAL' | 'LIVE_POSTGRES_MIGRATION';
+  pgConfigured: boolean;
+  pgHostOrRedactedUrl: string;
+  activeAuthorityAfterRun: 'LOCAL_JSON_WAL_AUTHORITATIVE' | 'POSTGRESQL_16_AUTHORITATIVE';
+  schemaTarget: 23;
+  migrationLockAcquired: boolean;
+  interruptedRecoveryTested: boolean;
+  stages: V25PostgresMigrationStage[];
+  currencyReconciliation: {
+    currency: V23CurrencyCode;
+    jsonDebitMinor: number;
+    jsonCreditMinor: number;
+    targetDebitMinor: number;
+    targetCreditMinor: number;
+    varianceMinor: number;
+    balanced: boolean;
+  }[];
+  totalRecordsAudited: number;
+  zeroVarianceVerified: boolean;
+  status: 'COMPLETED_DRY_RUN' | 'COMPLETED_LIVE_PG' | 'RECOVERED' | 'FAILED';
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface V25BackupDrillRun {
+  id: string;
+  sourceFile: string;
+  backupFile: string;
+  backupBytes: number;
+  backupChecksumSha256: string;
+  restoreVerificationPassed: boolean;
+  measuredRpoSeconds: number;
+  measuredRtoMs: number;
+  financialTotalsMatched: boolean;
+  executedByUserId: string;
+  executedAt: string;
+}
+
+export interface V25LoadBenchmarkRun {
+  id: string;
+  concurrency: number;
+  totalRequests: number;
+  succeededRequests: number;
+  failedRequests: number;
+  totalDurationMs: number;
+  measuredRps: number;
+  p50LatencyMs: number;
+  p95LatencyMs: number;
+  p99LatencyMs: number;
+  memoryRssMb: number;
+  executedAt: string;
+}
+
+export interface V25ReadinessFlags {
+  V25_ARCHITECTURE_CONSOLIDATED: boolean;
+  V25_POSTGRES_MIGRATOR_READY: boolean;
+  V25_POSTGRESQL_CONFIGURED: boolean;
+  V25_POSTGRESQL_CUTOVER_COMPLETE: boolean;
+  V25_MULTI_ORG_HIERARCHY_READY: boolean;
+  V25_DATA_ISOLATION_ENFORCED: boolean;
+  V25_IDENTITY_SECURITY_READY: boolean;
+  V25_IMMUTABLE_LEDGER_READY: boolean;
+  V25_EVENT_OUTBOX_READY: boolean;
+  V25_BACKGROUND_JOBS_READY: boolean;
+  V25_DEVELOPER_PLATFORM_READY: boolean;
+  V25_COUNTRY_ENGINE_READY: boolean;
+  V25_MULTI_CURRENCY_FX_READY: boolean;
+  V25_DOCUMENT_VAULT_READY: boolean;
+  V25_SECURITY_INCIDENT_READY: boolean;
+  V25_AI_GOVERNANCE_READY: boolean;
+  V25_CLOUD_DEPLOYMENT_CONFIGURED: boolean;
+  V25_CLOUD_DEPLOYMENT_COMPLETE: boolean;
+  V25_HUMAN_FIELD_VALIDATION_COMPLETE: boolean;
+  V25_PILOT_ACTIVE: boolean;
+  V25_REAL_VALUE_WALLET_LIVE: boolean;
+  V25_EXTERNAL_INTEGRATIONS_LIVE: boolean;
+}
+
+export interface V25ReadinessMatrix {
+  release: 'V25.0-CONTINENTAL-INFRASTRUCTURE';
+  schemaVersion: number;
+  databaseAuthority: 'LOCAL_JSON_WAL_AUTHORITATIVE' | 'POSTGRESQL_16_AUTHORITATIVE';
+  environmentProfile: V25EnvironmentProfile;
+  flags: V25ReadinessFlags;
+  evaluatedAt: string;
+}
+
+// ==========================================
+// V26.0 — UNIVERSAL PLATFORM ACTIVATION, COMPLETE WORKFLOW EXECUTION & INTERACTIVE EXPERIENCE (SCHEMA 24)
+// ==========================================
+
+export type V26ControlAuditStatus =
+  | 'VERIFIED_FUNCTIONAL'
+  | 'IMPLEMENTED_NOT_VERIFIED'
+  | 'BLOCKED_EXTERNAL_DEPENDENCY'
+  | 'DISABLED_BY_PERMISSION'
+  | 'DISABLED_BY_BUSINESS_RULE'
+  | 'REMOVED_AS_DUPLICATE';
+
+export interface V26UserOnboardingProgress {
+  id: string;
+  userId: string;
+  currentStep: number;
+  totalSteps: number;
+  selectedLanguage: string;
+  countryCode: string;
+  accountType: string;
+  fullName?: string;
+  phone?: string;
+  email?: string;
+  district?: string;
+  interests: string[];
+  consentAccepted: boolean;
+  completed: boolean;
+  completedAt?: string;
+  updatedAt: string;
+}
+
+export interface V26BusinessOnboardingProgress {
+  id: string;
+  userId: string;
+  organisationId?: string;
+  businessProfileId?: string;
+  euwn?: string;
+  businessName: string;
+  businessType: string;
+  sectorId: string;
+  countryCode: string;
+  currency: string;
+  registrationNumber?: string;
+  routedWorkspace: string;
+  status: 'DRAFT' | 'PROVISIONED' | 'VERIFICATION_PENDING' | 'ACTIVE';
+  completed: boolean;
+  idempotencyKey?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V26UserPreferences {
+  userId: string;
+  experienceMode: 'SIMPLE' | 'STANDARD' | 'PROFESSIONAL' | 'ADMINISTRATOR';
+  languageCode: string;
+  activeCountryCode: string;
+  activeCurrency: string;
+  activeWorkspaceId?: string;
+  textSize: 'normal' | 'large' | 'xlarge';
+  highContrast: boolean;
+  reducedMotion: boolean;
+  lowBandwidth: boolean;
+  dashboardLayout: { pinnedWidgets?: string[]; [k: string]: any };
+  updatedAt: string;
+}
+
+export interface V26RecoveryRequest {
+  id: string;
+  userId: string;
+  requestType: 'CONTACT_VERIFY' | 'ACCESS_RECOVERY';
+  contactChannel: 'EMAIL' | 'PHONE_SMS';
+  contactTargetMasked: string;
+  verificationCodeHash: string;
+  status: 'PENDING' | 'VERIFIED' | 'COMPLETED' | 'EXPIRED';
+  sandboxDeliveryOnly: boolean;
+  expiresAt: string;
+  verifiedAt?: string;
+  completedAt?: string;
+  createdAt: string;
+}
+
+export interface V26InAppNotification {
+  id: string;
+  userId: string;
+  tenantId: string;
+  category: string;
+  severity: 'INFO' | 'ACTION_REQUIRED' | 'WARNING' | 'CRITICAL';
+  title: string;
+  body: string;
+  targetRoute: string;
+  targetTabId: string;
+  isRead: boolean;
+  archived: boolean;
+  createdAt: string;
+  readAt?: string;
+}
+
+export interface V26NotificationPreferences {
+  userId: string;
+  inAppEnabled: boolean;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+  whatsappEnabled: boolean;
+  categories: Record<string, boolean>;
+  quietHours: { enabled: boolean; start: string; end: string };
+  updatedAt: string;
+}
+
+export interface V26NotificationDelivery {
+  id: string;
+  notificationId: string;
+  userId: string;
+  channel: 'IN_APP' | 'EMAIL' | 'SMS' | 'WHATSAPP';
+  providerConfigured: boolean;
+  deliveryStatus: 'DELIVERED_IN_APP' | 'PROVIDER_NOT_CONFIGURED' | 'SIMULATED_NOT_SENT' | 'FAILED';
+  providerNote: string;
+  attemptedAt: string;
+}
+
+export interface V26SavedItem {
+  id: string;
+  userId: string;
+  itemType: 'SAVED_SEARCH' | 'SAVED_LISTING' | 'QUICK_ACTION';
+  label: string;
+  queryText?: string;
+  filters?: Record<string, any>;
+  targetTabId?: string;
+  listingId?: string;
+  createdAt: string;
+}
+
+export interface V26SupportTicket {
+  id: string;
+  caseNumber: string;
+  userId: string;
+  tenantId: string;
+  organisationId?: string;
+  category: string;
+  priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
+  subject: string;
+  description: string;
+  linkedOrderId?: string;
+  status: 'OPEN' | 'IN_REVIEW' | 'RESOLVED' | 'CLOSED';
+  resolutionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V26SupportTicketMessage {
+  id: string;
+  ticketId: string;
+  senderUserId: string;
+  senderRole: string;
+  messageBody: string;
+  isInternalNote: boolean;
+  createdAt: string;
+}
+
+export interface V26DocumentShare {
+  id: string;
+  documentId: string;
+  ownerUserId: string;
+  targetUserId?: string;
+  targetOrgId?: string;
+  permission: 'VIEW' | 'DOWNLOAD';
+  shareTokenHash: string;
+  expiresAt: string;
+  revoked: boolean;
+  revokedAt?: string;
+  createdAt: string;
+}
+
+export interface V26ReportExport {
+  id: string;
+  userId: string;
+  tenantId: string;
+  reportType: string;
+  format: 'CSV' | 'JSON' | 'PDF';
+  rowCount: number;
+  contentSha256: string;
+  bytes: number;
+  content: string;
+  createdAt: string;
+}
+
+export interface V26WorkflowExecution {
+  id: string;
+  userId: string;
+  organisationId?: string;
+  workflowType: string;
+  currentStage: string;
+  completedStages: string[];
+  linkedRefs: Record<string, any>;
+  status: 'ACTIVE' | 'COMPLETED' | 'PAUSED' | 'CANCELLED';
+  honestyNotice: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V26ReadinessFlags {
+  V26_PLATFORM_CONSOLIDATED: boolean;
+  V26_POSTGRES_COMPATIBLE: boolean;
+  V26_UI_ROUTES_VERIFIED: boolean;
+  V26_INTERACTIVE_CONTROLS_AUDITED: boolean;
+  V26_ZERO_DEAD_BUTTONS: boolean;
+  V26_USER_ONBOARDING_ACTIVE: boolean;
+  V26_BUSINESS_ONBOARDING_ACTIVE: boolean;
+  V26_MARKETPLACE_E2E_ACTIVE: boolean;
+  V26_ORDER_WORKFLOW_ACTIVE: boolean;
+  V26_PROCUREMENT_WORKFLOW_ACTIVE: boolean;
+  V26_INVENTORY_WORKFLOW_ACTIVE: boolean;
+  V26_LOGISTICS_WORKFLOW_ACTIVE: boolean;
+  V26_WALLET_SANDBOX_ACTIVE: boolean;
+  V26_CARD_SANDBOX_ACTIVE: boolean;
+  V26_MESSAGING_NOTIFICATIONS_ACTIVE: boolean;
+  V26_SEARCH_FILTERS_ACTIVE: boolean;
+  V26_DOCUMENT_VAULT_ACTIVE: boolean;
+  V26_REPORTS_EXPORTS_ACTIVE: boolean;
+  V26_ADMIN_GOVERNANCE_ACTIVE: boolean;
+  V26_MULTI_COUNTRY_UI_ACTIVE: boolean;
+  V26_LOCALIZATION_ACTIVE: boolean;
+  V26_ACCESSIBILITY_BASELINE_ACTIVE: boolean;
+  V26_RBAC_UI_ENFORCED: boolean;
+  V26_DATA_ISOLATION_ENFORCED: boolean;
+  V26_SECURITY_HARDENING_VERIFIED: boolean;
+  V26_OFFLINE_DRAFTS_ACTIVE: boolean;
+  V26_AI_ASSISTANT_ACTIVE: boolean;
+  V26_DEVELOPER_PORTAL_ACTIVE: boolean;
+  V26_FULL_TESTS_PASSING: boolean;
+  V26_EXTERNAL_INTEGRATIONS_LIVE: boolean;
+  V26_POSTGRESQL_CUTOVER_COMPLETE: boolean;
+  V26_HUMAN_FIELD_VALIDATION_COMPLETE: boolean;
+  V26_PILOT_ACTIVE: boolean;
+  V26_PRODUCTION_DEPLOYED: boolean;
+}
+
+// ==========================================
+// V27.0 TYPES: UNIVERSAL ECONOMIC NETWORK, TRUST, OPPORTUNITY EXCHANGE, INTELLIGENCE & GOVERNANCE (SCHEMA 25)
+// ==========================================
+
+export type V27ProfilePrivacyVisibility = 'PUBLIC' | 'NETWORK' | 'ORG_ONLY' | 'PRIVATE';
+
+export type V27VerificationStatus =
+  | 'NOT_STARTED'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'VERIFIED'
+  | 'REJECTED'
+  | 'EXPIRED'
+  | 'SUSPENDED'
+  | 'REVOKED';
+
+export type V27DataProvenance =
+  | 'USER_SUBMITTED'
+  | 'SYSTEM_VALIDATED'
+  | 'THIRD_PARTY_VERIFIED'
+  | 'HUMAN_REVIEWED'
+  | 'GOVERNMENT_CONFIRMED'
+  | 'ACTUAL'
+  | 'VERIFIED'
+  | 'USER_DECLARED'
+  | 'SIMULATED'
+  | 'TEST'
+  | 'PROJECTED'
+  | 'ESTIMATED';
+
+export type V27RelationshipStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'SUSPENDED' | 'TERMINATED';
+
+export type V27OpportunityStatus =
+  | 'DRAFT'
+  | 'PUBLISHED'
+  | 'OPEN'
+  | 'RESPONSES_RECEIVED'
+  | 'UNDER_REVIEW'
+  | 'AWARDED'
+  | 'CLOSED'
+  | 'CANCELLED';
+
+export type V27CrmLeadStage = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'PROPOSAL' | 'NEGOTIATION' | 'WON' | 'LOST';
+
+export type V27PilotStatus = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'READY' | 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
+
+export type V27FieldSyncStatus = 'LOCAL_DRAFT' | 'QUEUED' | 'SYNCED' | 'REVIEWED' | 'APPROVED' | 'REJECTED';
+
+export type V27PartnerStatus = 'REGISTERED' | 'SANDBOX' | 'TESTED' | 'SECURITY_REVIEW' | 'APPROVED' | 'LIVE' | 'SUSPENDED';
+
+export interface V27NetworkProfile {
+  id: string;
+  participantType: 'INDIVIDUAL' | 'BUSINESS' | 'COOPERATIVE' | 'INSTITUTION' | 'LOGISTICS_PROVIDER' | 'SUPPLIER' | 'BUYER';
+  userId?: string;
+  organisationId?: string;
+  businessProfileId?: string;
+  euwnRef?: string;
+  displayName: string;
+  legalName?: string;
+  sectorId: string;
+  subSector?: string;
+  countryCode: string;
+  regionOrDistrict: string;
+  summary: string;
+  capabilities: string[];
+  certifications: string[];
+  visibility: V27ProfilePrivacyVisibility;
+  discoverableInPublicSearch: boolean;
+  shareContactPublicly: boolean;
+  verificationStatus: V27VerificationStatus;
+  verificationProvenance: V27DataProvenance;
+  trustScore: number;
+  reviewCount: number;
+  completedTransactionsCount: number;
+  privateContactEmail?: string;
+  privateContactPhone?: string;
+  privateNationalId?: string;
+  isSuspended?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27NetworkRelationship {
+  id: string;
+  requesterProfileId: string;
+  requesterOrgId?: string;
+  targetProfileId: string;
+  targetOrgId?: string;
+  relationshipType: 'TRADING_PARTNER' | 'APPROVED_SUPPLIER' | 'BUYER_CLIENT' | 'COOPERATIVE_MEMBER' | 'LOGISTICS_CARRIER' | 'ADVISORY_PARTNER';
+  status: V27RelationshipStatus;
+  notes?: string;
+  history: Array<{
+    fromStatus: string;
+    toStatus: V27RelationshipStatus;
+    actorUserId: string;
+    reason?: string;
+    timestamp: string;
+  }>;
+  createdByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27VerificationRecord {
+  id: string;
+  profileId: string;
+  entityType: 'INDIVIDUAL' | 'BUSINESS' | 'COOPERATIVE' | 'INSTITUTION';
+  verificationType: 'IDENTITY' | 'BUSINESS_REGISTRATION' | 'TAX_CLEARANCE' | 'FACILITY_AUDIT' | 'QUALITY_CERT';
+  status: V27VerificationStatus;
+  provenance: V27DataProvenance;
+  evidenceSummary: string;
+  evidenceDocumentIds: string[];
+  reviewerUserId?: string;
+  reviewNotes?: string;
+  expiresAt?: string;
+  auditTrail: Array<{
+    action: string;
+    fromStatus: string;
+    toStatus: V27VerificationStatus;
+    actorUserId: string;
+    provenance: V27DataProvenance;
+    timestamp: string;
+  }>;
+  submittedByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27ReputationReview {
+  id: string;
+  reviewerUserId: string;
+  reviewerProfileId: string;
+  targetProfileId: string;
+  linkedOrderId?: string;
+  linkedContractId?: string;
+  rating: number;
+  timelinessScore: number;
+  qualityScore: number;
+  communicationScore: number;
+  comment: string;
+  verifiedTransactionProof: string;
+  moderationStatus: 'VISIBLE' | 'DISPUTED' | 'UNDER_MODERATION' | 'REMOVED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27ReputationAppeal {
+  id: string;
+  reviewId: string;
+  targetProfileId: string;
+  appellantUserId: string;
+  reason: string;
+  supportingNotes?: string;
+  status: 'OPEN' | 'UNDER_REVIEW' | 'UPHELD_REMOVED' | 'REJECTED_KEPT';
+  decidedByUserId?: string;
+  decisionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27SavedSearch {
+  id: string;
+  userId: string;
+  label: string;
+  entityScope: 'ALL' | 'PARTICIPANTS' | 'OPPORTUNITIES' | 'SUPPLIERS' | 'BUYERS';
+  queryText: string;
+  filters: Record<string, any>;
+  alertOnNewMatch: boolean;
+  createdAt: string;
+}
+
+export interface V27SearchHistoryEntry {
+  id: string;
+  userId: string;
+  queryText: string;
+  filters: Record<string, any>;
+  resultCount: number;
+  executedAt: string;
+}
+
+export interface V27MatchRecommendation {
+  id: string;
+  forProfileId: string;
+  forUserId: string;
+  candidateProfileId?: string;
+  candidateOpportunityId?: string;
+  matchType: 'SUPPLIER_FOR_BUYER' | 'BUYER_FOR_SUPPLIER' | 'OPPORTUNITY_MATCH' | 'CORRIDOR_PARTNER';
+  overallScore: number;
+  factorBreakdown: {
+    sectorFit: number;
+    countryCorridorFit: number;
+    verificationTrustWeight: number;
+    capacityFit: number;
+    responsivenessScore: number;
+  };
+  explanationFactors: string[];
+  provenance: V27DataProvenance;
+  isPaidPromotionExcluded: true;
+  createdAt: string;
+}
+
+export interface V27MatchFeedback {
+  id: string;
+  recommendationId: string;
+  userId: string;
+  action: 'SAVE' | 'ACCEPT' | 'REJECT' | 'RFQ' | 'REPORT';
+  notes?: string;
+  createdAt: string;
+}
+
+export interface V27EconomicOpportunity {
+  id: string;
+  creatorUserId: string;
+  creatorOrganisationId: string;
+  creatorProfileId: string;
+  opportunityType: 'BUY_REQUEST' | 'SUPPLY_OFFER' | 'TENDER' | 'LOGISTICS_CONTRACT' | 'PARTNERSHIP' | 'PROCESSING_CONTRACT';
+  title: string;
+  description: string;
+  sectorId: string;
+  countryCode: string;
+  corridorDestinationCountry?: string;
+  budgetMinMinor?: number;
+  budgetMaxMinor?: number;
+  currency: string;
+  quantityText?: string;
+  deadlineAt: string;
+  status: V27OpportunityStatus;
+  awardedResponseId?: string;
+  responseCount: number;
+  provenance: V27DataProvenance;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27OpportunityResponse {
+  id: string;
+  opportunityId: string;
+  responderUserId: string;
+  responderOrganisationId: string;
+  responderProfileId: string;
+  proposedAmountMinor: number;
+  currency: string;
+  deliveryTimelineDays: number;
+  proposalSummary: string;
+  status: 'SUBMITTED' | 'SHORTLISTED' | 'AWARDED' | 'DECLINED' | 'WITHDRAWN';
+  linkedRfqId?: string;
+  linkedOrderId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27BuyerRequirement {
+  id: string;
+  buyerUserId: string;
+  buyerOrganisationId: string;
+  buyerProfileId: string;
+  title: string;
+  sectorId: string;
+  countryCode: string;
+  requiredVolumeText: string;
+  qualityStandard: string;
+  targetPriceMinor: number;
+  currency: string;
+  deliveryFrequency: 'ONE_OFF' | 'WEEKLY' | 'MONTHLY' | 'SEASONAL';
+  status: 'ACTIVE' | 'MATCHING' | 'FULFILLED' | 'CLOSED';
+  createdAt: string;
+}
+
+export interface V27SupplierCapability {
+  id: string;
+  supplierUserId: string;
+  supplierOrganisationId: string;
+  supplierProfileId: string;
+  capabilityName: string;
+  sectorId: string;
+  countryCode: string;
+  declaredCapacityText: string;
+  declaredCapacityProvenance: 'USER_DECLARED';
+  verifiedCapacityText?: string;
+  verifiedCapacityProvenance?: 'THIRD_PARTY_VERIFIED' | 'HUMAN_REVIEWED' | 'UNVERIFIED';
+  minOrderQtyText: string;
+  leadTimeDays: number;
+  certifications: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27CrmLead {
+  id: string;
+  organisationId: string;
+  ownerUserId: string;
+  counterpartyProfileId?: string;
+  counterpartyName: string;
+  sectorId: string;
+  countryCode: string;
+  stage: V27CrmLeadStage;
+  estimatedValueMinor: number;
+  currency: string;
+  notes: string;
+  nextActionText?: string;
+  nextActionDueAt?: string;
+  linkedOpportunityId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27PaidPromotion {
+  id: string;
+  sponsorOrganisationId: string;
+  sponsorProfileId: string;
+  createdByUserId: string;
+  title: string;
+  targetSectorId: string;
+  targetCountryCode: string;
+  promotionLabel: 'SPONSORED_PROMOTION';
+  affectsOrganicTrustScore: false;
+  affectsSearchReputationRanking: false;
+  budgetMinor: number;
+  currency: string;
+  status: 'DRAFT' | 'ACTIVE_SANDBOX' | 'PAUSED' | 'COMPLETED';
+  startsAt: string;
+  endsAt: string;
+  createdAt: string;
+}
+
+export interface V27NetworkThread {
+  id: string;
+  subject: string;
+  participantUserIds: string[];
+  participantOrgIds: string[];
+  linkedEntityType?: 'OPPORTUNITY' | 'RFQ' | 'ORDER' | 'CONTRACT' | 'RELATIONSHIP';
+  linkedEntityId?: string;
+  status: 'OPEN' | 'CLOSED';
+  lastMessageAt: string;
+  createdAt: string;
+}
+
+export interface V27NetworkMessage {
+  id: string;
+  threadId: string;
+  senderUserId: string;
+  senderOrganisationId: string;
+  body: string;
+  createdAt: string;
+}
+
+export interface V27ReferralAttribution {
+  id: string;
+  referrerUserId: string;
+  referrerOrgId?: string;
+  referredUserId?: string;
+  referredEmailMasked: string;
+  referralCode: string;
+  status: 'INVITED' | 'REGISTERED' | 'QUALIFIED_ACTIVITY' | 'REJECTED_FRAUD';
+  monetaryRewardEnabled: false;
+  rewardPolicyNotice: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27OutcomeMetric {
+  id: string;
+  subjectType: 'PLATFORM' | 'COUNTRY' | 'SECTOR' | 'PARTICIPANT';
+  subjectId: string;
+  metricName: string;
+  metricValue: number;
+  unit: string;
+  provenance: V27DataProvenance;
+  cohortTag?: string;
+  recordedAt: string;
+}
+
+export interface V27PilotProgramme {
+  id: string;
+  code: string;
+  name: string;
+  countryCode: string;
+  sectorId: string;
+  status: V27PilotStatus;
+  isSimulatedEnvironment: boolean;
+  canMarkActiveWithoutFieldSignoff: false;
+  leadCoordinatorUserId: string;
+  targetParticipantCount: number;
+  enrolledParticipantCount: number;
+  verifiedCompletionCount: number;
+  readinessChecklist: Array<{ item: string; completed: boolean; evidenceNote?: string }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27PilotParticipant {
+  id: string;
+  pilotId: string;
+  profileId: string;
+  userId?: string;
+  roleInPilot: 'PRODUCER' | 'BUYER' | 'AGRO_DEALER' | 'TRANSPORTER' | 'FIELD_COORDINATOR';
+  onboardingCompleted: boolean;
+  firstTransactionCompleted: boolean;
+  status: 'NOMINATED' | 'ENROLLED' | 'ACTIVE_IN_COHORT' | 'DROPPED';
+  enrolledAt: string;
+}
+
+export interface V27FieldAssignment {
+  id: string;
+  officerUserId: string;
+  district: string;
+  countryCode: string;
+  targetProfileId: string;
+  taskType: 'ONBOARDING_VERIFY' | 'FACILITY_INSPECT' | 'COOPERATIVE_AUDIT' | 'MARKET_SURVEY';
+  status: 'ASSIGNED' | 'IN_PROGRESS' | 'SUBMITTED' | 'CLOSED';
+  assignedByUserId: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27FieldReport {
+  id: string;
+  assignmentId: string;
+  officerUserId: string;
+  targetProfileId: string;
+  countryCode: string;
+  district: string;
+  observations: string;
+  gpsLatitude?: number;
+  gpsLongitude?: number;
+  gpsSource: 'DEVICE_REPORTED' | 'OFFLINE_MANUAL' | 'UNAVAILABLE';
+  syncStatus: V27FieldSyncStatus;
+  offlineClientId?: string;
+  reviewedByUserId?: string;
+  reviewDecisionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27IntegrationPartner {
+  id: string;
+  partnerName: string;
+  category: 'PAYMENT_GATEWAY' | 'IDENTITY_REGISTRY' | 'TAX_AUTHORITY' | 'LOGISTICS_TELEMATICS' | 'ERP_CONNECTOR' | 'BANKING_RAIL';
+  countryCode: string;
+  status: V27PartnerStatus;
+  credentialsConfigured: boolean;
+  regulatoryApprovalVerified: boolean;
+  contractualSignoffVerified: boolean;
+  securityAuditPassed: boolean;
+  lastHeartbeatAt?: string;
+  ownerOrgId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27ModerationCase {
+  id: string;
+  targetType: 'PROFILE' | 'OPPORTUNITY' | 'REVIEW' | 'MESSAGE' | 'PARTNER';
+  targetId: string;
+  reasonCategory: 'IMPERSONATION' | 'FRAUD_SIGNAL' | 'HARASSMENT' | 'SPAM' | 'FAKE_VERIFICATION_CLAIM' | 'POLICY_VIOLATION';
+  description: string;
+  reportedByUserId: string;
+  status: 'OPEN' | 'UNDER_REVIEW' | 'ACTION_TAKEN' | 'DISMISSED' | 'APPEALED';
+  moderatorUserId?: string;
+  actionTaken?: string;
+  appealNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V27ReadinessFlags {
+  V27_NETWORK_DIRECTORY_ACTIVE: boolean;
+  V27_TRUST_VERIFICATION_ACTIVE: boolean;
+  V27_REPUTATION_FRAMEWORK_ACTIVE: boolean;
+  V27_DISCOVERY_SEARCH_ACTIVE: boolean;
+  V27_EXPLAINABLE_MATCHING_ACTIVE: boolean;
+  V27_OPPORTUNITY_EXCHANGE_ACTIVE: boolean;
+  V27_BUYER_SELLER_COORDINATION_ACTIVE: boolean;
+  V27_CRM_PIPELINE_ACTIVE: boolean;
+  V27_PROMOTIONS_SEPARATED: boolean;
+  V27_MESSAGING_THREADS_ACTIVE: boolean;
+  V27_ECONOMIC_GRAPH_ACTIVE: boolean;
+  V27_INTELLIGENCE_CENTRE_ACTIVE: boolean;
+  V27_AI_GOVERNANCE_GUARDED: boolean;
+  V27_MULTI_COUNTRY_NETWORK_ACTIVE: boolean;
+  V27_CROSS_SECTOR_DISCOVERY_ACTIVE: boolean;
+  V27_REFERRAL_ATTRIBUTION_ACTIVE: boolean;
+  V27_OUTCOME_TRACKING_ACTIVE: boolean;
+  V27_WALLET_OBLIGATIONS_LINKED: boolean;
+  V27_MODERATION_APPEALS_ACTIVE: boolean;
+  V27_PRIVACY_BOUNDARIES_ENFORCED: boolean;
+  V27_POSTGRES_SCHEMA25_COMPATIBLE: boolean;
+  V27_API_OPENAPI_VERIFIED: boolean;
+  V27_SECURITY_CONTROLS_VERIFIED: boolean;
+  V27_PILOT_OPERATIONS_TOOLING_READY: boolean;
+  V27_FIELD_SYNC_REVIEW_READY: boolean;
+  V27_FULL_TESTS_PASSING: boolean;
+  V27_PILOT_ACTIVE: boolean;
+  V27_FIELD_VALIDATION_COMPLETE: boolean;
+  V27_EXTERNAL_INTEGRATIONS_LIVE: boolean;
+  V27_POSTGRESQL_CUTOVER_COMPLETE: boolean;
+  V27_PRODUCTION_DEPLOYED: boolean;
+}
+
+// ==========================================
+// V28 UNIVERSAL ECONOMIC EXECUTION, INTEROPERABILITY & CONTINENTAL OPERATIONS (SCHEMA 26)
+// ==========================================
+
+export type V28WorkflowStage =
+  | 'DISCOVER'
+  | 'VERIFY'
+  | 'MATCH'
+  | 'NEGOTIATE'
+  | 'AGREE'
+  | 'AUTHORISE'
+  | 'EXECUTE'
+  | 'FULFIL'
+  | 'RECONCILE'
+  | 'CLOSE'
+  | 'EVALUATE';
+
+export type V28WorkflowStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'VERIFIED'
+  | 'APPROVED'
+  | 'CONTRACTED'
+  | 'IN_PROGRESS'
+  | 'PARTIALLY_FULFILLED'
+  | 'FULFILLED'
+  | 'RECONCILED'
+  | 'CLOSED'
+  | 'DISPUTED'
+  | 'SUSPENDED'
+  | 'CANCELLED'
+  | 'FAILED';
+
+export type V28ParticipantCategory =
+  | 'INDIVIDUAL'
+  | 'MSE'
+  | 'ENTERPRISE'
+  | 'PRODUCER'
+  | 'FARMER'
+  | 'COOPERATIVE'
+  | 'MANUFACTURER'
+  | 'SUPPLIER'
+  | 'BUYER'
+  | 'DISTRIBUTOR'
+  | 'RETAILER'
+  | 'LOGISTICS_OPERATOR'
+  | 'SERVICE_PROVIDER'
+  | 'FINANCIAL_PROVIDER'
+  | 'INSTITUTION'
+  | 'GOV_FACING_ORG'
+  | 'INTERNATIONAL_PARTICIPANT';
+
+export interface V28ExecutionTransition {
+  id: string;
+  workflowId: string;
+  fromStage: V28WorkflowStage;
+  toStage: V28WorkflowStage;
+  fromStatus: V28WorkflowStatus;
+  toStatus: V28WorkflowStatus;
+  actorUserId: string;
+  actorRole: UserRole;
+  actorOrgId: string;
+  evidenceRefs: string[];
+  humanApprovedBy?: string;
+  compensationAction?: string;
+  notes?: string;
+  idempotencyKey?: string;
+  correlationId: string;
+  occurredAt: string;
+}
+
+export interface V28ExecutionWorkflow {
+  id: string;
+  workflowRef: string;
+  title: string;
+  sectorId: string;
+  participantCategory: V28ParticipantCategory;
+  initiatorUserId: string;
+  initiatorOrgId: string;
+  counterpartyOrgId?: string;
+  ownerUserId: string;
+  stage: V28WorkflowStage;
+  status: V28WorkflowStatus;
+  countryCode: string;
+  destinationCountryCode?: string;
+  currency: V23CurrencyCode;
+  valueMinor: number;
+  linkedOpportunityId?: string;
+  linkedContractId?: string;
+  linkedProcurementReqId?: string;
+  linkedOrderId?: string;
+  linkedFulfilmentPlanId?: string;
+  linkedObligationId?: string;
+  linkedCrossBorderId?: string;
+  requiredEvidence: string[];
+  submittedEvidence: string[];
+  requiresHumanApproval: boolean;
+  humanApprovedByUserId?: string;
+  humanApprovedAt?: string;
+  compensationStatus?: 'NONE' | 'COMPENSATION_INITIATED' | 'REVERSED';
+  failureReason?: string;
+  correlationId: string;
+  transitions: V28ExecutionTransition[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V28ContractType =
+  | 'PURCHASE'
+  | 'SUPPLY'
+  | 'SERVICE'
+  | 'DISTRIBUTION'
+  | 'MANUFACTURING'
+  | 'LOGISTICS'
+  | 'PROCUREMENT'
+  | 'COOPERATIVE'
+  | 'PROJECT'
+  | 'CROSS_BORDER'
+  | 'RECURRING';
+
+export type V28ContractStatus =
+  | 'DRAFT'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'ACKNOWLEDGED_ACTIVE'
+  | 'AMENDED'
+  | 'EXPIRING_SOON'
+  | 'DISPUTED'
+  | 'CLOSED'
+  | 'TERMINATED';
+
+export interface V28ContractVersion {
+  version: number;
+  summary: string;
+  valueMinor: number;
+  amendedByUserId: string;
+  amendmentReason: string;
+  checksumSha256: string;
+  createdAt: string;
+}
+
+export interface V28ContractObligation {
+  id: string;
+  contractId: string;
+  tenantId: string;
+  title: string;
+  dueDate: string;
+  responsiblePartyOrgId: string;
+  amountMinor: number;
+  currency: V23CurrencyCode;
+  status: 'PENDING' | 'MILESTONE_SUBMITTED' | 'VERIFIED' | 'LINKED_WALLET_OBLIGATION' | 'SETTLED_SANDBOX' | 'DISPUTED';
+  linkedWalletObligationId?: string;
+  linkedLedgerRef?: string;
+  evidenceRef?: string;
+  updatedAt: string;
+}
+
+export interface V28ContractRecord {
+  id: string;
+  contractNumber: string;
+  contractType: V28ContractType;
+  templateCode: string;
+  title: string;
+  scopeOfWork: string;
+  partyAOrgId: string;
+  partyARepUserId: string;
+  partyBOrgId: string;
+  partyBRepUserId?: string;
+  countryCode: string;
+  currency: V23CurrencyCode;
+  totalValueMinor: number;
+  paymentTerms: string;
+  deliveryTerms: string;
+  items: { sku: string; description: string; quantity: number; unit: string; unitPriceMinor: number }[];
+  evidenceRequirements: string[];
+  acknowledgements: {
+    userId: string;
+    orgId: string;
+    acknowledgedAt: string;
+    acknowledgementHash: string;
+    legallyQualifiedSignature: false;
+  }[];
+  legallyQualifiedSignature: false;
+  legalDisclosure: string;
+  status: V28ContractStatus;
+  currentVersion: number;
+  versions: V28ContractVersion[];
+  linkedOpportunityId?: string;
+  linkedOrderIds: string[];
+  linkedInvoiceIds: string[];
+  linkedLedgerRefs: string[];
+  expiresAt: string;
+  autoRenew: boolean;
+  disputeNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28ProcurementPolicy {
+  id: string;
+  organisationId: string;
+  countryCode: string;
+  enforceStrictSod: boolean;
+  dualApprovalThresholdMinor: number;
+  minCompetitiveQuotes: number;
+  requireConflictDeclaration: boolean;
+  officialGovernmentApprovalClaimed: false;
+  policyDisclaimer: string;
+  updatedAt: string;
+}
+
+export interface V28ProcurementPlan {
+  id: string;
+  organisationId: string;
+  fiscalPeriod: string;
+  title: string;
+  countryCode: string;
+  budgetMinor: number;
+  committedMinor: number;
+  currency: V23CurrencyCode;
+  status: 'DRAFT' | 'APPROVED' | 'ACTIVE' | 'CLOSED';
+  ownerUserId: string;
+  approvedByUserId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28ProcurementRequisition {
+  id: string;
+  planId?: string;
+  organisationId: string;
+  title: string;
+  category: string;
+  estimatedAmountMinor: number;
+  currency: V23CurrencyCode;
+  requesterUserId: string;
+  approverUserId?: string;
+  receiverUserId?: string;
+  paymentAuthoriserUserId?: string;
+  conflictDeclaredBy: string[];
+  status: 'DRAFT' | 'SUBMITTED' | 'L1_APPROVED' | 'APPROVED' | 'RFQ_ISSUED' | 'PO_ISSUED' | 'GOODS_RECEIVED' | 'INVOICE_MATCHED' | 'PAYMENT_AUTHORISED' | 'EXCEPTION' | 'REJECTED';
+  linkedRfqId?: string;
+  linkedPoId?: string;
+  linkedObligationId?: string;
+  invoiceMatchVarianceMinor?: number;
+  exceptionReason?: string;
+  officialGovernmentApprovalClaimed: false;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28ProcurementEvaluation {
+  id: string;
+  requisitionId: string;
+  rfqId?: string;
+  evaluatorUserId: string;
+  supplierOrgId: string;
+  priceScore: number;
+  qualityScore: number;
+  deliveryScore: number;
+  complianceScore: number;
+  weightedTotal: number;
+  conflictOfInterestFree: boolean;
+  recommended: boolean;
+  rationale: string;
+  evaluatedAt: string;
+}
+
+export type V28FulfilmentStatus =
+  | 'PLANNED'
+  | 'INVENTORY_RESERVED'
+  | 'DISPATCH_AUTHORISED'
+  | 'IN_TRANSIT'
+  | 'PARTIALLY_DELIVERED'
+  | 'DELIVERED'
+  | 'REJECTED_DELIVERY'
+  | 'RETURN_INITIATED'
+  | 'DAMAGED_GOODS_REPORTED'
+  | 'RECONCILED'
+  | 'DISPUTED'
+  | 'CONFIRMED_CLOSED';
+
+export interface V28InventoryReservation {
+  id: string;
+  inventoryId: string;
+  fulfilmentPlanId: string;
+  organisationId: string;
+  sku: string;
+  quantityReserved: number;
+  quantityDispatched: number;
+  quantityReturned: number;
+  quantityDamaged: number;
+  status: 'ACTIVE' | 'PARTIAL_RELEASED' | 'CONSUMED' | 'RELEASED';
+  allowNegativePolicyOverride: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28ShipmentEvidence {
+  id: string;
+  fulfilmentPlanId: string;
+  shipmentId: string;
+  trackingSource: 'MANUAL_RECORD' | 'SIMULATED_TELEMETRY' | 'EXTERNAL_CARRIER_API';
+  liveGpsConnected: boolean;
+  milestone: string;
+  locationLabel: string;
+  deliveredQty: number;
+  rejectedQty: number;
+  damagedQty: number;
+  returnedQty: number;
+  receiverName: string;
+  proofHashSha256: string;
+  disputeNote?: string;
+  recordedByUserId: string;
+  recordedAt: string;
+}
+
+export interface V28FulfilmentPlan {
+  id: string;
+  orderId: string;
+  contractId?: string;
+  sellerOrgId: string;
+  buyerOrgId: string;
+  warehouseId: string;
+  carrierOrgId?: string;
+  status: V28FulfilmentStatus;
+  orderedQuantity: number;
+  reservedQuantity: number;
+  deliveredQuantity: number;
+  rejectedQuantity: number;
+  damagedQuantity: number;
+  returnedQuantity: number;
+  dispatchAuthorisedBy?: string;
+  finalConfirmedBy?: string;
+  reconciliationVarianceQty: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28CountryOperatingProfile {
+  countryCode: string;
+  countryName: string;
+  supportedCurrencies: V23CurrencyCode[];
+  timeZone: string;
+  languages: string[];
+  businessIdentifierTypes: string[];
+  verificationRequirements: string[];
+  complianceChecklist: string[];
+  taxReferenceSystem: string;
+  tradeDocumentationRequired: string[];
+  operationalRestrictions: string[];
+  externalIntegrationStatus: 'SANDBOX_ONLY' | 'PARTIALLY_CONFIGURED';
+  featureAvailability: {
+    marketplace: boolean;
+    procurement: boolean;
+    crossBorderCoordination: boolean;
+    sandboxWallet: boolean;
+    liveBankRail: false;
+    officialCustomsClearance: false;
+  };
+  updatedAt: string;
+}
+
+export interface V28CrossBorderExecution {
+  id: string;
+  originCountryCode: string;
+  destinationCountryCode: string;
+  exporterOrgId: string;
+  importerOrgId: string;
+  contractId?: string;
+  fulfilmentPlanId?: string;
+  tradeCurrency: V23CurrencyCode;
+  settlementCurrency: V23CurrencyCode;
+  configuredFxRate?: number;
+  fxRateSource: string;
+  fxRateTimestamp?: string;
+  requiredDocuments: string[];
+  submittedDocumentIds: string[];
+  restrictionsChecked: boolean;
+  eligibilityVerified: boolean;
+  stage: 'COUNTRIES_IDENTIFIED' | 'ELIGIBILITY_VERIFIED' | 'DOCS_VALIDATED' | 'LOGISTICS_ASSIGNED' | 'FULFILMENT_TRACKED' | 'OBLIGATION_RECORDED' | 'EXTERNAL_RECONCILED' | 'CLOSED' | 'BLOCKED';
+  externalSettlementRef?: string;
+  officialCustomsOrTaxFilingClaimed: false;
+  regulatedFxDealingClaimed: false;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V28ConnectorState =
+  | 'NOT_CONFIGURED'
+  | 'AWAITING_CREDENTIALS'
+  | 'SANDBOX'
+  | 'TESTING'
+  | 'AWAITING_APPROVAL'
+  | 'ACTIVE'
+  | 'SUSPENDED'
+  | 'FAILED'
+  | 'RETIRED';
+
+export type V28ConnectorCategory =
+  | 'BANK'
+  | 'PAYMENT_PROVIDER'
+  | 'MOBILE_MONEY'
+  | 'CARD_PROCESSOR'
+  | 'IDENTITY_VERIFICATION'
+  | 'TAX_BUSINESS_REGISTRY'
+  | 'LOGISTICS'
+  | 'MESSAGING'
+  | 'DOCUMENT_VERIFICATION'
+  | 'ERP'
+  | 'ACCOUNTING'
+  | 'TRADE_CUSTOMS_INFO';
+
+export interface V28InteroperabilityConnector {
+  id: string;
+  providerCode: string;
+  providerName: string;
+  category: V28ConnectorCategory;
+  countryCodes: string[];
+  state: V28ConnectorState;
+  credentialRef?: string;
+  sandboxEndpoint: string;
+  rateLimitPerMinute: number;
+  retryMaxAttempts: number;
+  lastHealthCheckAt?: string;
+  lastHealthStatus: 'UNKNOWN' | 'SANDBOX_OK' | 'DEGRADED' | 'FAILING';
+  approvedByUserId?: string;
+  liveExternalTrafficEnabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28DomainEvent {
+  id: string;
+  eventVersion: string;
+  eventType: string;
+  domain: 'EXECUTION' | 'CONTRACT' | 'PROCUREMENT' | 'FULFILMENT' | 'CROSS_BORDER' | 'WALLET' | 'INTEGRATION' | 'SECURITY' | 'FIELD';
+  correlationId: string;
+  idempotencyKey: string;
+  tenantId: string;
+  actorUserId: string;
+  payload: Record<string, any>;
+  status: 'PENDING' | 'DISPATCHED' | 'ACKNOWLEDGED' | 'RETRYING' | 'DEAD_LETTER';
+  attempts: number;
+  maxAttempts: number;
+  lastError?: string;
+  nextRetryAt?: string;
+  dispatchedAt?: string;
+  createdAt: string;
+}
+
+export interface V28EventDeadLetter {
+  id: string;
+  domainEventId: string;
+  eventType: string;
+  correlationId: string;
+  errorClassification: 'TRANSIENT' | 'VALIDATION' | 'PROVIDER_UNCONFIGURED' | 'TIMEOUT' | 'UNKNOWN';
+  errorMessage: string;
+  replayCount: number;
+  status: 'OPEN' | 'REQUEUED' | 'RESOLVED';
+  resolvedByUserId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28VaultDocumentRecord {
+  id: string;
+  tenantId: string;
+  organisationId: string;
+  ownerUserId: string;
+  title: string;
+  category: 'CONTRACT' | 'PO' | 'INVOICE' | 'DELIVERY_PROOF' | 'KYC_KYB' | 'TAX_CERT' | 'CUSTOMS_INFO' | 'INSPECTION_EVIDENCE' | 'DISPUTE_EVIDENCE';
+  mimeType: string;
+  sizeBytes: number;
+  storageRef: string;
+  sha256Hash: string;
+  malwareScanStatus: 'SCAN_NOT_PROVISIONED_SANDBOX' | 'CLEAN_VERIFIED' | 'QUARANTINED';
+  verificationStatus: 'UNVERIFIED' | 'PENDING_REVIEW' | 'VERIFIED' | 'REJECTED' | 'EXPIRED';
+  verifiedByUserId?: string;
+  linkedEntityType: 'CONTRACT' | 'ORDER' | 'PROCUREMENT' | 'SHIPMENT' | 'DISPUTE' | 'PARTICIPANT';
+  linkedEntityId: string;
+  version: number;
+  legalHold: boolean;
+  retentionUntil: string;
+  expiresAt?: string;
+  accessLog: { userId: string; action: 'UPLOAD' | 'VIEW' | 'SHARE' | 'VERIFY' | 'LEGAL_HOLD'; at: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V28IntelligenceSourceCategory =
+  | 'ACTUAL_RECORDED'
+  | 'CALCULATED_INDICATOR'
+  | 'ESTIMATED_VALUE'
+  | 'FORECAST'
+  | 'SYNTHETIC_TEST_DATA'
+  | 'EXTERNAL_SOURCED';
+
+export interface V28OperationalException {
+  id: string;
+  domain: 'EXECUTION' | 'PROCUREMENT' | 'FULFILMENT' | 'INTEGRATION' | 'WALLET' | 'FIELD' | 'SECURITY';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  title: string;
+  description: string;
+  linkedEntityId?: string;
+  organisationId: string;
+  status: 'OPEN' | 'ASSIGNED' | 'ESCALATED' | 'RESOLVED';
+  assignedToUserId?: string;
+  resolvedByUserId?: string;
+  resolutionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28DualApprovalRequest {
+  id: string;
+  actionType: 'COUNTRY_PROFILE_CHANGE' | 'CONNECTOR_PROMOTION' | 'WALLET_REVERSAL_APPROVAL' | 'NEGATIVE_STOCK_POLICY' | 'RETENTION_OVERRIDE';
+  targetEntityId: string;
+  reason: string;
+  requestedByUserId: string;
+  firstApproverUserId?: string;
+  secondApproverUserId?: string;
+  status: 'PENDING_FIRST_APPROVAL' | 'PENDING_SECOND_APPROVAL' | 'APPROVED' | 'REJECTED' | 'EXECUTED';
+  executedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type V28FieldSyncState =
+  | 'DRAFT'
+  | 'PENDING_SYNC'
+  | 'SYNCING'
+  | 'SYNCED'
+  | 'CONFLICT'
+  | 'FAILED'
+  | 'REQUIRES_REVIEW';
+
+export interface V28FieldOfflineRecord {
+  id: string;
+  clientRecordId: string;
+  taskType: 'FIELD_VERIFICATION' | 'DELIVERY_CONFIRMATION' | 'PARTICIPANT_REGISTRATION' | 'ENTERPRISE_VISIT' | 'SUPPORT_CASE';
+  officerUserId: string;
+  organisationId: string;
+  targetEntityId: string;
+  countryCode: string;
+  district: string;
+  payload: Record<string, any>;
+  evidenceDocumentIds: string[];
+  version: number;
+  baseVersion: number;
+  syncState: V28FieldSyncState;
+  conflictPayload?: Record<string, any>;
+  resolutionStrategy?: 'KEEP_SERVER' | 'ACCEPT_CLIENT' | 'MERGED_MANUAL';
+  supervisorUserId?: string;
+  supervisorNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V28AiOrchestrationRun {
+  id: string;
+  userId: string;
+  role: UserRole;
+  organisationId: string;
+  taskType: 'COMMERCIAL_PLANNING' | 'OPPORTUNITY_ANALYSIS' | 'SUPPLIER_DISCOVERY' | 'PROCUREMENT_PREP' | 'CONTRACT_REVIEW' | 'FULFILMENT_RISK' | 'CROSS_BORDER_GUIDANCE' | 'EXCEPTION_SUMMARY';
+  prompt: string;
+  contextSources: string[];
+  responseSummary: string;
+  confidenceLabel: 'LOW' | 'MEDIUM' | 'HIGH';
+  limitationsNotice: string;
+  humanApprovalRequired: true;
+  autonomousExecutionBlocked: boolean;
+  promptInjectionFlagged: boolean;
+  aiGeneratedNotice: string;
+  createdAt: string;
+}
+
+export interface V28ReadinessFlags {
+  V28_EXECUTION_ENGINE_ACTIVE: boolean;
+  V28_UNIVERSAL_WORKSPACE_ACTIVE: boolean;
+  V28_CONTRACTS_OBLIGATIONS_ACTIVE: boolean;
+  V28_PROCUREMENT_SOD_ACTIVE: boolean;
+  V28_FULFILMENT_INVENTORY_ACTIVE: boolean;
+  V28_CROSS_BORDER_ENGINE_ACTIVE: boolean;
+  V28_WALLET_COORDINATION_ACTIVE: boolean;
+  V28_INTEROPERABILITY_GATEWAY_ACTIVE: boolean;
+  V28_EVENT_ORCHESTRATION_ACTIVE: boolean;
+  V28_DOCUMENT_EVIDENCE_VAULT_ACTIVE: boolean;
+  V28_CONTINENTAL_INTELLIGENCE_ACTIVE: boolean;
+  V28_AI_ORCHESTRATOR_GUARDED: boolean;
+  V28_OPERATIONS_CONTROL_CENTRE_ACTIVE: boolean;
+  V28_FIELD_OFFLINE_CONTINUITY_ACTIVE: boolean;
+  V28_SECURITY_GOVERNANCE_ACTIVE: boolean;
+  V28_GITHUB_DIAGNOSTICS_ACTIVE: boolean;
+  V28_SCHEMA26_COMPATIBLE: boolean;
+  V28_FULL_TESTS_PASSING: boolean;
+  POSTGRESQL_CUTOVER_COMPLETE: boolean;
+  EXTERNAL_INTEGRATIONS_LIVE: boolean;
+  REAL_VALUE_WALLET_OPERATIONS_ENABLED: boolean;
+  CARD_SCHEME_CERTIFICATION_COMPLETE: boolean;
+  HUMAN_FIELD_VALIDATION_COMPLETE: boolean;
+  PILOT_ACTIVE: boolean;
+  PRODUCTION_DEPLOYED: boolean;
+  GITHUB_REMOTE_SYNC_VERIFIED: boolean;
+  AI_STUDIO_GITHUB_BINDING_VERIFIED: boolean;
+}
+
+
+
+
+
+
 
 
 

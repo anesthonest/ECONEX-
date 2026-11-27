@@ -52,16 +52,23 @@ async function startServer() {
     res.json({
       status: shuttingDown ? 'DRAINING' : 'healthy',
       product: 'ECONEX',
-      system: 'ECONEX V23',
-      release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
+      system: 'ECONEX V26',
+      release: 'V26.0-UNIVERSAL-PLATFORM-ACTIVATION',
       v19Release: 'V19.0-PLATFORM-STABILITY-AND-DELIVERY',
       v20Release: 'V20.0-UNIFIED-ECONOMIC-OPERATIONS',
       v21Release: 'V21.0-CONTROLLED-PILOT-AND-MARKET-ACTIVATION',
       v22Release: 'V22.0-UNIVERSAL-ECONOMIC-GROWTH',
       v23Release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
+      v24Release: 'V24.0-UNIVERSAL-COMMERCE-EXECUTION',
+      v25Release: 'V25.0-CONTINENTAL-INFRASTRUCTURE',
+      v26Release: 'V26.0-UNIVERSAL-PLATFORM-ACTIVATION',
+      v27Release: 'V27.0-UNIVERSAL-ECONOMIC-NETWORK',
+      v28Release: 'V28.0-UNIVERSAL-ECONOMIC-EXECUTION',
       environment: envDiag.environment,
       databaseAuthority: envDiag.databaseAuthority,
+      schemaVersion: db.schemaVersion,
       developer: 'VINEXSAH TECHNOLOGIES',
+      attribution: 'Developed under VINEXSAH TECHNOLOGIES. All rights reserved.',
       correlationId: (req as any).correlationId || null,
       uptimeSeconds: Math.round(process.uptime()),
       memoryRssMb: Number((mem.rss / (1024 * 1024)).toFixed(1)),
@@ -74,13 +81,23 @@ async function startServer() {
   app.get('/ready', (_req, res) => {
     const envDiag = validateV21Environment();
     const fin = db.getFinancialIntegrityReport();
-    const isReady = !shuttingDown && envDiag.portValid && fin.journalBalanced;
+    const v22Check = db.validateV22SchemaIntegrity();
+    const v23Check = db.validateV23SchemaIntegrity();
+    const v24Check = db.validateV24SchemaIntegrity();
+    const v25Check = db.validateV25SchemaIntegrity();
+    const v26Check = db.validateV26SchemaIntegrity();
+    const isReady = !shuttingDown && envDiag.portValid && fin.journalBalanced && v23Check.valid && v24Check.valid && v25Check.valid && v26Check.valid;
     res.status(isReady ? 200 : 503).json({
       ready: isReady,
       shuttingDown,
       schemaVersion: db.schemaVersion,
       databaseAuthority: envDiag.databaseAuthority,
       journalBalanced: fin.journalBalanced,
+      schema22IntegrityValid: v22Check.valid,
+      schema23IntegrityValid: v23Check.valid,
+      schema24IntegrityValid: v24Check.valid,
+      schema25IntegrityValid: v25Check.valid,
+      schema26IntegrityValid: v26Check.valid,
       timestamp: new Date().toISOString(),
     });
   });

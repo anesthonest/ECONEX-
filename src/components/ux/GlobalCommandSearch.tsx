@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { useExperience } from '../../context/ExperienceContext.tsx';
-import { searchNavRegistry } from '../../navigation/navigationRegistry.ts';
+import { getV29DisplayLabel, searchNavRegistry } from '../../navigation/navigationRegistry.ts';
 import { ApiClient } from '../../services/apiClient.ts';
 import type { V18SearchResult } from '../../types/index.ts';
 
@@ -65,6 +65,7 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
   const { mode } = useExperience();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<V18SearchResult[]>([]);
+  const [quickActions, setQuickActions] = useState<{ id: string; label: string; targetTabId: string; category: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [pendingConfirm, setPendingConfirm] = useState<V18SearchResult | null>(null);
@@ -75,10 +76,13 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
       setPendingConfirm(null);
       setActiveIndex(0);
       setTimeout(() => inputRef.current?.focus(), 20);
+      ApiClient.v26GetQuickActions({ userId: currentUser?.id, userRole: role })
+        .then((qa) => setQuickActions(Array.isArray(qa) ? qa : []))
+        .catch(() => setQuickActions([]));
     } else {
       setQuery('');
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser?.id, role]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -86,8 +90,8 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
     const localModules: V18SearchResult[] = searchNavRegistry(query, role, mode, 8).map((m) => ({
       id: `MOD-${m.id}`,
       kind: 'MODULE',
-      title: m.label,
-      subtitle: `${m.groupLabel} · ${m.description}`,
+      title: getV29DisplayLabel(m),
+      subtitle: m.description,
       route: m.route,
       tabId: m.id,
       badge: m.availability === 'SANDBOX_ONLY' ? 'Sandbox' : m.groupLabel,
@@ -105,12 +109,47 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
     setLoading(true);
     const timer = setTimeout(async () => {
       try {
-        const res = await ApiClient.v18Search(query.trim(), mode, {
-          userId: currentUser?.id,
-          userRole: role,
-        });
-        if (!cancelled && Array.isArray(res?.results)) {
-          setResults(res.results);
+        const [v18Res, v26Res] = await Promise.all([
+          ApiClient.v18Search(query.trim(), mode, {
+            userId: currentUser?.id,
+            userRole: role,
+          }).catch(() => null),
+          ApiClient.v26Search(query.trim(), {
+            userId: currentUser?.id,
+            userRole: role,
+          }).catch(() => null),
+        ]);
+        if (!cancelled) {
+          const v18Items: V18SearchResult[] = Array.isArray(v18Res?.results) ? v18Res.results : localModules;
+          const v26Items: V18SearchResult[] = Array.isArray(v26Res?.results)
+            ? v26Res.results.map((r: any) => ({
+                id: `V26-${r.type}-${r.id}`,
+                kind:
+                  r.type === 'LISTING'
+                    ? 'LISTING'
+                    : r.type === 'RFQ'
+                      ? 'OPPORTUNITY'
+                      : r.type === 'SUPPORT_TICKET'
+                        ? 'SUPPORT_CASE'
+                        : r.type === 'DOCUMENT'
+                          ? 'ORGANIZATION'
+                          : 'MODULE',
+                title: r.title,
+                subtitle: r.subtitle || r.type,
+                route: `/${r.targetTabId}`,
+                tabId: r.targetTabId,
+                badge: r.type,
+              }))
+            : [];
+          const seen = new Set(v18Items.map((i) => `${i.tabId}:${i.title}`));
+          const merged = [...v18Items];
+          for (const item of v26Items) {
+            if (!seen.has(`${item.tabId}:${item.title}`)) {
+              seen.add(`${item.tabId}:${item.title}`);
+              merged.push(item);
+            }
+          }
+          setResults(merged);
           setActiveIndex(0);
         }
       } catch {
@@ -180,7 +219,7 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search modules, produce listings, orders, support cases, cooperatives..."
+            placeholder="Search businesses, products, services, sectors, opportunities..."
             aria-label="Search modules and economic records"
             className="flex-1 bg-transparent text-sm sm:text-base text-[#F5F5F5] placeholder-[#71717a] focus:outline-none min-h-[40px]"
           />
@@ -234,12 +273,35 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
           <div className="max-h-[62vh] overflow-y-auto p-3 space-y-4">
             <div className="flex items-center justify-between px-2 text-xs text-[#A0A0A0]">
               <span>
-                Scoped to role <strong className="text-[#D4AF37]">{role}</strong> ({mode} view)
+                Showing results available to your account
               </span>
               <span className="tabular-nums">
                 {loading ? 'Searching...' : `${results.length} matches`}
               </span>
             </div>
+
+            {!query.trim() && quickActions.length > 0 && (
+              <div className="px-2 space-y-1.5">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#A0A0A0]">
+                  Quick Actions
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {quickActions.map((qa) => (
+                    <button
+                      key={qa.id}
+                      type="button"
+                      onClick={() => {
+                        onNavigateTab(qa.targetTabId);
+                        onClose();
+                      }}
+                      className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-xs text-[#F5F5F5] cursor-pointer"
+                    >
+                      {qa.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {results.length === 0 ? (
               <div className="py-10 text-center text-sm text-[#A0A0A0]">
@@ -283,9 +345,11 @@ export const GlobalCommandSearch: React.FC<Props> = ({ isOpen, onClose, onNaviga
                               </div>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-[11px] font-mono text-[#A0A0A0] hidden sm:inline">
-                                {item.route}
-                              </span>
+                              {role === 'PLATFORM_ADMIN' && mode === 'ADMINISTRATOR' && (
+                                <span className="text-[11px] font-mono text-[#A0A0A0] hidden sm:inline">
+                                  {item.route}
+                                </span>
+                              )}
                               <ArrowRight size={14} className="text-[#D4AF37]" aria-hidden="true" />
                             </div>
                           </button>

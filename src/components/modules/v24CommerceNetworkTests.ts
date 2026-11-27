@@ -289,16 +289,16 @@ export async function runV24VerificationTests(
       method: 'POST',
       headers: hdrs,
       body: JSON.stringify({
-        participantCategory: 'SMALL_BUSINESS',
+        category: 'SMALL_BUSINESS',
         legalName: `ECONEX Test Entity ${tag}`,
         displayName: `Commerce Actor ${tag}`,
         countryCode: country,
-        currency,
+        initialCurrency: currency,
         phone: `+256 77${Math.floor(1000000 + Math.random() * 8999999)}`,
         email: `${tag}.${runSeed}@test.econex.ug`,
         pin,
         walletCategory: 'BUSINESS',
-        seedSandboxMinor: opts.seedMinor ?? 20_000_000,
+        sandboxSeedMinor: opts.seedMinor ?? 20_000_000,
       }),
     });
     const idJson = await idRes.json();
@@ -348,7 +348,7 @@ export async function runV24VerificationTests(
     const r = await fetch(url('/api/v24/health'));
     if (r.status !== 200) throw new Error(`Expected 200, got ${r.status}`);
     const d = await r.json();
-    if (d.status !== 'HEALTHY' || d.schemaVersion !== 22 || !d.journalBalanced || !d.inventoryBalanced) {
+    if (d.status !== 'HEALTHY' || d.schemaVersion < 22 || !d.journalBalanced || !d.inventoryBalanced) {
       throw new Error(`Unexpected health payload: ${JSON.stringify(d)}`);
     }
     if (d.externalIntegrationsLive !== false || d.postgresqlCutoverComplete !== false || d.realValueWalletLive !== false) {
@@ -369,7 +369,7 @@ export async function runV24VerificationTests(
     const r = await fetch(url('/ready'));
     if (r.status !== 200) throw new Error(`Expected 200, got ${r.status}`);
     const d = await r.json();
-    if (d.schemaVersion !== 22 || !d.journalBalanced || d.databaseAuthority !== 'LOCAL_JSON_WAL_AUTHORITATIVE') {
+    if (d.schemaVersion < 22 || !d.journalBalanced || d.databaseAuthority !== 'LOCAL_JSON_WAL_AUTHORITATIVE') {
       throw new Error(`Unexpected /ready payload: ${JSON.stringify(d)}`);
     }
     return `/ready OK: schemaVersion=${d.schemaVersion}, authority=${d.databaseAuthority}.`;
@@ -1902,7 +1902,7 @@ export async function runV24VerificationTests(
       headers: adminHdrs,
       body: '{}',
     }).then((r) => r.json());
-    if (fin.status !== 'BALANCED' || !fin.glBalanced) throw new Error(`GL imbalanced: ${JSON.stringify(fin)}`);
+    if (fin.status !== 'BALANCED' || !fin.journalBalanced) throw new Error(`GL imbalanced: ${JSON.stringify(fin)}`);
     return 'V23 GL trial balance variance verified 0 across all V24 obligation settlements & refunds.';
   });
 
@@ -2101,6 +2101,11 @@ export async function runV24VerificationTests(
   });
 
   await exec('T3330', async () => {
+    await fetch(url('/api/v24/threads/THR-V24-001/moderate'), {
+      method: 'POST',
+      headers: dealerHdrs,
+      body: JSON.stringify({ block: false, reason: 'Reset moderation state before test' }),
+    });
     const m1 = await fetch(url('/api/v24/threads/THR-V24-001/messages'), {
       method: 'POST',
       headers: buyerHdrs,
@@ -2116,6 +2121,11 @@ export async function runV24VerificationTests(
       method: 'POST',
       headers: buyerHdrs,
       body: JSON.stringify({ body: 'Post after block' }),
+    });
+    await fetch(url('/api/v24/threads/THR-V24-001/moderate'), {
+      method: 'POST',
+      headers: dealerHdrs,
+      body: JSON.stringify({ block: false, reason: 'Restore unblocked state after test' }),
     });
     if (mBlocked.status !== 403) throw new Error(`Expected 403 blocked thread, got ${mBlocked.status}`);
     return 'Commercial thread moderation block enforced cleanly (403).';
@@ -2417,7 +2427,7 @@ export async function runV24VerificationTests(
 
   await exec('T3475', async () => {
     const d = await fetch(url('/api/v24/rollback-readiness'), { headers: adminHdrs }).then((r) => r.json());
-    if (!d.rollback?.v23BackupValid || !d.migration?.passed || d.migration?.schemaVersion !== 22) {
+    if (!d.rollback?.v23BackupValid || !d.migration?.passed || Number(d.migration?.schemaVersion || 0) < 22) {
       throw new Error(`Rollback/migration failed: ${JSON.stringify(d)}`);
     }
     return `V23 canonical backup SHA-256 verified (${d.rollback.v23BackupSha256?.slice(0, 12)}...) & Schema 22 migration complete.`;

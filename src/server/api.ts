@@ -23,6 +23,11 @@ import { v20Router } from './v20Routes.ts';
 import { v21Router } from './v21Routes.ts';
 import { v22Router } from './v22Routes.ts';
 import { v23Router } from './v23Routes.ts';
+import { v24Router } from './v24Routes.ts';
+import { v25Router } from './v25Routes.ts';
+import { v26Router } from './v26Routes.ts';
+import { v27Router } from './v27Routes.ts';
+import { v28Router } from './v28Routes.ts';
 import {
   UserProfile,
   UserRole,
@@ -592,7 +597,21 @@ apiRouter.get('/listings', (req: Request, res: Response) => {
     );
   }
 
-  return res.json(items);
+  const normalized = items.map((l) => {
+    const rawImg = String(l.imageUrl || '').trim();
+    if (rawImg.startsWith('/assets/econex/')) return l;
+    const hint = `${l.title || ''} ${l.category || ''} ${l.description || ''}`.toUpperCase();
+    const safeImg = /COFFEE|COCOA|TEA|ARABICA|ROBUSTA/.test(hint)
+      ? '/assets/econex/agriculture/coffee-harvest.jpg'
+      : /MAIZE|GRAIN|CEREAL|BEAN|SOY|SORGHUM|MILLET|SEED/.test(hint)
+        ? '/assets/econex/agriculture/maize-grain.jpg'
+        : /MATOOKE|BANANA|TOMATO|FRESH|FRUIT|VEGETABLE|CASSAVA|POTATO|PRODUCE/.test(hint)
+          ? '/assets/econex/agriculture/fresh-produce.jpg'
+          : '/assets/econex/retail/wholesale-showroom.jpg';
+    return { ...l, imageUrl: safeImg };
+  });
+
+  return res.json(normalized);
 });
 
 apiRouter.post('/listings', (req: Request, res: Response) => {
@@ -642,8 +661,15 @@ apiRouter.post('/listings', (req: Request, res: Response) => {
     district: district.trim(),
     harvestDate: harvestDate || undefined,
     imageUrl:
-      imageUrl ||
-      'https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=600&q=80',
+      typeof imageUrl === 'string' && imageUrl.trim().startsWith('/assets/econex/')
+        ? imageUrl.trim()
+        : /COFFEE|COCOA|TEA|ARABICA|ROBUSTA/i.test(`${title} ${category}`)
+          ? '/assets/econex/agriculture/coffee-harvest.jpg'
+          : /MAIZE|GRAIN|CEREAL|BEAN|SOY|SORGHUM|MILLET|SEED/i.test(`${title} ${category}`)
+            ? '/assets/econex/agriculture/maize-grain.jpg'
+            : /MATOOKE|BANANA|TOMATO|FRESH|FRUIT|VEGETABLE|CASSAVA|POTATO|PRODUCE/i.test(`${title} ${category}`)
+              ? '/assets/econex/agriculture/fresh-produce.jpg'
+              : '/assets/econex/retail/wholesale-showroom.jpg',
     status: 'ACTIVE',
     organicCertified: !!organicCertified,
     qualityGrade: qualityGrade || 'STANDARD',
@@ -6159,6 +6185,11 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     v21Release: 'V21.0-CONTROLLED-PILOT-AND-MARKET-ACTIVATION',
     v22Release: 'V22.0-UNIVERSAL-ECONOMIC-GROWTH',
     v23Release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
+    v24Release: 'V24.0-UNIVERSAL-COMMERCE-EXECUTION',
+    v25Release: 'V25.0-CONTINENTAL-INFRASTRUCTURE',
+    v26Release: 'V26.0-UNIVERSAL-PLATFORM-ACTIVATION',
+    v27Release: 'V27.0-UNIVERSAL-ECONOMIC-NETWORK',
+    v28Release: 'V28.0-UNIVERSAL-ECONOMIC-EXECUTION',
     consolidationRelease: 'V15.9-FINAL-CONSOLIDATION-AND-RELEASE',
     v17Release: 'V17.0-VERIFIED-ECONOMIC-NETWORK-OPERATIONS',
     attribution: 'Developed under VINEXSAH TECHNOLOGIES. All rights reserved.',
@@ -6200,6 +6231,11 @@ apiRouter.use('/v20', v20Router);
 apiRouter.use('/v21', v21Router);
 apiRouter.use('/v22', v22Router);
 apiRouter.use('/v23', v23Router);
+apiRouter.use('/v24', v24Router);
+apiRouter.use('/v25', v25Router);
+apiRouter.use('/v26', v26Router);
+apiRouter.use('/v27', v27Router);
+apiRouter.use('/v28', v28Router);
 
 // Prevent missing API routes from falling through to Vite SPA HTML
 apiRouter.use((_req: Request, res: Response) => {

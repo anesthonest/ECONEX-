@@ -12,6 +12,8 @@ import { AlertTriangle, CheckCircle2, Flag, Plus, ShoppingBag } from 'lucide-rea
 import { useAuth } from '../../context/AuthContext.tsx';
 import { ApiClient } from '../../services/apiClient.ts';
 import type { V22FraudReport, V22ProductOrService, V22SectorDefinition } from '../../types/index.ts';
+import { EconexImage } from '../ux/EconexImage.tsx';
+import { resolveMarketplaceAsset } from '../../config/econexAssetManifest.ts';
 
 interface Props {
   onNavigate: (tab: string) => void;
@@ -28,6 +30,26 @@ const OFFER_KINDS: Array<V22ProductOrService['offerKind'] | 'ALL'> = [
   'PROFESSIONAL_SERVICE',
   'CONTRACT_OFFER',
 ];
+
+const OFFER_KIND_LABELS: Record<string, string> = {
+  ALL: 'All Offer Types',
+  GOODS: 'Goods',
+  SERVICE: 'Services',
+  EQUIPMENT_RENTAL: 'Equipment Rentals',
+  WHOLESALE_LOT: 'Wholesale Lots',
+  RETAIL_ITEM: 'Retail Items',
+  DIGITAL_OFFER: 'Digital & Software',
+  PROFESSIONAL_SERVICE: 'Professional Services',
+  CONTRACT_OFFER: 'Contract Offers',
+};
+
+const REPORT_REASON_LABELS: Record<string, string> = {
+  MISLEADING_TERMS: 'Misleading Terms or Pricing',
+  PROHIBITED_ACTIVITY: 'Prohibited Item or Activity',
+  IMPERSONATION: 'Impersonation / False Identity',
+  UNLICENSED_CLAIM: 'Unlicensed Regulatory Claim',
+  SUSPECTED_FRAUD: 'Suspected Fraud',
+};
 
 export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => {
   const { currentUser, role } = useAuth();
@@ -179,10 +201,10 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
       <header className="bg-[#121212] border border-[#27272a] rounded-2xl p-6 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="text-xs font-mono text-[#D4AF37]">UNIVERSAL MARKETPLACE 2.0 · ALL OFFER TYPES</div>
-            <h1 className="text-2xl font-display font-bold text-[#F5F5F5]">Goods, Services, Rentals &amp; Digital Offers</h1>
+            <div className="text-xs font-medium text-[#D4AF37]">Goods, Services, Rentals &amp; Wholesale Offers</div>
+            <h1 className="text-2xl font-display font-bold text-[#F5F5F5]">Universal Marketplace</h1>
             <p className="text-sm text-[#A0A0A0]">
-              Identity verification and product/licence verification are displayed independently — self-declared offers never pose as regulated approvals.
+              Seller identity checks and product or licence verification are displayed independently for full transparency.
             </p>
           </div>
           <div className="flex items-center gap-2.5 shrink-0">
@@ -199,7 +221,7 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
               className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] text-[#050505] font-semibold text-sm flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
             >
               <Plus size={16} aria-hidden="true" />
-              <span>Publish Universal Offer</span>
+              <span>Publish Offer</span>
             </button>
           </div>
         </div>
@@ -209,7 +231,7 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Filter by title, supplier, equipment, or software..."
+            placeholder="Search products, services, suppliers, equipment, or software..."
             className="flex-1 min-h-[44px] px-3.5 rounded-xl bg-[#181818] border border-[#27272a] text-sm text-[#F5F5F5]"
           />
           <select
@@ -233,13 +255,13 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
               key={k}
               type="button"
               onClick={() => setOfferKind(k)}
-              className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-mono border cursor-pointer whitespace-nowrap shrink-0 ${
+              className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs border cursor-pointer whitespace-nowrap shrink-0 ${
                 offerKind === k
                   ? 'bg-[#D4AF37] text-[#050505] border-[#D4AF37] font-semibold'
                   : 'bg-[#181818] text-[#C0C0C0] border-[#27272a] hover:border-[#D4AF37]'
               }`}
             >
-              {k}
+              {OFFER_KIND_LABELS[k] || k}
             </button>
           ))}
         </div>
@@ -293,7 +315,7 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
               >
                 {OFFER_KINDS.filter((k) => k !== 'ALL').map((k) => (
                   <option key={k} value={k}>
-                    {k}
+                    {OFFER_KIND_LABELS[k] || k}
                   </option>
                 ))}
               </select>
@@ -372,11 +394,11 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
                 onChange={(e) => setReportReason(e.target.value as V22FraudReport['reasonCategory'])}
                 className="w-full min-h-[44px] px-3 rounded-xl bg-[#181818] border border-[#27272a] text-sm text-[#F5F5F5]"
               >
-                <option value="MISLEADING_TERMS">MISLEADING_TERMS</option>
-                <option value="PROHIBITED_ACTIVITY">PROHIBITED_ACTIVITY</option>
-                <option value="IMPERSONATION">IMPERSONATION</option>
-                <option value="UNLICENSED_CLAIM">UNLICENSED_CLAIM</option>
-                <option value="SUSPECTED_FRAUD">SUSPECTED_FRAUD</option>
+                <option value="MISLEADING_TERMS">{REPORT_REASON_LABELS.MISLEADING_TERMS}</option>
+                <option value="PROHIBITED_ACTIVITY">{REPORT_REASON_LABELS.PROHIBITED_ACTIVITY}</option>
+                <option value="IMPERSONATION">{REPORT_REASON_LABELS.IMPERSONATION}</option>
+                <option value="UNLICENSED_CLAIM">{REPORT_REASON_LABELS.UNLICENSED_CLAIM}</option>
+                <option value="SUSPECTED_FRAUD">{REPORT_REASON_LABELS.SUSPECTED_FRAUD}</option>
               </select>
             </label>
             <label className="space-y-1 text-xs text-[#A0A0A0]">
@@ -399,55 +421,77 @@ export const V22UniversalMarketplaceView: React.FC<Props> = ({ onNavigate }) => 
       )}
 
       {/* Marketplace Catalog */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((item) => (
-          <article key={item.id} className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 flex flex-col justify-between gap-4">
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                <span className="text-[#D4AF37]">{item.offerKind} · {item.sectorCode}</span>
-                <span className={item.moderationStatus === 'ACTIVE' ? 'text-emerald-400' : 'text-amber-400'}>
-                  {item.moderationStatus}
-                </span>
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {items.map((item) => {
+          const media = resolveMarketplaceAsset({
+            imageUrl: (item as any).imageUrl,
+            title: item.title,
+            sectorCode: item.sectorCode,
+            offerKind: item.offerKind,
+          });
+          return (
+            <article key={item.id} className="bg-[#121212] border border-[#27272a] hover:border-[#D4AF37]/60 transition-colors rounded-2xl overflow-hidden flex flex-col justify-between group">
+              <div>
+                <EconexImage
+                  src={media.path}
+                  alt={media.alt}
+                  fallbackLabel={item.title}
+                  aspectClassName="h-44 w-full"
+                  overlayGradient
+                  className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                />
+                <div className="p-5 space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <span className="text-[#D4AF37] font-medium">
+                      {OFFER_KIND_LABELS[item.offerKind] || item.offerKind}
+                    </span>
+                    <span className={item.moderationStatus === 'ACTIVE' ? 'text-emerald-400' : 'text-amber-400'}>
+                      {item.moderationStatus === 'ACTIVE' ? 'Active' : item.moderationStatus.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                  <h2 className="text-lg font-display font-semibold text-[#F5F5F5] line-clamp-1">{item.title}</h2>
+                  <p className="text-xs text-[#A0A0A0] leading-relaxed line-clamp-2">{item.description}</p>
+                  <div className="text-base font-bold tabular-nums text-[#F5F5F5]">
+                    {item.currency} {item.unitPrice.toLocaleString()} <span className="text-xs font-normal text-[#A0A0A0]">/ {item.unitLabel}</span>
+                  </div>
+                  <div className="text-xs text-[#A0A0A0]">
+                    {item.sellerName} · {item.district}, {item.countryCode}
+                  </div>
+                  <div className="pt-1 flex flex-wrap gap-3 text-xs">
+                    <span className={item.identityVerified ? 'text-emerald-400' : 'text-[#A0A0A0]'}>
+                      {item.identityVerified ? 'Verified Seller' : 'Unverified Seller'}
+                    </span>
+                    <span aria-hidden="true" className="text-[#52525b]">·</span>
+                    <span className={item.productOrLicenceVerified ? 'text-emerald-400' : 'text-amber-400'}>
+                      {item.productOrLicenceVerified
+                        ? 'Verified Product / Licence'
+                        : String(item.qualityClassification || 'Self-declared').replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <h2 className="text-lg font-display font-semibold text-[#F5F5F5]">{item.title}</h2>
-              <p className="text-xs text-[#A0A0A0] leading-relaxed">{item.description}</p>
-              <div className="text-sm font-mono font-bold tabular-nums text-[#F5F5F5]">
-                {item.currency} {item.unitPrice.toLocaleString()} <span className="text-xs font-normal text-[#A0A0A0]">/ {item.unitLabel}</span>
+              <div className="px-5 pb-5 pt-3 border-t border-[#27272a] flex flex-wrap items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReportTarget(item)}
+                  className="min-h-[40px] px-3 py-1.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-amber-500 text-xs text-[#A0A0A0] hover:text-amber-300 flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Flag size={13} aria-hidden="true" />
+                  <span>Report</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={item.moderationStatus === 'REMOVED'}
+                  onClick={() => handleInitiateOrder(item)}
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#e5bf43] disabled:opacity-40 text-[#050505] font-semibold text-xs flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <ShoppingBag size={14} aria-hidden="true" />
+                  <span>Order or Enquire</span>
+                </button>
               </div>
-              <div className="text-xs text-[#A0A0A0] font-mono">
-                Seller: {item.sellerName} · {item.district}, {item.countryCode} · {item.transactionMode}
-              </div>
-              {/* Explicit separation of Identity Verified vs Product/Licence Verified */}
-              <div className="pt-1 flex flex-wrap gap-4 text-xs font-mono">
-                <span className={item.identityVerified ? 'text-emerald-400' : 'text-[#A0A0A0]'}>
-                  Identity: {item.identityVerified ? 'VERIFIED' : 'UNVERIFIED'}
-                </span>
-                <span className={item.productOrLicenceVerified ? 'text-emerald-400' : 'text-amber-400'}>
-                  Product/Licence: {item.productOrLicenceVerified ? 'VERIFIED' : item.qualityClassification}
-                </span>
-              </div>
-            </div>
-            <div className="pt-3 border-t border-[#27272a] flex flex-wrap items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={() => setReportTarget(item)}
-                className="min-h-[40px] px-3 py-1.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-amber-500 text-xs text-[#A0A0A0] hover:text-amber-300 flex items-center gap-1.5 cursor-pointer"
-              >
-                <Flag size={13} aria-hidden="true" />
-                <span>Report</span>
-              </button>
-              <button
-                type="button"
-                disabled={item.moderationStatus === 'REMOVED'}
-                onClick={() => handleInitiateOrder(item)}
-                className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] disabled:opacity-40 text-[#050505] font-semibold text-xs flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                <ShoppingBag size={14} aria-hidden="true" />
-                <span>Initiate Engagement</span>
-              </button>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </section>
 
       {/* Admin Moderation Queue */}

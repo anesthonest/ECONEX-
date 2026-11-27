@@ -32,20 +32,20 @@ interface Props {
 }
 
 const DOC_TYPES: V24DocumentType[] = [
-  'INVOICE',
   'QUOTATION',
+  'PROFORMA_INVOICE',
   'PURCHASE_ORDER',
   'SALES_ORDER',
+  'CONTRACT_AGREEMENT',
+  'INVOICE',
   'CREDIT_NOTE',
-  'DELIVERY_NOTE',
-  'GOODS_RECEIVED_NOTE',
-  'SERVICE_COMPLETION_RECORD',
-  'INSPECTION_REPORT',
-  'PACKING_LIST',
-  'COMMERCIAL_AGREEMENT',
-  'STATEMENT',
+  'DEBIT_NOTE',
   'RECEIPT',
-  'RETURN_DOCUMENT',
+  'DELIVERY_NOTE',
+  'PACKING_LIST',
+  'GOODS_RECEIVED_NOTE',
+  'WAYBILL',
+  'STATEMENT_OF_ACCOUNT',
 ];
 
 function fmtMinor(minor: number, currency = 'UGX'): string {
@@ -184,7 +184,7 @@ export const V24BusinessDocumentsExecutionView: React.FC<Props> = ({ onNavigate 
         actor
       );
       setFeedback(
-        `Settled obligation ${obl.obligationRef} via V23 ledger tx ${res.v23Transaction?.reference} (${res.obligation?.status}).`
+        `Settled obligation ${obl.obligationRef} via V23 ledger tx ${res.v23Transaction?.txReference || res.v23TransactionId} (${res.obligation?.status}).`
       );
       await loadData();
     } catch (err: any) {
@@ -436,11 +436,11 @@ export const V24BusinessDocumentsExecutionView: React.FC<Props> = ({ onNavigate 
                   <div key={obl.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="space-y-1">
                       <div className="font-medium text-sm text-[#F5F5F5]">
-                        {obl.obligationRef} · {obl.sourceModule} ({obl.sourceEntityId})
+                        {obl.obligationRef} · {obl.sourceEntityType} ({obl.sourceEntityId})
                       </div>
                       <div className="text-[#A0A0A0] font-mono tabular-nums">
                         Amount: {fmtMinor(obl.amountMinor, obl.currency)} · Status: {obl.status} · Payee EUWN: {obl.payeeEuwn}
-                        {obl.v23TxReference ? ` · V23 Tx: ${obl.v23TxReference}` : ''}
+                        {obl.v23TransactionIds?.[0] ? ` · V23 Tx: ${obl.v23TransactionIds[0]}` : ''}
                       </div>
                     </div>
                     <div className="flex gap-2 shrink-0">
@@ -488,7 +488,7 @@ export const V24BusinessDocumentsExecutionView: React.FC<Props> = ({ onNavigate 
                         {doc.documentNumber} · {doc.documentType}
                       </div>
                       <div className="text-[#A0A0A0] font-mono tabular-nums">
-                        Total: {fmtMinor(doc.totalMinor, doc.currency)} · {doc.status} · {doc.taxFilingNotice}
+                        Total: {fmtMinor(doc.totalAmountMinor, doc.currency)} · {doc.status} · {doc.taxFilingNotice}
                       </div>
                     </div>
                     <button
@@ -587,8 +587,8 @@ export const V24BusinessDocumentsExecutionView: React.FC<Props> = ({ onNavigate 
                   <div className="text-lg font-bold text-[#F5F5F5]">{trustProfile.completedOrdersCount}</div>
                 </div>
                 <div className="bg-[#181818] border border-[#27272a] rounded-lg p-3">
-                  <div className="text-[#A0A0A0] font-sans">Inspection Passes</div>
-                  <div className="text-lg font-bold text-emerald-400">{trustProfile.inspectionPassCount}</div>
+                  <div className="text-[#A0A0A0] font-sans">On-Time Delivery</div>
+                  <div className="text-lg font-bold text-emerald-400">{trustProfile.onTimeDeliveryRatePct}%</div>
                 </div>
                 <div className="bg-[#181818] border border-[#27272a] rounded-lg p-3">
                   <div className="text-[#A0A0A0] font-sans">Avg Rating</div>
@@ -647,7 +647,7 @@ export const V24BusinessDocumentsExecutionView: React.FC<Props> = ({ onNavigate 
                 <div key={thr.id} className="py-3 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[#D4AF37]">
-                      {thr.id} · {thr.contextType} ({thr.contextEntityId})
+                      {thr.id} · {thr.linkedEntityType} ({thr.linkedEntityId})
                     </span>
                     <button
                       type="button"
@@ -695,7 +695,7 @@ export const V24BusinessDocumentsExecutionView: React.FC<Props> = ({ onNavigate 
                     <div className="font-mono text-[#F5F5F5]">
                       {d.clientDraftId} · {d.entityKind}
                     </div>
-                    <div className="text-[#A0A0A0]">{d.resolutionNote || d.targetEntityId || 'Draft payload'}</div>
+                    <div className="text-[#A0A0A0]">{d.serverResolutionNote || d.targetEntityId || 'Draft payload'}</div>
                   </div>
                   <span
                     className={`font-mono font-semibold ${

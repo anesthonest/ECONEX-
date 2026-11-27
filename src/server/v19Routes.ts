@@ -24,8 +24,29 @@ const DATA_DIR = path.join(ROOT, 'data');
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 const DB_FILE = path.join(DATA_DIR, 'aros_database.json');
 const EXPORT_DIR = path.join(ROOT, 'exports');
-const ARCHIVE_PATH = path.join(EXPORT_DIR, 'ECONEX-V19.0-SOURCE.zip');
-const MANIFEST_PATH = path.join(EXPORT_DIR, 'ECONEX-V19.0-EXPORT-MANIFEST.json');
+const ARCHIVE_CANDIDATES = [
+  { zip: 'ECONEX-V29.0-SOURCE.zip', manifest: 'ECONEX-V29.0-EXPORT-MANIFEST.json' },
+  { zip: 'ECONEX-V28.0-SOURCE.zip', manifest: 'ECONEX-V28.0-EXPORT-MANIFEST.json' },
+  { zip: 'ECONEX-V27.0-SOURCE.zip', manifest: 'ECONEX-V27.0-EXPORT-MANIFEST.json' },
+  { zip: 'ECONEX-V26.0-SOURCE.zip', manifest: 'ECONEX-V26.0-EXPORT-MANIFEST.json' },
+  { zip: 'ECONEX-V25.0-SOURCE.zip', manifest: 'ECONEX-V25.0-EXPORT-MANIFEST.json' },
+  { zip: 'ECONEX-V19.0-SOURCE.zip', manifest: 'ECONEX-V19.0-EXPORT-MANIFEST.json' },
+];
+function resolveExportPaths() {
+  for (const c of ARCHIVE_CANDIDATES) {
+    const archivePath = path.join(EXPORT_DIR, c.zip);
+    const manifestPath = path.join(EXPORT_DIR, c.manifest);
+    if (fs.existsSync(archivePath) && fs.existsSync(manifestPath)) {
+      return { archiveName: c.zip, archivePath, manifestPath };
+    }
+  }
+  const primary = ARCHIVE_CANDIDATES[0];
+  return {
+    archiveName: primary.zip,
+    archivePath: path.join(EXPORT_DIR, primary.zip),
+    manifestPath: path.join(EXPORT_DIR, primary.manifest),
+  };
+}
 const REPORT_FILE = path.join(ROOT, '.econex-reports', 'verification-latest.json');
 
 export const v19Router = Router();
@@ -261,16 +282,17 @@ function buildDiagnosticsSummary(): V19DiagnosticsSummary {
   const finReport = db.getFinancialIntegrityReport();
   const latestMigration = db.migrationHistory[db.migrationHistory.length - 1];
 
+  const { archiveName, archivePath, manifestPath } = resolveExportPaths();
   let manifest: any = null;
-  if (fs.existsSync(MANIFEST_PATH)) {
+  if (fs.existsSync(manifestPath)) {
     try {
-      manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+      manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     } catch {
       manifest = null;
     }
   }
-  const zipExists = fs.existsSync(ARCHIVE_PATH);
-  const zipStat = zipExists ? fs.statSync(ARCHIVE_PATH) : null;
+  const zipExists = fs.existsSync(archivePath);
+  const zipStat = zipExists ? fs.statSync(archivePath) : null;
   const exportVerified = Boolean(zipExists && manifest?.verification?.verified);
 
   let verReport: any = null;
@@ -287,7 +309,7 @@ function buildDiagnosticsSummary(): V19DiagnosticsSummary {
   if (!distIndexPresent) warnings.push('Production build output (dist/index.html) not generated yet; run `npm run build`.');
   if (!process.env.DATABASE_URL) warnings.push('PostgreSQL 16 (DATABASE_URL) is NOT_PROVISIONED; running authoritative local JSON WAL.');
   if (!gitRepository.remoteConfigured) warnings.push('No GitHub remote is configured or authorized in this container environment.');
-  if (!exportVerified) warnings.push('Source archive exports/ECONEX-V19.0-SOURCE.zip has not been generated/verified yet.');
+  if (!exportVerified) warnings.push(`Source archive exports/${archiveName} has not been generated/verified yet.`);
   if (backupsCount > 12) warnings.push(`Rolling backups directory has ${backupsCount} files; keep pruned to avoid workspace bloat.`);
 
   const artifactChecks = (() => {
@@ -356,7 +378,7 @@ function buildDiagnosticsSummary(): V19DiagnosticsSummary {
     exportArchive: {
       exists: zipExists,
       verified: exportVerified,
-      archiveName: 'ECONEX-V19.0-SOURCE.zip',
+      archiveName,
       bytes: zipStat ? zipStat.size : 0,
       sha256: manifest?.verification?.sha256 || null,
       fileCount: manifest?.verification?.fileCount || 0,
@@ -459,15 +481,16 @@ v19Router.post('/export/generate', requirePlatformAdmin, (req: Request, res: Res
 });
 
 v19Router.get('/export/download', requirePlatformAdmin, (_req: Request, res: Response) => {
-  if (!fs.existsSync(ARCHIVE_PATH) || !fs.existsSync(MANIFEST_PATH)) {
+  const { archiveName, archivePath, manifestPath } = resolveExportPaths();
+  if (!fs.existsSync(archivePath) || !fs.existsSync(manifestPath)) {
     return res.status(404).json({
       error: 'ARCHIVE_NOT_GENERATED',
       message: 'Verified source archive has not been generated yet. Run POST /api/v19/export/generate or `npm run export:zip`.',
     });
   }
   res.setHeader('Content-Type', 'application/zip');
-  res.setHeader('Content-Disposition', 'attachment; filename="ECONEX-V19.0-SOURCE.zip"');
-  return res.sendFile(ARCHIVE_PATH);
+  res.setHeader('Content-Disposition', `attachment; filename="${archiveName}"`);
+  return res.sendFile(archivePath);
 });
 
 v19Router.get('/diagnostics/report-download', requirePlatformAdmin, (_req: Request, res: Response) => {

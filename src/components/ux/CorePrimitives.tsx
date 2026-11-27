@@ -439,3 +439,88 @@ export const StatusLabel: React.FC<{ tone: 'good' | 'wait' | 'warn' | 'neutral';
     </span>
   );
 };
+
+const ORDER_MILESTONE_STEPS = [
+  { key: 'PLACED', label: 'Order placed' },
+  { key: 'CONFIRMED', label: 'Confirmed' },
+  { key: 'PROCESSING', label: 'Processing' },
+  { key: 'DISPATCHED', label: 'Dispatched' },
+  { key: 'DELIVERED', label: 'Delivered' },
+] as const;
+
+export function mapOrderStatusToMilestoneIndex(rawStatus: string): {
+  index: number;
+  cancelledOrDisputed: boolean;
+} {
+  const s = String(rawStatus || '').toUpperCase();
+  if (s === 'REJECTED' || s === 'CANCELLED' || s === 'DISPUTED') {
+    return { index: 0, cancelledOrDisputed: true };
+  }
+  if (s === 'DELIVERED' || s === 'DELIVERY_VERIFIED' || s === 'COMPLETED' || s === 'RECONCILED') {
+    return { index: 4, cancelledOrDisputed: false };
+  }
+  if (s === 'IN_TRANSIT' || s === 'DISPATCHED') {
+    return { index: 3, cancelledOrDisputed: false };
+  }
+  if (s === 'PAID' || s === 'PREPARING' || s === 'READY_FOR_DISPATCH') {
+    return { index: 2, cancelledOrDisputed: false };
+  }
+  if (s === 'ACCEPTED' || s === 'AWAITING_PAYMENT' || s === 'PAYMENT_PENDING') {
+    return { index: 1, cancelledOrDisputed: false };
+  }
+  return { index: 0, cancelledOrDisputed: false };
+}
+
+export const OrderDeliveryTimeline: React.FC<{
+  rawStatus: string;
+  compact?: boolean;
+}> = ({ rawStatus, compact = false }) => {
+  const { index, cancelledOrDisputed } = mapOrderStatusToMilestoneIndex(rawStatus);
+
+  if (cancelledOrDisputed) {
+    return (
+      <div className="rounded-xl bg-red-950/30 border border-red-900/60 px-3.5 py-2.5 text-xs text-red-300 flex items-center gap-2">
+        <AlertTriangle size={14} aria-hidden="true" />
+        <span>This order is currently paused or cancelled ({rawStatus.replace(/_/g, ' ').toLowerCase()}).</span>
+      </div>
+    );
+  }
+
+  return (
+    <div aria-label="Order delivery progress" className="w-full">
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+        {ORDER_MILESTONE_STEPS.map((step, i) => {
+          const done = i < index;
+          const active = i === index;
+          return (
+            <div key={step.key} className="space-y-1.5">
+              <div
+                className={`h-1.5 rounded-full transition-colors ${
+                  done
+                    ? 'bg-emerald-400'
+                    : active
+                      ? 'bg-[#D4AF37]'
+                      : 'bg-[#27272a]'
+                }`}
+              />
+              {!compact && (
+                <div
+                  className={`text-[11px] leading-tight truncate ${
+                    done
+                      ? 'text-emerald-400 font-medium'
+                      : active
+                        ? 'text-[#D4AF37] font-semibold'
+                        : 'text-[#A0A0A0]'
+                  }`}
+                >
+                  {step.label}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+

@@ -1,0 +1,74 @@
+# ECONEX V28.0 — Universal Economic Execution CI/CD Pipeline
+# Developed under VINEXSAH TECHNOLOGIES. All rights reserved.
+
+name: ECONEX V28 CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: econex-v28-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-build:
+    name: Typecheck, Secret Scan, Build, Live V28 Verification & Clean Archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ECONEX_ENV: AUTOMATED_TESTING
+      PORT: "3000"
+      DISABLE_HMR: "true"
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Setup Bun (matches bun.lock)
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies cleanly
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f bun.lock ]; then
+            bun install --frozen-lockfile
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: TypeScript typecheck & lint
+        run: npm run typecheck && npm run lint
+
+      - name: Secret & credential scan
+        run: npm run security:scan
+
+      - name: Build production frontend bundle
+        run: npm run build
+
+      - name: Boot server & execute V28 + cross-release verification
+        run: |
+          npm run start &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:3000/health >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl -sf http://127.0.0.1:3000/ready >/dev/null
+          curl -sf http://127.0.0.1:3000/api/v28/health >/dev/null
+          npm run test:v28
+          kill $SERVER_PID || true
+
+      - name: Build and verify secret-free source ZIP archive
+        run: npm run export:zip && npm run export:check

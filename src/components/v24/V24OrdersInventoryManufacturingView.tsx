@@ -31,16 +31,15 @@ interface Props {
 
 const ORDER_TYPES: V24OrderType[] = [
   'B2B',
+  'B2C',
+  'C2C',
   'WHOLESALE',
   'RETAIL',
-  'B2C',
-  'INSTITUTIONAL_PROCUREMENT',
   'SERVICE',
+  'RENTAL_BOOKING',
   'MANUFACTURING',
-  'CONSTRUCTION_MATERIAL',
-  'LOGISTICS_SERVICE',
+  'INSTITUTIONAL',
   'RECURRING_SUPPLY',
-  'COOPERATIVE',
 ];
 
 function fmtMinor(minor: number, currency = 'UGX'): string {
@@ -82,7 +81,7 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
 
   // Stock Operation form
   const [adjItemId, setAdjItemId] = useState<string>('INV-V24-001');
-  const [adjOp, setAdjOp] = useState<'ADJUSTMENT' | 'DAMAGE' | 'EXPIRY' | 'TRANSFER'>('ADJUSTMENT');
+  const [adjOp, setAdjOp] = useState<'ADJUSTMENT' | 'DAMAGED' | 'EXPIRED' | 'TRANSFER'>('ADJUSTMENT');
   const [adjQty, setAdjQty] = useState<number>(1);
   const [targetWhId, setTargetWhId] = useState<string>('WH-V24-002');
   const [adjReason, setAdjReason] = useState<string>('Cycle count verification');
@@ -152,20 +151,20 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
               inventoryItemId: inv?.id,
               sku: inv?.sku,
               title: inv ? inv.name : 'Commercial Supply Lot',
-              quantity: orderQty,
+              quantityOrdered: orderQty,
               unitOfMeasure: inv?.unitOfMeasure || 'UNIT',
               unitPriceMinor: Math.round(unitPriceMajor * 100),
             },
           ],
           currency: 'UGX',
-          deliveryAddress: deliveryAddr,
+          deliveryLocation: deliveryAddr,
           allowPartialFulfilment: true,
           submitImmediately: true,
         },
         actor
       );
       setFeedback(
-        `Created order ${res.order?.orderNumber} (${res.order?.status}) with UNPAID obligation ${res.order?.linkedPaymentObligationId}.`
+        `Created order ${res.order?.orderNumber} (${res.order?.status}) with UNPAID obligation ${res.order?.paymentObligationId || res.obligation?.id}.`
       );
       await loadData();
     } catch (err: any) {
@@ -180,7 +179,7 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
     setError(null);
     try {
       const payload: Record<string, any> = { nextStatus };
-      if (nextStatus === 'ORDER_INSPECTION') payload.inspectionResult = 'PASSED';
+      if (nextStatus === 'ORDER_INSPECTED') payload.inspectionResult = 'PASSED';
       if (nextStatus === 'ORDER_DELIVERED') payload.deliveryEvidenceRef = `POD-${order.orderNumber}`;
       await ApiClient.v24TransitionOrder(order.id, payload, actor);
       setFeedback(`Order ${order.orderNumber} transitioned to ${nextStatus}.`);
@@ -430,8 +429,8 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
                     <div className="font-mono text-[#D4AF37]">{o.status}</div>
                   </div>
                   <div className="text-[#A0A0A0] font-mono tabular-nums">
-                    Total: {fmtMinor(o.totalAmountMinor, o.currency)} · Buyer: {o.buyerParticipantId} · Seller:{' '}
-                    {o.sellerParticipantId} · Obligation: {o.linkedPaymentObligationId || 'None'}
+                    Total: {fmtMinor(o.totalMinor, o.currency)} · Buyer: {o.buyerParticipantId} · Seller:{' '}
+                    {o.sellerParticipantId} · Obligation: {o.paymentObligationId || 'None'}
                   </div>
                   <div className="text-[#A0A0A0]">
                     Items: {o.items.map((it) => `${it.title} (${it.quantityFulfilled}/${it.quantityOrdered})`).join(', ')}
@@ -476,13 +475,13 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
                     {o.status === 'ORDER_DELIVERED' && (
                       <button
                         type="button"
-                        onClick={() => handleTransitionOrder(o, 'ORDER_INSPECTION')}
+                        onClick={() => handleTransitionOrder(o, 'ORDER_INSPECTED')}
                         className="px-3 py-1.5 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
                       >
                         Pass Inspection
                       </button>
                     )}
-                    {o.status === 'ORDER_INSPECTION' && (
+                    {o.status === 'ORDER_INSPECTED' && (
                       <button
                         type="button"
                         onClick={() => handleTransitionOrder(o, 'ORDER_COMPLETED')}
@@ -521,9 +520,9 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
                   <span className="font-mono text-[#D4AF37]">{w.status}</span>
                 </div>
                 <div className="text-[#A0A0A0]">
-                  {w.location} · Capacity: <span className="font-mono tabular-nums">{w.usedCapacityUnits}/{w.totalCapacityUnits}</span>
+                  {w.districtOrCity} ({w.countryCode}) · Capacity: <span className="font-mono tabular-nums">{w.usedCapacityUnits}/{w.maxCapacityUnits}</span>
                 </div>
-                <div className="text-[#71717a] font-mono">{w.receiptClassification}</div>
+                <div className="text-[#71717a] font-mono">{w.facilityType}</div>
               </div>
             ))}
           </div>
@@ -588,8 +587,8 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
                   className="px-3 py-2 rounded-lg bg-[#181818] border border-[#27272a] text-[#F5F5F5]"
                 >
                   <option value="ADJUSTMENT">ADJUSTMENT</option>
-                  <option value="DAMAGE">DAMAGE</option>
-                  <option value="EXPIRY">EXPIRY</option>
+                  <option value="DAMAGED">DAMAGED</option>
+                  <option value="EXPIRED">EXPIRED</option>
                   <option value="TRANSFER">TRANSFER</option>
                 </select>
                 <input
@@ -644,7 +643,7 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
                     <th className="py-2 pr-3 text-right">Physical</th>
                     <th className="py-2 pr-3 text-right">Reserved</th>
                     <th className="py-2 pr-3 text-right">ATP</th>
-                    <th className="py-2 pr-3 text-right">Damaged/Exp</th>
+                    <th className="py-2 pr-3 text-right">Reorder Min</th>
                     <th className="py-2 pr-3 text-right">Ver</th>
                   </tr>
                 </thead>
@@ -656,9 +655,7 @@ export const V24OrdersInventoryManufacturingView: React.FC<Props> = ({ onNavigat
                       <td className="py-2.5 pr-3 text-right text-[#F5F5F5]">{i.physicalQty}</td>
                       <td className="py-2.5 pr-3 text-right text-amber-400">{i.reservedQty}</td>
                       <td className="py-2.5 pr-3 text-right text-emerald-400 font-bold">{i.availableToPromiseQty}</td>
-                      <td className="py-2.5 pr-3 text-right text-[#A0A0A0]">
-                        {i.damagedQty}/{i.expiredQty}
-                      </td>
+                      <td className="py-2.5 pr-3 text-right text-[#A0A0A0]">{i.reorderThresholdQty}</td>
                       <td className="py-2.5 pr-3 text-right text-[#A0A0A0]">v{i.version}</td>
                     </tr>
                   ))}

@@ -47,6 +47,32 @@ const NEXT_STAGE_MAP: Partial<Record<V22CommercialStage, V22CommercialStage>> = 
   COMPLETED: 'PERFORMANCE_TRUST_RECORDED',
 };
 
+const PERSPECTIVE_LABELS: Record<'ALL' | 'INDIVIDUAL' | 'BUSINESS' | 'PROCUREMENT' | 'ADMIN', string> = {
+  ALL: 'All Activity',
+  INDIVIDUAL: 'Personal',
+  BUSINESS: 'Business',
+  PROCUREMENT: 'Procurement',
+  ADMIN: 'Administration',
+};
+
+const ACTIVITY_TYPE_LABELS: Record<string, string> = {
+  GOODS_SALE: 'Goods Sale',
+  SERVICE_ENGAGEMENT: 'Service Engagement',
+  EQUIPMENT_RENTAL: 'Equipment Rental',
+  PROJECT_CONTRACT: 'Project Contract',
+  WHOLESALE_ORDER: 'Wholesale Order',
+  DIGITAL_DELIVERY: 'Digital Delivery',
+};
+
+function formatFriendlyStage(raw: string): string {
+  return String(raw || '')
+    .toLowerCase()
+    .split('_')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
   const { currentUser, role } = useAuth();
   const actor = { userId: currentUser?.id || role, userRole: role };
@@ -159,15 +185,15 @@ export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
       <header className="bg-[#121212] border border-[#27272a] rounded-2xl p-6 space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1.5">
-            <div className="text-xs font-mono text-[#D4AF37] uppercase tracking-wider">
-              ECONEX V22.0 · SCHEMA {overview?.schemaVersion ?? 20} · SECTOR-NEUTRAL OPERATING SYSTEM
+            <div className="text-xs font-medium text-[#D4AF37]">
+              Universal Multi-Sector Economy Hub
             </div>
             <h1 className="text-2xl font-display font-bold text-[#F5F5F5]">
-              Universal Economic Activity &amp; Growth Engine
+              Commercial Activity &amp; Sector Overview
             </h1>
             <p className="text-sm text-[#A0A0A0] max-w-3xl">
-              Coordinate legitimate commerce across {sectors.length || 28} economic sectors — from construction, solar energy,
-              software &amp; healthcare supplies to transport, trade, artisans, and agriculture.
+              Coordinate commerce across {sectors.length || 28} economic sectors — from construction, solar energy,
+              software, and healthcare supplies to transport, trade, artisans, and agriculture.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
@@ -192,21 +218,23 @@ export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
 
         {/* Role Perspective Selector */}
         <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-[#27272a]">
-          <span className="text-xs font-mono text-[#A0A0A0] mr-2">VIEW PERSPECTIVE:</span>
-          {(['ALL', 'INDIVIDUAL', 'BUSINESS', 'PROCUREMENT', 'ADMIN'] as const).map((p) => (
-            <button
-              key={p}
-              type="button"
-              onClick={() => setPerspective(p)}
-              className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-mono border cursor-pointer whitespace-nowrap shrink-0 ${
-                perspective === p
-                  ? 'bg-[#D4AF37] text-[#050505] border-[#D4AF37] font-semibold'
-                  : 'bg-[#181818] text-[#C0C0C0] border-[#27272a] hover:border-[#D4AF37]'
-              }`}
-            >
-              {p}
-            </button>
-          ))}
+          <span className="text-xs text-[#A0A0A0] mr-2">Focus View:</span>
+          {(['ALL', 'INDIVIDUAL', 'BUSINESS', 'PROCUREMENT', 'ADMIN'] as const)
+            .filter((p) => p !== 'ADMIN' || role === 'PLATFORM_ADMIN')
+            .map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setPerspective(p)}
+                className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs border cursor-pointer whitespace-nowrap shrink-0 ${
+                  perspective === p
+                    ? 'bg-[#D4AF37] text-[#050505] border-[#D4AF37] font-semibold'
+                    : 'bg-[#181818] text-[#C0C0C0] border-[#27272a] hover:border-[#D4AF37]'
+                }`}
+              >
+                {PERSPECTIVE_LABELS[p]}
+              </button>
+            ))}
         </div>
       </header>
 
@@ -270,12 +298,12 @@ export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
                 onChange={(e) => setActType(e.target.value as V22EconomicActivity['activityType'])}
                 className="w-full min-h-[44px] px-3 rounded-xl bg-[#181818] border border-[#27272a] text-sm text-[#F5F5F5]"
               >
-                <option value="GOODS_SALE">GOODS_SALE</option>
-                <option value="SERVICE_ENGAGEMENT">SERVICE_ENGAGEMENT</option>
-                <option value="EQUIPMENT_RENTAL">EQUIPMENT_RENTAL</option>
-                <option value="PROJECT_CONTRACT">PROJECT_CONTRACT</option>
-                <option value="WHOLESALE_ORDER">WHOLESALE_ORDER</option>
-                <option value="DIGITAL_DELIVERY">DIGITAL_DELIVERY</option>
+                <option value="GOODS_SALE">Goods Sale</option>
+                <option value="SERVICE_ENGAGEMENT">Service Engagement</option>
+                <option value="EQUIPMENT_RENTAL">Equipment Rental</option>
+                <option value="PROJECT_CONTRACT">Project Contract</option>
+                <option value="WHOLESALE_ORDER">Wholesale Order</option>
+                <option value="DIGITAL_DELIVERY">Digital Delivery</option>
               </select>
             </label>
             <label className="space-y-1 text-xs text-[#A0A0A0]">
@@ -335,47 +363,47 @@ export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
         </form>
       )}
 
-      {/* Separated Metrics Strip (ACTUAL / TEST / PENDING_EXTERNAL_SURVEY) */}
+      {/* Separated Metrics Strip */}
       <section aria-label="Universal Economy Metrics" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 space-y-1">
-          <div className="text-[11px] font-mono text-[#D4AF37]">ACTUAL · SECTORS &amp; ENTITIES</div>
-          <div className="text-2xl font-mono font-bold tabular-nums text-[#F5F5F5]">
+          <div className="text-xs text-[#D4AF37] font-medium">Sectors &amp; Participants</div>
+          <div className="text-2xl font-bold tabular-nums text-[#F5F5F5]">
             {loading ? '—' : `${sectors.length} Sectors`}
           </div>
-          <div className="text-xs text-[#A0A0A0] font-mono tabular-nums">
+          <div className="text-xs text-[#A0A0A0] tabular-nums">
             {actual.registeredBusinesses ?? 0} businesses · {actual.independentIndividuals ?? 0} individuals
           </div>
         </div>
 
         <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 space-y-1">
-          <div className="text-[11px] font-mono text-[#D4AF37]">ACTUAL · MARKET &amp; WORKFLOWS</div>
-          <div className="text-2xl font-mono font-bold tabular-nums text-[#F5F5F5]">
+          <div className="text-xs text-[#D4AF37] font-medium">Marketplace &amp; Deals</div>
+          <div className="text-2xl font-bold tabular-nums text-[#F5F5F5]">
             {loading ? '—' : `${actual.activeListings ?? 0} Offers`}
           </div>
-          <div className="text-xs text-[#A0A0A0] font-mono tabular-nums">
-            {actual.liveCommercialActivities ?? 0} live deals · {actual.openTenders ?? 0} open RFQs
+          <div className="text-xs text-[#A0A0A0] tabular-nums">
+            {actual.liveCommercialActivities ?? 0} active deals · {actual.openTenders ?? 0} open requests
           </div>
         </div>
 
         <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 space-y-1">
-          <div className="text-[11px] font-mono text-[#D4AF37]">ACTUAL · INVOICED &amp; LEDGER</div>
-          <div className="text-2xl font-mono font-bold tabular-nums text-[#F5F5F5]">
+          <div className="text-xs text-[#D4AF37] font-medium">Invoiced &amp; Ledger Status</div>
+          <div className="text-2xl font-bold tabular-nums text-[#F5F5F5]">
             {loading ? '—' : `UGX ${Number(actual.invoicedValueUgx || 0).toLocaleString()}`}
           </div>
-          <div className="text-xs text-[#A0A0A0] font-mono tabular-nums">
-            Ledger parity: {overview?.financialIntegrity?.journalBalanced ? 'BALANCED' : 'CHECK'} · Paying subscribers:{' '}
+          <div className="text-xs text-[#A0A0A0] tabular-nums">
+            Ledger check: {overview?.financialIntegrity?.journalBalanced ? 'Balanced' : 'Review needed'} · Active subscribers:{' '}
             {actual.payingSubscribersCount ?? 0}
           </div>
         </div>
 
         <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 space-y-1">
-          <div className="text-[11px] font-mono text-[#A0A0A0]">TEST &amp; EXTERNAL BOUNDARY</div>
-          <div className="text-2xl font-mono font-bold tabular-nums text-[#C0C0C0]">
+          <div className="text-xs text-[#A0A0A0] font-medium">Sandbox &amp; Deployment Boundary</div>
+          <div className="text-2xl font-bold tabular-nums text-[#C0C0C0]">
             {loading ? '—' : `${testData.testCommercialActivities ?? 0} Test`}
           </div>
-          <div className="text-xs text-[#A0A0A0] font-mono">
-            Cutover: {String(extFlags.V22_POSTGRESQL_CUTOVER_COMPLETE ?? false)} · Prod:{' '}
-            {String(extFlags.V22_PRODUCTION_DEPLOYED ?? false)}
+          <div className="text-xs text-[#A0A0A0]">
+            External cutover: {extFlags.V22_POSTGRESQL_CUTOVER_COMPLETE ? 'Complete' : 'Pre-cutover'} · Production:{' '}
+            {extFlags.V22_PRODUCTION_DEPLOYED ? 'Live' : 'Sandbox mode'}
           </div>
         </div>
       </section>
@@ -493,24 +521,24 @@ export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
               return (
                 <div key={act.id} className="py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="space-y-1.5">
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#A0A0A0]">
-                      <span className="text-[#D4AF37]">{act.activityCode}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#A0A0A0]">
+                      <span className="font-mono text-[#D4AF37]">{act.activityCode}</span>
                       <span>·</span>
-                      <span>{act.sectorCode}</span>
+                      <span>{formatFriendlyStage(act.sectorCode)}</span>
                       <span>·</span>
-                      <span>{act.activityType}</span>
+                      <span>{ACTIVITY_TYPE_LABELS[act.activityType] || formatFriendlyStage(act.activityType)}</span>
                       <span>·</span>
-                      <span className="text-[#F5F5F5]">{act.stage}</span>
+                      <span className="text-[#F5F5F5] font-medium">{formatFriendlyStage(act.stage)}</span>
                     </div>
                     <div className="text-base font-medium text-[#F5F5F5]">{act.title}</div>
-                    <div className="text-xs text-[#A0A0A0] font-mono tabular-nums">
+                    <div className="text-xs text-[#A0A0A0] tabular-nums">
                       Buyer: {act.buyerName} → Supplier: {act.sellerName} · {act.currency}{' '}
-                      {act.totalAmount.toLocaleString()} · {act.district}, {act.countryCode} · v{act.version}
+                      {act.totalAmount.toLocaleString()} · {act.district}, {act.countryCode}
                     </div>
                     {act.agreement?.lockedAfterAcceptance && (
-                      <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-400">
+                      <div className="flex items-center gap-1.5 text-xs text-emerald-400">
                         <Lock size={12} aria-hidden="true" />
-                        <span>SHA-256 Locked: {act.agreement.sha256Hash.slice(0, 20)}...</span>
+                        <span>Agreement locked ({act.agreement.sha256Hash.slice(0, 12)})</span>
                       </div>
                     )}
                   </div>
@@ -522,10 +550,10 @@ export const V22UniversalDashboard: React.FC<Props> = ({ onNavigate }) => {
                         onClick={() => handleAdvanceStage(act)}
                         className="min-h-[44px] px-4 py-2 rounded-xl bg-[#181818] border border-[#D4AF37]/60 hover:bg-[#D4AF37] hover:text-[#050505] text-xs font-semibold text-[#D4AF37] whitespace-nowrap shrink-0 cursor-pointer transition-colors"
                       >
-                        {busyId === act.id ? 'Updating...' : `Advance → ${nextStage}`}
+                        {busyId === act.id ? 'Updating...' : `Advance to ${formatFriendlyStage(nextStage)}`}
                       </button>
                     ) : (
-                      <span className="text-xs font-mono text-emerald-400">COMPLETED / ARCHIVED</span>
+                      <span className="text-xs font-medium text-emerald-400">Completed</span>
                     )}
                   </div>
                 </div>

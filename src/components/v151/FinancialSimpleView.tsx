@@ -18,9 +18,10 @@ import { formatMoney } from '../../i18n/econexTranslations.ts';
 interface Props {
   onOpenPaymentModal: (order: Order) => void;
   onReportDispute: (prefillSubject: string) => void;
+  onNavigate?: (tab: string) => void;
 }
 
-export const FinancialSimpleView: React.FC<Props> = ({ onOpenPaymentModal, onReportDispute }) => {
+export const FinancialSimpleView: React.FC<Props> = ({ onOpenPaymentModal, onReportDispute, onNavigate }) => {
   const { currentUser, role } = useAuth();
   const { language } = useExperience();
 
@@ -66,11 +67,24 @@ export const FinancialSimpleView: React.FC<Props> = ({ onOpenPaymentModal, onRep
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-6 space-y-3">
-        <h1 className="text-2xl font-bold text-[#F5F5F5]">My Payments &amp; Money</h1>
-        <p className="text-sm text-[#A0A0A0]">
-          Clear record of money sent, money received, and payments waiting for confirmation. We never show a payment as finished until the payment provider confirms receipt.
-        </p>
+      <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold text-[#F5F5F5]">My Payments &amp; Money</h1>
+            <p className="text-sm text-[#A0A0A0]">
+              Clear record of money sent, money received, and payments waiting for confirmation. We never show a payment as finished until the payment provider confirms receipt.
+            </p>
+          </div>
+          {onNavigate && (
+            <button
+              type="button"
+              onClick={() => onNavigate('v23-wallet')}
+              className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#e5bf43] text-[#050505] text-sm font-semibold shrink-0 cursor-pointer"
+            >
+              Open Universal Wallet
+            </button>
+          )}
+        </div>
 
         {/* Honest Provider Status Disclosure */}
         <div className="p-4 rounded-xl bg-[#181818] border border-[#27272a] flex items-start gap-3 text-xs text-[#C0C0C0]">

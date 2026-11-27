@@ -5,7 +5,7 @@
  * Developed under VINEXSAH TECHNOLOGIES. All rights reserved.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CheckCircle2,
   ShieldCheck,
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useExperience } from '../../context/ExperienceContext.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
+import { ApiClient } from '../../services/apiClient.ts';
 import { EconexLanguageCode, SUPPORTED_LANGUAGES } from '../../i18n/econexTranslations.ts';
 import { GuidedForm, AccessibleDialog } from '../ux/CorePrimitives.tsx';
 import { UserRole } from '../../types/index.ts';
@@ -59,12 +60,59 @@ export const GuidedOnboardingWizard: React.FC<Props> = ({ isOpen, onClose, onFin
     completeOnboarding,
     setLanguage,
     language,
+    activeCountry,
   } = useExperience();
-  const { register, switchRole, currentUser } = useAuth();
+  const { register, switchRole, currentUser, role } = useAuth();
 
   const [step, setStep] = useState<number>(onboardingDraft.step || 1);
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOpen || !currentUser?.id) return;
+    let cancelled = false;
+    ApiClient.v26GetUserOnboarding({ userId: currentUser.id, userRole: role })
+      .then((prog) => {
+        if (cancelled || !prog) return;
+        if (prog.currentStep && prog.currentStep >= 1 && prog.currentStep <= 7) {
+          setStep(prog.currentStep);
+        }
+        saveOnboardingDraft({
+          step: prog.currentStep || 1,
+          language: (prog.selectedLanguage as EconexLanguageCode) || language,
+          accountType: prog.accountType || onboardingDraft.accountType,
+          fullName: prog.fullName || currentUser.name || onboardingDraft.fullName,
+          phone: prog.phone || currentUser.phone || onboardingDraft.phone,
+          email: prog.email || currentUser.email || onboardingDraft.email,
+          district: prog.district || currentUser.district || onboardingDraft.district,
+          interests: Array.isArray(prog.interests) && prog.interests.length > 0 ? prog.interests : onboardingDraft.interests,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, currentUser?.id]);
+
+  const syncProgressToServer = async (targetStep: number, completed = false) => {
+    if (!currentUser?.id) return;
+    await ApiClient.v26UpdateUserOnboarding(
+      {
+        currentStep: targetStep,
+        selectedLanguage: language,
+        countryCode: activeCountry,
+        accountType: onboardingDraft.accountType,
+        fullName: onboardingDraft.fullName || currentUser.name,
+        phone: onboardingDraft.phone || currentUser.phone,
+        email: onboardingDraft.email || currentUser.email,
+        district: onboardingDraft.district || currentUser.district,
+        interests: onboardingDraft.interests,
+        consentAccepted: true,
+        completed,
+      },
+      { userId: currentUser.id, userRole: role, countryCode: activeCountry }
+    ).catch(() => {});
+  };
 
   const stepTitles = [
     'Welcome to ECONEX',
@@ -76,9 +124,10 @@ export const GuidedOnboardingWizard: React.FC<Props> = ({ isOpen, onClose, onFin
     'Your Home Screen Is Ready',
   ];
 
-  const handleSaveForLater = () => {
+  const handleSaveForLater = async () => {
     saveOnboardingDraft({ step });
-    setStatusMessage('Progress saved on this device. You can continue any time.');
+    await syncProgressToServer(step, false);
+    setStatusMessage('Progress saved to your ECONEX account and this device. You can continue any time.');
     setTimeout(() => {
       setStatusMessage(null);
       onClose();
@@ -98,7 +147,7 @@ export const GuidedOnboardingWizard: React.FC<Props> = ({ isOpen, onClose, onFin
     setStatusMessage(null);
     try {
       const selectedType = ACCOUNT_TYPE_OPTIONS.find((o) => o.id === onboardingDraft.accountType) || ACCOUNT_TYPE_OPTIONS[1];
-      if (onboardingDraft.fullName.trim() && onboardingDraft.email.trim()) {
+      if (onboardingDraft.fullName.trim() && onboardingDraft.email.trim() && onboardingDraft.email.trim() !== currentUser?.email) {
         await register({
           name: onboardingDraft.fullName.trim(),
           email: onboardingDraft.email.trim(),
@@ -112,6 +161,7 @@ export const GuidedOnboardingWizard: React.FC<Props> = ({ isOpen, onClose, onFin
       } else {
         await switchRole(selectedType.role);
       }
+      await syncProgressToServer(7, true);
       completeOnboarding();
       saveOnboardingDraft({ step: 1 });
       onFinish?.();
@@ -161,6 +211,7 @@ export const GuidedOnboardingWizard: React.FC<Props> = ({ isOpen, onClose, onFin
                   const next = step + 1;
                   setStep(next);
                   saveOnboardingDraft({ step: next });
+                  void syncProgressToServer(next, false);
                 }
               : handleFinishSetup
           }

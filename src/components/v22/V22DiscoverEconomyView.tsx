@@ -12,6 +12,8 @@ import { Compass, Plus, Search, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { ApiClient } from '../../services/apiClient.ts';
 import type { V22SectorDefinition } from '../../types/index.ts';
+import { EconexImage } from '../ux/EconexImage.tsx';
+import { resolveSectorAsset } from '../../config/econexAssetManifest.ts';
 
 interface Props {
   onNavigate: (tab: string) => void;
@@ -26,6 +28,15 @@ const CATEGORY_GROUPS: Array<V22SectorDefinition['categoryGroup'] | 'ALL'> = [
   'SOCIAL_PUBLIC_INSTITUTIONS',
 ];
 
+const CATEGORY_GROUP_LABELS: Record<string, string> = {
+  ALL: 'All Sectors',
+  PRIMARY_PRODUCTION: 'Agriculture & Primary Production',
+  INDUSTRY_CONSTRUCTION: 'Manufacturing & Construction',
+  COMMERCE_LOGISTICS: 'Trade, Retail & Logistics',
+  SERVICES_TECHNOLOGY: 'Services & Clean Technology',
+  SOCIAL_PUBLIC_INSTITUTIONS: 'Health, Education & Public',
+};
+
 export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
   const { currentUser, role } = useAuth();
   const actor = { userId: currentUser?.id || role, userRole: role };
@@ -37,6 +48,7 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
   const [searching, setSearching] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [searchEntityTab, setSearchEntityTab] = useState<'ALL' | 'BUSINESSES' | 'OFFERS' | 'RFQS'>('ALL');
 
   const [addOpen, setAddOpen] = useState<boolean>(false);
   const [newCode, setNewCode] = useState<string>('');
@@ -114,10 +126,10 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
       <header className="bg-[#121212] border border-[#27272a] rounded-2xl p-6 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="text-xs font-mono text-[#D4AF37]">UNIVERSAL SECTOR ARCHITECTURE · 28+ SECTORS</div>
+            <div className="text-xs font-medium text-[#D4AF37]">28+ Active Economic Sectors</div>
             <h1 className="text-2xl font-display font-bold text-[#F5F5F5]">Discover the Universal Economy</h1>
             <p className="text-sm text-[#A0A0A0]">
-              Explore every legitimate sector, discover registered businesses and artisans, and search across Uganda &amp; EAC corridors.
+              Explore every legitimate sector, discover registered businesses and skilled artisans, and search across Uganda &amp; East Africa.
             </p>
           </div>
           {role === 'PLATFORM_ADMIN' && (
@@ -140,7 +152,7 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search solar, civil works, pharmacy, software, artisans, RFQs, Kampal..."
+              placeholder="Search solar, civil works, pharmacy, software, artisans, RFQs, Kampala..."
               className="w-full min-h-[44px] pl-10 pr-4 rounded-xl bg-[#181818] border border-[#27272a] text-sm text-[#F5F5F5] focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
@@ -149,7 +161,7 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
             disabled={searching}
             className="min-h-[44px] px-5 py-2 rounded-xl bg-[#181818] border border-[#D4AF37] text-sm font-semibold text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#050505] whitespace-nowrap shrink-0 cursor-pointer transition-colors"
           >
-            {searching ? 'Searching...' : 'Search All Entities'}
+            {searching ? 'Searching...' : 'Search Economy'}
           </button>
         </form>
 
@@ -160,13 +172,13 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
               key={g}
               type="button"
               onClick={() => setGroupFilter(g)}
-              className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-mono border cursor-pointer whitespace-nowrap shrink-0 ${
+              className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs border cursor-pointer whitespace-nowrap shrink-0 transition-colors ${
                 groupFilter === g
                   ? 'bg-[#D4AF37] text-[#050505] border-[#D4AF37] font-semibold'
                   : 'bg-[#181818] text-[#C0C0C0] border-[#27272a] hover:border-[#D4AF37]'
               }`}
             >
-              {g}
+              {CATEGORY_GROUP_LABELS[g] || g}
             </button>
           ))}
         </div>
@@ -216,7 +228,7 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
               >
                 {CATEGORY_GROUPS.filter((c) => c !== 'ALL').map((c) => (
                   <option key={c} value={c}>
-                    {c}
+                    {CATEGORY_GROUP_LABELS[c] || c}
                   </option>
                 ))}
               </select>
@@ -262,92 +274,135 @@ export const V22DiscoverEconomyView: React.FC<Props> = ({ onNavigate }) => {
       {/* Search Results Breakdown */}
       {searchResults && (
         <section className="bg-[#121212] border border-[#D4AF37]/40 rounded-2xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-base font-display font-semibold text-[#F5F5F5]">
-              Cross-Sector Search Results for “{searchResults.query || 'All'}”
+              Search Results for “{searchResults.query || 'All'}”
             </h2>
-            <button
-              type="button"
-              onClick={() => setSearchResults(null)}
-              className="text-xs text-[#A0A0A0] hover:text-[#F5F5F5] cursor-pointer"
-            >
-              Dismiss
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              {(['ALL', 'BUSINESSES', 'OFFERS', 'RFQS'] as const).map((tabKey) => (
+                <button
+                  key={tabKey}
+                  type="button"
+                  onClick={() => setSearchEntityTab(tabKey)}
+                  className={`min-h-[34px] px-3 py-1 rounded-lg text-xs border cursor-pointer ${
+                    searchEntityTab === tabKey
+                      ? 'bg-[#D4AF37] text-[#050505] border-[#D4AF37] font-semibold'
+                      : 'bg-[#181818] text-[#C0C0C0] border-[#27272a]'
+                  }`}
+                >
+                  {tabKey === 'ALL' ? 'All Matches' : tabKey === 'BUSINESSES' ? 'Businesses' : tabKey === 'OFFERS' ? 'Offers' : 'RFQs & Projects'}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setSearchResults(null)}
+                className="text-xs text-[#A0A0A0] hover:text-[#F5F5F5] cursor-pointer ml-2"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-            <div className="bg-[#181818] border border-[#27272a] rounded-xl p-4 space-y-2">
-              <div className="font-mono text-[#D4AF37]">BUSINESSES ({searchResults.businesses?.length || 0})</div>
-              {(searchResults.businesses || []).slice(0, 4).map((b: any) => (
-                <div key={b.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
-                  <div>{b.name}</div>
-                  <div className="text-[#A0A0A0] font-mono">{b.primarySectorCode} · {b.district}</div>
-                </div>
-              ))}
-            </div>
-            <div className="bg-[#181818] border border-[#27272a] rounded-xl p-4 space-y-2">
-              <div className="font-mono text-[#D4AF37]">MARKETPLACE OFFERS ({searchResults.listings?.length || 0})</div>
-              {(searchResults.listings || []).slice(0, 4).map((l: any) => (
-                <div key={l.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
-                  <div>{l.title}</div>
-                  <div className="text-[#A0A0A0] font-mono tabular-nums">
-                    {l.offerKind} · {l.currency} {Number(l.unitPrice || 0).toLocaleString()}
+            {(searchEntityTab === 'ALL' || searchEntityTab === 'BUSINESSES') && (
+              <div className="bg-[#181818] border border-[#27272a] rounded-xl p-4 space-y-2">
+                <div className="font-semibold text-[#D4AF37] tabular-nums">Businesses ({searchResults.businesses?.length || 0})</div>
+                {(searchResults.businesses || []).slice(0, 4).map((b: any) => (
+                  <div key={b.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
+                    <div>{b.name}</div>
+                    <div className="text-[#A0A0A0]">{String(b.primarySectorCode || '').replace(/_/g, ' ')} · {b.district}</div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className="bg-[#181818] border border-[#27272a] rounded-xl p-4 space-y-2">
-              <div className="font-mono text-[#D4AF37]">RFQS &amp; PROJECTS ({(searchResults.tenders?.length || 0) + (searchResults.projects?.length || 0)})</div>
-              {(searchResults.tenders || []).slice(0, 3).map((t: any) => (
-                <div key={t.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
-                  <div>RFQ: {t.title}</div>
-                  <div className="text-[#A0A0A0] font-mono">{t.currency} {Number(t.budgetAmount || 0).toLocaleString()}</div>
-                </div>
-              ))}
-              {(searchResults.projects || []).slice(0, 2).map((p: any) => (
-                <div key={p.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
-                  <div>PRJ: {p.title}</div>
-                  <div className="text-[#A0A0A0] font-mono">{p.status}</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
+            {(searchEntityTab === 'ALL' || searchEntityTab === 'OFFERS') && (
+              <div className="bg-[#181818] border border-[#27272a] rounded-xl p-4 space-y-2">
+                <div className="font-semibold text-[#D4AF37] tabular-nums">Products &amp; Services ({searchResults.listings?.length || 0})</div>
+                {(searchResults.listings || []).slice(0, 4).map((l: any) => (
+                  <div key={l.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
+                    <div>{l.title}</div>
+                    <div className="text-[#A0A0A0] tabular-nums">
+                      {String(l.offerKind || '').replace(/_/g, ' ')} · {l.currency} {Number(l.unitPrice || 0).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {(searchEntityTab === 'ALL' || searchEntityTab === 'RFQS') && (
+              <div className="bg-[#181818] border border-[#27272a] rounded-xl p-4 space-y-2">
+                <div className="font-semibold text-[#D4AF37] tabular-nums">RFQs &amp; Projects ({(searchResults.tenders?.length || 0) + (searchResults.projects?.length || 0)})</div>
+                {(searchResults.tenders || []).slice(0, 3).map((t: any) => (
+                  <div key={t.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
+                    <div>Request: {t.title}</div>
+                    <div className="text-[#A0A0A0] tabular-nums">{t.currency} {Number(t.budgetAmount || 0).toLocaleString()}</div>
+                  </div>
+                ))}
+                {(searchResults.projects || []).slice(0, 2).map((p: any) => (
+                  <div key={p.id} className="text-[#F5F5F5] border-t border-[#27272a] pt-1.5">
+                    <div>Project: {p.title}</div>
+                    <div className="text-[#A0A0A0]">{String(p.status || '').replace(/_/g, ' ')}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
 
       {/* Sector Directory Grid */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sectors.map((sec) => (
-          <article key={sec.id} className="bg-[#121212] border border-[#27272a] rounded-2xl p-5 flex flex-col justify-between gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2 text-xs font-mono">
-                <span className="text-[#D4AF37]">{sec.id} · {sec.code}</span>
-                {sec.sensitiveDataIsolationRequired && (
-                  <span className="text-amber-400 flex items-center gap-1">
-                    <ShieldCheck size={12} aria-hidden="true" /> PRIVACY MASKED
-                  </span>
-                )}
+        {sectors.map((sec) => {
+          const media = resolveSectorAsset(sec.code, sec.categoryGroup);
+          return (
+            <article key={sec.id} className="bg-[#121212] border border-[#27272a] hover:border-[#D4AF37]/60 transition-colors rounded-2xl overflow-hidden flex flex-col justify-between group">
+              <div>
+                <EconexImage
+                  src={media.path}
+                  alt={media.alt}
+                  fallbackLabel={sec.name}
+                  aspectClassName="h-36 w-full"
+                  overlayGradient
+                  className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                />
+                <div className="p-5 space-y-2">
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="text-[#D4AF37] font-medium">
+                      {CATEGORY_GROUP_LABELS[sec.categoryGroup] || sec.categoryGroup}
+                    </span>
+                    {sec.sensitiveDataIsolationRequired && (
+                      <span className="text-amber-400 flex items-center gap-1">
+                        <ShieldCheck size={12} aria-hidden="true" /> Protected Data
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-base font-display font-semibold text-[#F5F5F5] flex items-center gap-2">
+                    <Compass size={15} className="text-[#D4AF37] shrink-0" aria-hidden="true" />
+                    <span>{sec.name}</span>
+                  </h2>
+                  <p className="text-xs text-[#A0A0A0] leading-relaxed line-clamp-2">{sec.description}</p>
+                  <div className="text-xs text-[#C0C0C0]">
+                    Areas: {sec.subsectors.slice(0, 4).join(' · ') || 'General'}
+                  </div>
+                </div>
               </div>
-              <h2 className="text-base font-display font-semibold text-[#F5F5F5] flex items-center gap-2">
-                <Compass size={15} className="text-[#D4AF37] shrink-0" aria-hidden="true" />
-                <span>{sec.name}</span>
-              </h2>
-              <p className="text-xs text-[#A0A0A0] leading-relaxed">{sec.description}</p>
-              <div className="text-xs text-[#C0C0C0] font-mono">
-                Subsectors: {sec.subsectors.slice(0, 4).join(' · ') || 'General'}
+              <div className="px-5 pb-5 pt-3 border-t border-[#27272a] flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('v22-businesses')}
+                  className="text-xs text-[#A0A0A0] hover:text-[#F5F5F5] cursor-pointer"
+                >
+                  View Suppliers
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('v22-marketplace')}
+                  className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-xs text-[#D4AF37] font-medium whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  Explore Offers
+                </button>
               </div>
-            </div>
-            <div className="pt-3 border-t border-[#27272a] flex items-center justify-between gap-2">
-              <span className="text-[11px] font-mono text-[#A0A0A0]">{sec.categoryGroup}</span>
-              <button
-                type="button"
-                onClick={() => onNavigate('v22-marketplace')}
-                className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-xs text-[#F5F5F5] whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                Explore Offers
-              </button>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </section>
     </div>
   );

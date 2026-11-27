@@ -1,4 +1,4 @@
-# ECONEX V23.0 — Environment Separation & Deployment Guide
+# ECONEX V27.0 — Environment Separation, Cloud & Deployment Guide
 
 **Developer:** VINEXSAH TECHNOLOGIES. All rights reserved.
 
@@ -8,21 +8,18 @@
 
 | Environment | `ECONEX_ENV` | `NODE_ENV` | Database Authority | Purpose |
 |---|---|---|---|---|
-| Local Dev | `DEVELOPMENT` | `development` | Local JSON WAL (`data/aros_database.json`, Schema 21) | Feature work & sandbox wallet preview |
-| Automated Tests | `AUTOMATED_TESTING` | `development` | Local JSON WAL (Schema 21) | Sequential suite verification (2,950 assertions) |
-| Staging | `STAGING` | `production` | Managed PostgreSQL 16 (when `DATABASE_URL` configured) | Pre-production & Schema 21 parity validation |
-| Production | `PRODUCTION` | `production` | Managed PostgreSQL 16 + WORM archive | Regulated live ops (**Blocked until external gates clear**) |
+| Local Dev | `DEVELOPMENT` | `development` | Local JSON WAL (`data/aros_database.json`, Schema 25) | Interactive economic network, trust & market activation sandbox |
+| Automated Tests | `AUTOMATED_TESTING` | `development` | Local JSON WAL (Schema 25) | Sequential suite verification (`6,000` assertions) |
+| Staging | `STAGING` | `production` | Managed PostgreSQL 16 (when `DATABASE_URL` / `PGHOST` configured) | Pre-production & Schema 25 parity validation |
+| Production | `PRODUCTION` | `production` | Managed PostgreSQL 16 + WORM archive + Cloud Vault | Regulated live ops (**Blocked until external gates clear**) |
 
 ---
 
-## 2. Hosting Architecture
+## 2. Container & CI/CD Manifests
 
-ECONEX is a **full-stack Node.js + Express + Vite SPA application**. Static hosting alone cannot run `/api/v23/*`, PIN verification, HMAC QR signing, or PostgreSQL persistence.
-
-Recommended stack:
-- **Compute:** Cloud Run / Fly.io / Railway / Render / dedicated Node.js 22 LTS container (`npm run build && npm run start`).
-- **Database:** Managed PostgreSQL 16 with schemas applied sequentially from `src/server/postgres/schema_v13.sql` through `src/server/postgres/schema_v21.sql`.
-- **Edge & TLS:** Reverse proxy terminating HTTPS on 443 forwarding to `PORT=3000`.
+ECONEX V27.0 retains cloud-ready build and verification manifests (`Dockerfile` + `.github/workflows/econex-ci.yml`):
+- **`Dockerfile`:** Multi-stage `node:22-alpine` build (`npm ci`, `npm run typecheck && npm run build`) and production runtime exposing port `3000` with `/health` check and `/app/data/v25_vault`.
+- **`.github/workflows/econex-ci.yml`:** CI/CD workflow running `npm run typecheck`, `npm run security:scan`, `npm run build`, live verification smoke + test suites, and `npm run export:zip && npm run export:check`.
 
 ---
 
@@ -30,17 +27,15 @@ Recommended stack:
 
 - **Build Command:** `npm run build`
 - **Start Command:** `npm run start` (`tsx server.ts`) with `NODE_ENV=production`
-- **Liveness Probe:** `GET /health`, `GET /api/v22/health`, & `GET /api/v23/health` (returns HTTP `200`, `503` during graceful shutdown)
-- **Readiness Probe:** `GET /ready` & `GET /api/v23/readiness-matrix` (verifies Schema 21 integrity, balanced double-entry journal, and truthful non-live status flags)
-- **Request Tracing:** Every request emits `X-Correlation-Id` (`src/server/v21Config.ts`).
-- **Graceful Shutdown:** Handles `SIGTERM` / `SIGINT`, drains keep-alive connections, and flushes WAL writes (`db.saveToDisk()`).
+- **Liveness Probes:** `GET /health`, `GET /api/v25/health`, `GET /api/v26/health`, `GET /api/v27/health`
+- **Readiness Probes:** `GET /ready`, `GET /api/v26/readiness-matrix`, `GET /api/v27/readiness-matrix` (Schema 25 integrity, balanced double-entry journal, V26 rollback checkpoint, and all `31` truthful V27 readiness flags)
+- **Request Tracing:** Every request emits `X-Correlation-Id`.
 
 ---
 
 ## 4. Production Cutover Checklist
 
 1. `npm run typecheck`, `npm run build`, `npm run verify`, and `npm run security:scan` exit `0`.
-2. Provision PostgreSQL 16 with SSL (`PG_SSL_MODE=require`) and apply `schema_v13.sql`–`schema_v21.sql`.
-3. Execute `POST /api/v23/postgres-audit` (and `POST /api/v22/postgres/dry-run`) and verify zero uniqueness/checksum errors and zero ledger variance.
-4. Configure runtime secrets (`GEMINI_API_KEY`, `ECONEX_WEBHOOK_SECRET`, QR/card HSM keys, licensed partner keys) in a secret manager — never commit `.env`.
-5. Keep `V23_REAL_VALUE_TRANSACTIONS_ENABLED`, `V23_PHYSICAL_CARDS_ISSUED`, `V23_CARD_SCHEME_CERTIFIED`, `V23_ATM_NETWORK_LIVE`, `V23_LIVE_MERCHANT_ACCEPTANCE`, `V23_EXTERNAL_INTEGRATIONS_LIVE`, `V23_POSTGRESQL_CUTOVER_COMPLETE`, `V23_PILOT_ACTIVE`, and `V23_PRODUCTION_DEPLOYED` strictly `false` until external regulatory, safeguarding, scheme, and infrastructure approvals are completed.
+2. Provision PostgreSQL 16 with SSL (`PG_SSL_MODE=require`), apply `schema_v13.sql` through `schema_v25.sql`, set `DATABASE_URL`/`PGHOST`, and execute PostgreSQL dry-run + live migration validation.
+3. Verify `GET /api/v27/migration/backup-verify` confirms `data/aros_database.v26.backup.json` integrity.
+4. Keep all 5 non-live V27 readiness flags (`V27_PILOT_ACTIVE`, `V27_FIELD_VALIDATION_COMPLETE`, `V27_EXTERNAL_INTEGRATIONS_LIVE`, `V27_POSTGRESQL_CUTOVER_COMPLETE`, `V27_PRODUCTION_DEPLOYED`) strictly `false` until physical field validation, external partner approvals, and production cutover complete.

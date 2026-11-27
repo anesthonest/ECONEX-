@@ -885,4 +885,455 @@ export async function executeV20OperationalAssist(
   };
 }
 
+// ==========================================
+// V24.0 UNIVERSAL COMMERCE & SUPPLY CHAIN AI ASSISTANT
+// Strictly read/draft only — autonomous execution forbidden, prompt injection blocked
+// ==========================================
+
+export type V24AiTaskType =
+  | 'SUPPLIER_DISCOVERY'
+  | 'RFQ_DRAFT'
+  | 'QUOTATION_COMPARISON'
+  | 'DOCUMENT_DRAFT'
+  | 'INVENTORY_REORDER'
+  | 'DELIVERY_PLAN'
+  | 'PROCUREMENT_ANALYSIS'
+  | 'EXCEPTION_DETECTION'
+  | 'CONTRACT_EXPLANATION'
+  | 'TRANSLATION_ASSIST'
+  | 'CUSTOMER_SERVICE'
+  | 'BUSINESS_SUMMARY';
+
+export interface V24AiAssistRequest {
+  taskType: V24AiTaskType | string;
+  prompt: string;
+  targetLocale?: string;
+  requestedAutonomousAction?: string;
+  contextData?: Record<string, any>;
+}
+
+export interface V24AiAssistResponse {
+  taskType: string;
+  summary: string;
+  verifiedSystemData: string[];
+  userProvidedInfo: string[];
+  modelInference: string[];
+  uncertainties: string[];
+  recommendedChecklist: string[];
+  requiresHumanConfirmation: true;
+  canExecuteAutonomousAction: false;
+  autonomousExecutionAllowed: false;
+  blockedReason?: string;
+  promptInjectionBlocked: boolean;
+  modelDependency: string;
+  usedFallbackEngine: boolean;
+  disclaimer: string;
+  generatedAt: string;
+}
+
+const V24_FORBIDDEN_AUTONOMOUS_ACTIONS = new Set([
+  'TRANSFER_FUNDS',
+  'APPROVE_PAYMENT',
+  'MODIFY_WALLET_BALANCE',
+  'SIGN_CONTRACT',
+  'ACCEPT_QUOTATION',
+  'PLACE_ORDER',
+  'APPROVE_PROCUREMENT',
+  'ALTER_INVENTORY',
+  'RELEASE_SHIPMENT',
+  'RESOLVE_DISPUTE',
+  'ACCEPT_OFFER',
+  'SIGN_AGREEMENT',
+  'RELEASE_FUNDS',
+  'POST_LEDGER',
+]);
+
+export async function runV24AiCommerceAssist(
+  req: V24AiAssistRequest
+): Promise<{ statusCode: number; result: V24AiAssistResponse }> {
+  const disclaimer =
+    'ECONEX V24 AI Commerce Assist separates verified system data from model inference. Human confirmation is mandatory; AI cannot execute payments, sign contracts, alter inventory, or approve procurement.';
+
+  const requestedAuto = String(req.requestedAutonomousAction || '').toUpperCase().trim();
+  if (requestedAuto && V24_FORBIDDEN_AUTONOMOUS_ACTIONS.has(requestedAuto)) {
+    return {
+      statusCode: 403,
+      result: {
+        taskType: req.taskType,
+        summary: `BLOCKED: Autonomous execution of ${requestedAuto} is strictly forbidden under ECONEX V24 human-governance rules.`,
+        verifiedSystemData: ['Governance Policy: V24_HUMAN_IN_THE_LOOP_MANDATORY'],
+        userProvidedInfo: [req.prompt || requestedAuto],
+        modelInference: ['Action requires explicit authenticated human sign-off in the UI/API workflow.'],
+        uncertainties: ['Counterparty intent and authorization credentials cannot be assumed by AI.'],
+        recommendedChecklist: [`Perform ${requestedAuto} manually with verified human credentials.`],
+        requiresHumanConfirmation: true,
+        canExecuteAutonomousAction: false,
+        autonomousExecutionAllowed: false,
+        blockedReason: `AI_AUTONOMOUS_ACTION_FORBIDDEN: ${requestedAuto}`,
+        promptInjectionBlocked: false,
+        modelDependency: 'V24_GOVERNANCE_GUARD',
+        usedFallbackEngine: false,
+        disclaimer,
+        generatedAt: new Date().toISOString(),
+      },
+    };
+  }
+
+  const injCheck = detectPromptInjection(req.prompt || '');
+  if (injCheck.flagged) {
+    return {
+      statusCode: 400,
+      result: {
+        taskType: req.taskType,
+        summary: 'Prompt injection or unauthorized system-override directive detected and blocked.',
+        verifiedSystemData: ['Security Guard: PROMPT_INJECTION_BLOCKED'],
+        userProvidedInfo: ['[REDACTED_SUSPECT_INPUT]'],
+        modelInference: [],
+        uncertainties: ['Request rejected before reaching model inference.'],
+        recommendedChecklist: ['Resubmit plain commercial question without system-override instructions.'],
+        requiresHumanConfirmation: true,
+        canExecuteAutonomousAction: false,
+        autonomousExecutionAllowed: false,
+        blockedReason: 'PROMPT_INJECTION_BLOCKED',
+        promptInjectionBlocked: true,
+        modelDependency: 'SECURITY_GUARD_V24',
+        usedFallbackEngine: false,
+        disclaimer,
+        generatedAt: new Date().toISOString(),
+      },
+    };
+  }
+
+  const ctx = req.contextData || {};
+  const verifiedFacts: string[] = Array.isArray(ctx.verifiedFacts)
+    ? ctx.verifiedFacts.map((v: any) => String(v))
+    : [
+        `ECONEX V24 Sandbox Commerce Ledger active (Schema 22, jurisdiction ${ctx.countryCode || 'UG'}).`,
+        ctx.sectorId ? `Scoped Sector: ${ctx.sectorId}` : 'Multi-sector catalogue context grounded in local store.',
+      ];
+  const userProvided = [
+    String(req.prompt || '').trim(),
+    ...(req.targetLocale ? [`Requested Target Locale: ${req.targetLocale}`] : []),
+  ].filter(Boolean);
+
+  if (ai) {
+    try {
+      const generatePromise = ai.models.generateContent({
+        model: 'gemini-4-hydrogen',
+        contents: `Task: ${req.taskType}\nLocale: ${req.targetLocale || 'en'}\nVerified System Context: ${JSON.stringify(verifiedFacts)}\nUser Prompt: ${req.prompt}`,
+        config: {
+          systemInstruction:
+            'You are ECONEX V24 Commercial Operations Assistant. Provide concise, practical analysis clearly distinguishing verified context facts from suggestions and uncertainties. Never claim to transfer funds, sign contracts, or execute state changes.',
+        },
+      });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini V24 assist timeout')), 6000)
+      );
+      const response = await Promise.race([generatePromise, timeoutPromise]);
+      const txt = (response.text || '').trim();
+      if (txt.length > 15) {
+        const lines = txt
+          .split('\n')
+          .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
+          .filter(Boolean);
+        return {
+          statusCode: 200,
+          result: {
+            taskType: req.taskType,
+            summary: lines[0] || txt.slice(0, 220),
+            verifiedSystemData: verifiedFacts,
+            userProvidedInfo: userProvided,
+            modelInference: lines.slice(0, 4),
+            uncertainties: [
+              'Live market prices, border transit queues, and external tax authorities are not queried in real time.',
+              'Counterparty operational capacity remains subject to physical inspection.',
+            ],
+            recommendedChecklist: [
+              'Verify counterparty verification tier and past delivery evidence',
+              'Confirm quantities, minor-unit pricing, and human sign-off before execution',
+            ],
+            requiresHumanConfirmation: true,
+            canExecuteAutonomousAction: false,
+            autonomousExecutionAllowed: false,
+            promptInjectionBlocked: false,
+            modelDependency: 'gemini-4-hydrogen',
+            usedFallbackEngine: false,
+            disclaimer,
+            generatedAt: new Date().toISOString(),
+          },
+        };
+      }
+    } catch (err: any) {
+      console.warn('[ECONEX V24 AI] Gemini unavailable/timeout, using deterministic commerce fallback:', err?.message || err);
+    }
+  }
+
+  const taskSuggestions: Record<string, string[]> = {
+    SUPPLIER_DISCOVERY: [
+      'Shortlist counterparties with VERIFIED or DOCUMENT_REVIEWED evidence and completed order track records.',
+      'Compare quoted unit pricing plus corridor delivery lead time prior to issuing an RFQ invitation.',
+    ],
+    RFQ_DRAFT: [
+      'Specify exact unit of measure, technical/quality standard (e.g. UNBS/EAC), delivery depot, and deadline timestamp.',
+      'Use INVITED_ONLY visibility when restricting quotes to pre-vetted enterprise suppliers.',
+    ],
+    QUOTATION_COMPARISON: [
+      'Compare landed total (unit price * quantity + tax + delivery - discount) across submitted revisions.',
+      'Accepting a quotation locks an immutable SHA-256 snapshot and requires human buyer confirmation.',
+    ],
+    DOCUMENT_DRAFT: [
+      'Ensure commercial invoice references linked order or PO ID and clarifies that ECONEX records are not official URA tax filings.',
+    ],
+    INVENTORY_REORDER: [
+      'Check ATP = physicalQty - reservedQty before committing new B2B orders to avoid backorder bottlenecks.',
+    ],
+    DELIVERY_PLAN: [
+      'Include EAC Certificate of Origin and Packing List guidance for cross-border routes such as Malaba or Busia OSBP.',
+    ],
+    PROCUREMENT_ANALYSIS: [
+      'Enforce Segregation of Duties (Requester != Approver) and complete 3-way PO/GRN/Invoice variance matching.',
+    ],
+    EXCEPTION_DETECTION: [
+      'Review delayed shipment notes and ATP reservation expiries to resolve bottlenecks proactively.',
+    ],
+    CONTRACT_EXPLANATION: [
+      'Verify both buyer and seller signatures are captured before transitioning PENDING_SIGNATURE -> ACTIVE.',
+    ],
+    TRANSLATION_ASSIST: [
+      `Prepared plain commercial summary tailored for locale '${req.targetLocale || 'en'}' with English fallback on legal clauses.`,
+    ],
+    CUSTOMER_SERVICE: [
+      'Log commercial thread updates or review appeals inside the audited workspace so evidence remains preserved.',
+    ],
+    BUSINESS_SUMMARY: [
+      'Monitor separation between actualOperational vs sandboxOrTest metrics and keep V23 journal variance strictly at 0.00.',
+    ],
+  };
+
+  const inferences = taskSuggestions[String(req.taskType)] || taskSuggestions.BUSINESS_SUMMARY;
+  return {
+    statusCode: 200,
+    result: {
+      taskType: req.taskType,
+      summary: `${req.taskType} draft prepared for human review (${ctx.countryCode || 'UG'} commercial context).`,
+      verifiedSystemData: verifiedFacts,
+      userProvidedInfo: userProvided,
+      modelInference: inferences,
+      uncertainties: [
+        'Deterministic offline drafting fallback used; verify current warehouse ATP and counterparty availability manually.',
+        'External customs, banking, and statutory tax portals remain disconnected in sandbox mode.',
+      ],
+      recommendedChecklist: [
+        'Inspect verified system metrics vs model suggestions above',
+        'Obtain explicit authorized human confirmation before state changes',
+      ],
+      requiresHumanConfirmation: true,
+      canExecuteAutonomousAction: false,
+      autonomousExecutionAllowed: false,
+      promptInjectionBlocked: false,
+      modelDependency: 'V24_DETERMINISTIC_COMMERCE_ASSISTANT',
+      usedFallbackEngine: true,
+      disclaimer,
+      generatedAt: new Date().toISOString(),
+    },
+  };
+}
+
+// ==========================================
+// V25.0 CONTINENTAL INFRASTRUCTURE AI PLATFORM ASSIST (GOVERNED)
+// ==========================================
+
+export interface V25AiAssistRequest {
+  taskType:
+    | 'INFRASTRUCTURE_DIAGNOSTIC'
+    | 'PG_MIGRATION_ADVISORY'
+    | 'SECURITY_INCIDENT_TRIAGE'
+    | 'COUNTRY_READINESS_REVIEW'
+    | 'FX_EXPOSURE_SUMMARY'
+    | 'ORGANISATION_GOVERNANCE';
+  prompt: string;
+  organisationId?: string;
+  countryCode?: string;
+  verifiedContext?: string[];
+}
+
+const v25AiTelemetryState = {
+  totalRequests: 0,
+  blockedPromptInjections: 0,
+  blockedAutonomousRequests: 0,
+  liveModelCalls: 0,
+  deterministicFallbacks: 0,
+  estimatedInputTokens: 0,
+  estimatedOutputTokens: 0,
+  estimatedCostUsd: 0,
+};
+
+export function getV25AiTelemetryStats() {
+  return {
+    ...v25AiTelemetryState,
+    apiKeyConfigured: Boolean(ai),
+    modelId: 'gemini-4-hydrogen',
+    humanConfirmationRequired: true,
+    autonomousExecutionPermitted: false,
+  };
+}
+
+export async function runV25AiPlatformAssist(req: V25AiAssistRequest) {
+  v25AiTelemetryState.totalRequests += 1;
+  const promptText = String(req.prompt || '').trim();
+  const injCheck = detectPromptInjection(promptText);
+
+  if (injCheck.flagged) {
+    v25AiTelemetryState.blockedPromptInjections += 1;
+    return {
+      statusCode: 400,
+      result: {
+        taskType: req.taskType,
+        summary: 'Blocked prompt injection / unauthorized override directive before model inference.',
+        promptInjectionBlocked: true,
+        autonomousExecutionBlocked: false,
+        requiresHumanConfirmation: true,
+        canExecuteAutonomousAction: false,
+        verifiedSystemData: ['V25 Security Guard: PROMPT_INJECTION_BLOCKED'],
+        recommendations: ['Submit a plain infrastructure or governance question without system-override directives.'],
+        modelDependency: 'SECURITY_GUARD_V25',
+        usedFallbackEngine: false,
+        telemetry: getV25AiTelemetryStats(),
+        generatedAt: new Date().toISOString(),
+      },
+    };
+  }
+
+  // Strictly block requests attempting autonomous regulated execution (transfers, approvals, contracts, KYC overrides)
+  const forbiddenAutonomousPattern = /(auto[- ]?approve|execute transfer|release funds|override kyc|bypass dual approval|sign contract automatically)/i;
+  if (forbiddenAutonomousPattern.test(promptText)) {
+    v25AiTelemetryState.blockedAutonomousRequests += 1;
+    return {
+      statusCode: 403,
+      result: {
+        taskType: req.taskType,
+        summary: 'Autonomous regulated execution is strictly forbidden. Authorized human sign-off and state-machine controls are mandatory.',
+        promptInjectionBlocked: false,
+        autonomousExecutionBlocked: true,
+        requiresHumanConfirmation: true,
+        canExecuteAutonomousAction: false,
+        verifiedSystemData: ['V25 AI Governance Boundary: HUMAN_IN_THE_LOOP_MANDATORY'],
+        recommendations: [
+          'Route financial approvals through V25 Dual-Approval Ledger state machine (PENDING -> APPROVED -> POSTED).',
+          'Route compliance promotions through authorized human review or official registry evidence.',
+        ],
+        modelDependency: 'AI_GOVERNANCE_GUARD_V25',
+        usedFallbackEngine: false,
+        telemetry: getV25AiTelemetryStats(),
+        generatedAt: new Date().toISOString(),
+      },
+    };
+  }
+
+  const verifiedFacts = Array.isArray(req.verifiedContext) && req.verifiedContext.length > 0
+    ? req.verifiedContext.map(String)
+    : [
+        `ECONEX V25.0 Continental Infrastructure (Schema 23, org=${req.organisationId || 'ORG-V25-HOLDING'}, country=${req.countryCode || 'UG'})`,
+        'AI boundary operates strictly as advisory; no direct mutations to wallets, ledger, or KYC state.',
+      ];
+
+  const estInTokens = Math.max(24, Math.ceil((promptText.length + JSON.stringify(verifiedFacts).length) / 4));
+  v25AiTelemetryState.estimatedInputTokens += estInTokens;
+
+  if (ai) {
+    try {
+      const genPromise = ai.models.generateContent({
+        model: 'gemini-4-hydrogen',
+        contents: `Task: ${req.taskType}\nVerified Facts: ${JSON.stringify(verifiedFacts)}\nRequest: ${promptText}`,
+        config: {
+          systemInstruction:
+            'You are ECONEX V25 Platform Operations Advisor. Never claim to run migrations autonomously, transfer funds, approve KYC, or sign contracts. Cite verified facts separately from recommendations.',
+        },
+      });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini V25 assist timeout')), 6000)
+      );
+      const response = await Promise.race([genPromise, timeoutPromise]);
+      const txt = (response.text || '').trim();
+      if (txt.length > 10) {
+        v25AiTelemetryState.liveModelCalls += 1;
+        const estOut = Math.ceil(txt.length / 4);
+        v25AiTelemetryState.estimatedOutputTokens += estOut;
+        v25AiTelemetryState.estimatedCostUsd = Number(
+          ((v25AiTelemetryState.estimatedInputTokens * 0.000001 + v25AiTelemetryState.estimatedOutputTokens * 0.000004)).toFixed(6)
+        );
+        const lines = txt.split('\n').map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim()).filter(Boolean);
+        return {
+          statusCode: 200,
+          result: {
+            taskType: req.taskType,
+            summary: lines[0] || txt.slice(0, 220),
+            promptInjectionBlocked: false,
+            autonomousExecutionBlocked: false,
+            requiresHumanConfirmation: true,
+            canExecuteAutonomousAction: false,
+            verifiedSystemData: verifiedFacts,
+            recommendations: lines.slice(0, 5),
+            modelDependency: 'gemini-4-hydrogen',
+            usedFallbackEngine: false,
+            telemetry: getV25AiTelemetryStats(),
+            generatedAt: new Date().toISOString(),
+          },
+        };
+      }
+    } catch (err: any) {
+      console.warn('[ECONEX V25 AI] Gemini unavailable, using calibrated advisory fallback:', err?.message || err);
+    }
+  }
+
+  v25AiTelemetryState.deterministicFallbacks += 1;
+  const fallbackRecs: Record<V25AiAssistRequest['taskType'], string[]> = {
+    INFRASTRUCTURE_DIAGNOSTIC: [
+      'Inspect /api/v25/telemetry and /api/v25/readiness-matrix for measured RSS, heap, and WAL authority.',
+      'Confirm LOCAL_JSON_WAL_AUTHORITATIVE remains primary until external PostgreSQL 16 DATABASE_URL is provisioned.',
+    ],
+    PG_MIGRATION_ADVISORY: [
+      'Verify data/aros_database.v24.backup.json SHA-256 checksum prior to Schema 23 cutover.',
+      'Execute 20-stage dry-run rehearsal and assert 0.00 minor-unit variance across all currencies.',
+    ],
+    SECURITY_INCIDENT_TRIAGE: [
+      'Follow DETECTION -> CLASSIFICATION -> CONTAINMENT -> INVESTIGATION -> RECOVERY -> POST_INCIDENT_REVIEW.',
+      'Revoke compromised refresh sessions and rotate affected scoped sandbox API keys immediately.',
+    ],
+    COUNTRY_READINESS_REVIEW: [
+      'Review Country Readiness Report score across VAT rules, currency precision, and local compliance approval.',
+      'Keep external banking/tax rails marked non-live until regulatory licensing and credentials are provisioned.',
+    ],
+    FX_EXPOSURE_SUMMARY: [
+      'Require explicit EXECUTABLE quotes with validUntil check and zero silent currency conversion.',
+    ],
+    ORGANISATION_GOVERNANCE: [
+      'Enforce strict cross-organisation isolation, Dual-Approval SoD, and OWNER_CONFIDENTIAL visibility scoping.',
+    ],
+  };
+
+  const recs = fallbackRecs[req.taskType] || fallbackRecs.INFRASTRUCTURE_DIAGNOSTIC;
+  v25AiTelemetryState.estimatedOutputTokens += 48;
+
+  return {
+    statusCode: 200,
+    result: {
+      taskType: req.taskType,
+      summary: `${req.taskType} advisory generated in deterministic governance fallback (${req.countryCode || 'UG'}).`,
+      promptInjectionBlocked: false,
+      autonomousExecutionBlocked: false,
+      requiresHumanConfirmation: true,
+      canExecuteAutonomousAction: false,
+      verifiedSystemData: verifiedFacts,
+      recommendations: recs,
+      modelDependency: 'V25_DETERMINISTIC_INFRA_ADVISOR',
+      usedFallbackEngine: true,
+      telemetry: getV25AiTelemetryStats(),
+      generatedAt: new Date().toISOString(),
+    },
+  };
+}
+
+
+
 

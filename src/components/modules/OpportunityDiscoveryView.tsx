@@ -24,6 +24,8 @@ import {
   ChevronRight,
   ArrowRight,
 } from 'lucide-react';
+import { EconexImage } from '../ux/EconexImage.tsx';
+import { resolveSectorAsset } from '../../config/econexAssetManifest.ts';
 import { api } from '../../services/apiClient.ts';
 import {
   EconomicOpportunity,
@@ -34,6 +36,12 @@ import {
 interface OpportunityDiscoveryViewProps {
   currentUser?: UserProfile | null;
 }
+
+const formatTitle = (val?: string): string =>
+  String(val || '')
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function OpportunityDiscoveryView({ currentUser }: OpportunityDiscoveryViewProps) {
   const [opportunities, setOpportunities] = useState<EconomicOpportunity[]>([]);
@@ -128,93 +136,93 @@ export default function OpportunityDiscoveryView({ currentUser }: OpportunityDis
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#121212] via-[#1a1a1a] to-[#121212] border border-[#2a2a2a] rounded-xl p-6 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#121212] via-[#1a1a1a] to-[#121212] border border-[#27272a] rounded-2xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-96 bg-gradient-to-l from-[#D4AF37]/10 to-transparent pointer-events-none" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30 tracking-wider">
-                ECONEX ECONOMIC OPPORTUNITIES
-              </span>
-              <span className="text-xs text-[#A0A0A0] flex items-center gap-1">
-                <Award className="w-3.5 h-3.5 text-[#D4AF37]" /> Reputation Scoring & Continental Value Chain Gaps
-              </span>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs text-[#D4AF37] font-medium">
+              <Award className="w-4 h-4" aria-hidden="true" />
+              <span>Market Gaps &amp; Partner Reputation</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] tracking-tight">
-              Value Chain Opportunities & Participant Reputation
+              Regional Opportunities &amp; Trusted Businesses
             </h1>
-            <p className="text-sm text-[#A0A0A0] mt-1 max-w-2xl">
-              Identifies structural deficits in processing capacity, storage, and cross-border trade while tracking objective participant reputation based on contract fulfillment rates.
+            <p className="text-sm text-[#A0A0A0] max-w-2xl leading-relaxed">
+              See real demand gaps in processing, storage, and regional trade alongside objective partner track records built from completed deliveries.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
+              type="button"
               onClick={loadData}
-              className="p-2.5 bg-[#1e1e1e] hover:bg-[#282828] text-[#F5F5F5] border border-[#333] rounded-lg transition-colors flex items-center gap-2 text-sm"
+              className="min-h-[44px] px-4 py-2 bg-[#181818] hover:bg-[#222226] text-[#F5F5F5] border border-[#27272a] rounded-xl transition-colors flex items-center gap-2 text-sm cursor-pointer"
             >
-              <RefreshCw className={`w-4 h-4 text-[#D4AF37] ${loading ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw className={`w-4 h-4 text-[#D4AF37] ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
+              <span>Refresh</span>
             </button>
             <button
+              type="button"
               onClick={() => setShowNewOppModal(true)}
-              className="px-4 py-2.5 bg-[#D4AF37] hover:bg-[#c49f2e] text-[#050505] font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-[#D4AF37]/20"
+              className="min-h-[44px] px-5 py-2.5 bg-[#D4AF37] hover:bg-[#e5bf43] text-[#050505] font-semibold text-sm rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-[#D4AF37]/20 cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
-              <span>Publish Market Gap</span>
+              <Plus className="w-4 h-4" aria-hidden="true" />
+              <span>Share Market Opportunity</span>
             </button>
           </div>
         </div>
       </div>
 
       {actionNotice && (
-        <div className="p-3 bg-emerald-950/40 border border-emerald-800/50 rounded-lg text-xs text-emerald-300 flex items-center justify-between">
+        <div className="p-3.5 bg-emerald-950/40 border border-emerald-800/50 rounded-xl text-xs text-emerald-300 flex items-center justify-between">
           <span>{actionNotice}</span>
-          <button onClick={() => setActionNotice(null)} className="text-[#A0A0A0] hover:text-white ml-4">Dismiss</button>
+          <button type="button" onClick={() => setActionNotice(null)} className="text-[#A0A0A0] hover:text-white ml-4 cursor-pointer">
+            Dismiss
+          </button>
         </div>
       )}
 
       {/* Organization Reputation Scoring Board */}
-      <div className="bg-[#121212] border border-[#2a2a2a] rounded-xl p-5 shadow-lg">
-        <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider mb-3 flex items-center gap-2">
-          <Award className="w-4 h-4 text-[#D4AF37]" /> Verified Participant Reputation Indices
+      <div className="bg-[#121212] border border-[#27272a] rounded-2xl p-6 shadow-lg">
+        <h3 className="text-sm font-semibold text-[#F5F5F5] mb-1.5 flex items-center gap-2">
+          <Award className="w-4 h-4 text-[#D4AF37]" aria-hidden="true" /> Verified Partner Track Records
         </h3>
         <p className="text-xs text-[#A0A0A0] mb-4">
-          Reputation is calculated objectively from verified on-time contract delivery, quality acceptance rates, and dispute resolution history.
+          Scores are calculated directly from on-time order delivery, quality inspection results, and resolved disputes.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {Object.entries(reputations).map(([orgKey, rep], idx) => (
-            <div key={rep.organizationId || rep.orgId || orgKey || `rep-${idx}`} className="p-4 bg-[#181818] border border-[#282828] rounded-xl space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[#F5F5F5] truncate max-w-[170px]">{rep.organizationName || rep.orgName || orgKey}</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
-                  {(rep.ratingBand || 'TIER_1_EXEMPLARY').replace(/_/g, ' ')}
+            <div key={rep.organizationId || rep.orgId || orgKey || `rep-${idx}`} className="p-4 bg-[#181818] border border-[#27272a] rounded-xl space-y-3">
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="font-semibold text-[#F5F5F5] truncate">{rep.organizationName || rep.orgName || orgKey}</span>
+                <span className="font-semibold text-[#D4AF37] shrink-0">
+                  {formatTitle(rep.ratingBand || 'TIER_1_EXEMPLARY')}
                 </span>
               </div>
 
               <div className="flex items-baseline justify-between">
-                <span className="text-xs text-[#A0A0A0]">Overall Index</span>
-                <span className="text-2xl font-bold font-mono text-[#D4AF37]">
+                <span className="text-xs text-[#A0A0A0]">Trust Score</span>
+                <span className="text-2xl font-bold font-mono tabular-nums text-[#D4AF37]">
                   {rep.overallScore ?? rep.trustScore ?? 0}<span className="text-xs text-[#A0A0A0]">/100</span>
                 </span>
               </div>
 
-              <div className="space-y-1.5 text-xs pt-2 border-t border-[#242424]">
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#A0A0A0]">Contract Fulfillment:</span>
-                  <strong className="text-emerald-400">{rep.fulfillmentRatePercent ?? rep.onTimeDeliveryRate ?? 0}%</strong>
+              <div className="space-y-1.5 text-xs pt-2 border-t border-[#27272a]">
+                <div className="flex justify-between">
+                  <span className="text-[#A0A0A0]">On-Time Fulfillment</span>
+                  <strong className="text-emerald-400 tabular-nums">{rep.fulfillmentRatePercent ?? rep.onTimeDeliveryRate ?? 0}%</strong>
                 </div>
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#A0A0A0]">Lab Quality Pass Rate:</span>
-                  <strong className="text-emerald-400">{rep.qualityPassRatePercent ?? rep.qualityComplianceRate ?? 0}%</strong>
+                <div className="flex justify-between">
+                  <span className="text-[#A0A0A0]">Quality Pass Rate</span>
+                  <strong className="text-emerald-400 tabular-nums">{rep.qualityPassRatePercent ?? rep.qualityComplianceRate ?? 0}%</strong>
                 </div>
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#A0A0A0]">Dispute Frequency:</span>
-                  <strong className="text-[#A0A0A0]">{rep.disputeFrequencyPercent ?? 0}%</strong>
+                <div className="flex justify-between">
+                  <span className="text-[#A0A0A0]">Dispute Rate</span>
+                  <strong className="text-[#C0C0C0] tabular-nums">{rep.disputeFrequencyPercent ?? 0}%</strong>
                 </div>
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#A0A0A0]">Completed Trades:</span>
-                  <strong className="text-[#F5F5F5]">{rep.completedTradesCount ?? rep.completedTransactions ?? 0}</strong>
+                <div className="flex justify-between">
+                  <span className="text-[#A0A0A0]">Completed Orders</span>
+                  <strong className="text-[#F5F5F5] tabular-nums">{rep.completedTradesCount ?? rep.completedTransactions ?? 0}</strong>
                 </div>
               </div>
             </div>
@@ -224,68 +232,83 @@ export default function OpportunityDiscoveryView({ currentUser }: OpportunityDis
 
       {/* Economic Opportunities Discovery */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-base font-bold text-[#F5F5F5] flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-[#D4AF37]" /> Continental Supply Chain Deficit & Opportunity Registry ({filteredOpps.length})
+            <TrendingUp className="w-4 h-4 text-[#D4AF37]" aria-hidden="true" /> Regional Supply &amp; Demand Opportunities ({filteredOpps.length})
           </h3>
 
-          <div className="flex gap-1.5 text-xs">
+          <div className="flex flex-wrap gap-1.5 text-xs">
             {['ALL', 'Oilseeds', 'Grain', 'Storage'].map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setFilterSector(cat)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                   filterSector === cat
                     ? 'bg-[#D4AF37] text-[#050505]'
-                    : 'bg-[#181818] text-[#A0A0A0] hover:text-[#F5F5F5]'
+                    : 'bg-[#181818] text-[#A0A0A0] border border-[#27272a] hover:text-[#F5F5F5]'
                 }`}
               >
-                {cat}
+                {cat === 'ALL' ? 'All Sectors' : cat}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredOpps.map((opp, idx) => (
-            <div key={opp.id || `opp-${idx}`} className="bg-[#121212] border border-[#2a2a2a] rounded-xl p-5 shadow-lg space-y-3 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="font-mono text-[#D4AF37] font-semibold">{opp.id}</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-[#1e293b] text-blue-300 font-medium">
-                    {(opp.opportunityType || 'MARKET_DEFICIT').replace(/_/g, ' ')}
-                  </span>
-                </div>
-                <h4 className="text-base font-bold text-[#F5F5F5]">{opp.title}</h4>
-                <p className="text-xs text-[#A0A0A0] mt-1">{opp.rationale}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {filteredOpps.map((opp, idx) => {
+            const sectorAsset = resolveSectorAsset(`${opp.targetSector} ${opp.title}`, opp.targetSector);
+            return (
+              <div key={opp.id || `opp-${idx}`} className="bg-[#121212] border border-[#27272a] rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between">
+                <EconexImage
+                  src={sectorAsset.path}
+                  alt={sectorAsset.alt}
+                  fallbackLabel={opp.targetSector}
+                  aspectClassName="aspect-[16/9]"
+                  containerClassName="border-b border-[#27272a]"
+                />
+                <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <span className="font-mono text-[#A0A0A0]">{opp.id}</span>
+                      <span className="text-[#D4AF37] font-medium">
+                        {formatTitle(opp.opportunityType || 'MARKET_DEFICIT')}
+                      </span>
+                    </div>
+                    <h4 className="text-base font-bold text-[#F5F5F5] leading-snug">{opp.title}</h4>
+                    <p className="text-xs text-[#A0A0A0] mt-1.5 leading-relaxed">{opp.rationale}</p>
 
-                <div className="mt-4 p-3 bg-[#181818] border border-[#262626] rounded-lg text-xs space-y-1.5">
-                  <div className="flex justify-between">
-                    <span className="text-[#A0A0A0]">Estimated Market Size:</span>
-                    <strong className="text-emerald-400 font-mono">${((opp.estimatedMarketSizeUsd || 0) / 1000000).toFixed(1)}M USD</strong>
+                    <div className="mt-4 p-3.5 bg-[#181818] border border-[#27272a] rounded-xl text-xs space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-[#A0A0A0]">Estimated Market Size</span>
+                        <strong className="text-emerald-400 font-mono tabular-nums">${((opp.estimatedMarketSizeUsd || 0) / 1000000).toFixed(1)}M USD</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#A0A0A0]">Annual Demand Gap</span>
+                        <strong className="text-[#F5F5F5] tabular-nums">{(opp.unmetDemandVolumeMT || 0).toLocaleString()} MT / year</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#A0A0A0]">Region</span>
+                        <span className="text-[#D4AF37] font-medium">{opp.targetRegion}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#A0A0A0]">Unmet Deficit Volume:</span>
-                    <strong className="text-[#F5F5F5]">{(opp.unmetDemandVolumeMT || 0).toLocaleString()} MT / year</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#A0A0A0]">Target Region:</span>
-                    <span className="text-[#D4AF37]">{opp.targetRegion}</span>
+
+                  <div className="pt-3 border-t border-[#222226] flex items-center justify-between gap-2 text-xs">
+                    <span className="text-[#71717a] truncate max-w-[200px]">Source: {opp.dataProvenance}</span>
+                    <button
+                      type="button"
+                      onClick={() => setActionNotice(`Saved ${opp.title} to your opportunity workspace.`)}
+                      className="min-h-[40px] px-3.5 py-2 bg-[#181818] hover:bg-[#222226] text-[#D4AF37] border border-[#27272a] hover:border-[#D4AF37] rounded-xl text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>Save Opportunity</span>
+                      <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
                   </div>
                 </div>
               </div>
-
-              <div className="pt-3 border-t border-[#222] flex items-center justify-between text-xs">
-                <span className="text-[#777] text-[11px] truncate max-w-[200px]">Data: {opp.dataProvenance}</span>
-                <button
-                  onClick={() => setActionNotice(`Opportunity ${opp.id} bookmarked in your ECONEX workspace thesis.`)}
-                  className="px-3 py-1 bg-[#1e1e1e] hover:bg-[#282828] text-[#D4AF37] border border-[#333] rounded text-xs font-semibold flex items-center gap-1"
-                >
-                  Explore Value Chain <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

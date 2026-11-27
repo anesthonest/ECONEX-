@@ -15,6 +15,8 @@ import {
   RefreshCw,
   CheckSquare,
   Square,
+  CheckCheck,
+  Archive,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { ApiClient } from '../../services/apiClient.ts';
@@ -22,6 +24,7 @@ import type {
   NotificationItem,
   V18TaskBucket,
   V18UnifiedTask,
+  V26InAppNotification,
 } from '../../types/index.ts';
 
 interface Props {
@@ -46,8 +49,11 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedBucket, setSelectedBucket] = useState<'ALL' | V18TaskBucket>('ALL');
+  const [notifCategory, setNotifCategory] = useState<string>('ALL');
+  const [notifUnreadOnly, setNotifUnreadOnly] = useState<boolean>(false);
   const [tasks, setTasks] = useState<V18UnifiedTask[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [v26Notifications, setV26Notifications] = useState<V26InAppNotification[]>([]);
   const [counts, setCounts] = useState<Record<V18TaskBucket, number>>({
     ASSIGNED_TO_ME: 0,
     AWAITING_MY_ACTION: 0,
@@ -58,18 +64,29 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  const actor = { userId: currentUser?.id, userRole: role };
+
   const loadCenter = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await ApiClient.v18GetNotificationsTasks({
-        userId: currentUser?.id,
-        userRole: role,
-      });
+      const [data, v26Res] = await Promise.all([
+        ApiClient.v18GetNotificationsTasks(actor),
+        ApiClient.v26GetNotifications(
+          { category: notifCategory, unreadOnly: notifUnreadOnly, archived: 'false' },
+          actor
+        ).catch(() => null),
+      ]);
       setTasks(data.tasks || []);
       setNotifications(data.notifications || []);
+      if (v26Res && Array.isArray(v26Res.notifications)) {
+        setV26Notifications(v26Res.notifications);
+        setUnreadCount(Number(v26Res.unreadCount ?? data.unreadNotificationsCount ?? 0));
+      } else {
+        setV26Notifications([]);
+        setUnreadCount(Number(data.unreadNotificationsCount || 0));
+      }
       if (data.countsByBucket) setCounts(data.countsByBucket);
-      setUnreadCount(Number(data.unreadNotificationsCount || 0));
     } catch (e: any) {
       setError(e?.message || 'Unable to load notifications and tasks.');
     } finally {
@@ -79,17 +96,14 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
 
   useEffect(() => {
     loadCenter();
-  }, [currentUser?.id, role]);
+  }, [currentUser?.id, role, notifCategory, notifUnreadOnly]);
 
   const handleToggleTask = async (task: V18UnifiedTask) => {
     if (!task.actionable) return;
     const nextStatus = task.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED';
     try {
       setUpdatingId(task.id);
-      await ApiClient.v18UpdateTaskStatus(task.id, nextStatus, {
-        userId: currentUser?.id,
-        userRole: role,
-      });
+      await ApiClient.v18UpdateTaskStatus(task.id, nextStatus, actor);
       await loadCenter();
     } catch (e: any) {
       setError(e?.message || 'Unable to update task status.');
@@ -98,14 +112,40 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
     }
   };
 
-  const handleMarkNotificationRead = async (notifId: string) => {
+  const handleMarkNotificationRead = async (notifId: string, isV26 = false) => {
     try {
       setUpdatingId(notifId);
-      await ApiClient.markNotificationRead(notifId);
+      if (isV26) await ApiClient.v26MarkNotificationRead(notifId, actor);
+      else await ApiClient.markNotificationRead(notifId);
       await loadCenter();
       if (onRefreshNotifications) await onRefreshNotifications();
     } catch (e: any) {
       setError(e?.message || 'Unable to mark notification as read.');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      setUpdatingId('ALL');
+      await ApiClient.v26MarkAllNotificationsRead(actor);
+      await loadCenter();
+      if (onRefreshNotifications) await onRefreshNotifications();
+    } catch (e: any) {
+      setError(e?.message || 'Unable to mark all notifications read.');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleArchiveNotification = async (notifId: string) => {
+    try {
+      setUpdatingId(notifId);
+      await ApiClient.v26ArchiveNotification(notifId, actor);
+      await loadCenter();
+    } catch (e: any) {
+      setError(e?.message || 'Unable to archive notification.');
     } finally {
       setUpdatingId(null);
     }
@@ -126,15 +166,26 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
             <strong className="text-[#F5F5F5]">{currentUser?.name || role}</strong>.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={loadCenter}
-          disabled={loading}
-          className="min-h-[44px] px-4 py-2 rounded-xl border border-[#27272a] bg-[#0a0a0c] text-sm text-[#F5F5F5] hover:border-[#D4AF37] flex items-center gap-2 cursor-pointer self-start sm:self-auto"
-        >
-          <RefreshCw size={15} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
-          <span>Refresh Queue</span>
-        </button>
+        <div className="flex flex-wrap gap-2 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={handleMarkAllRead}
+            disabled={updatingId === 'ALL'}
+            className="min-h-[44px] px-4 py-2 rounded-xl border border-[#27272a] bg-[#0a0a0c] text-sm text-[#D4AF37] hover:border-[#D4AF37] flex items-center gap-2 cursor-pointer"
+          >
+            <CheckCheck size={15} aria-hidden="true" />
+            <span>Mark All Read</span>
+          </button>
+          <button
+            type="button"
+            onClick={loadCenter}
+            disabled={loading}
+            className="min-h-[44px] px-4 py-2 rounded-xl border border-[#27272a] bg-[#0a0a0c] text-sm text-[#F5F5F5] hover:border-[#D4AF37] flex items-center gap-2 cursor-pointer"
+          >
+            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
+            <span>Refresh Queue</span>
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -209,10 +260,10 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
         <section className="lg:col-span-2 bg-[#121212] border border-[#27272a] rounded-2xl overflow-hidden">
           <div className="px-5 py-3.5 border-b border-[#27272a] bg-[#0a0a0c] flex items-center justify-between">
             <h2 className="text-sm font-semibold text-[#F5F5F5]">
-              Actionable Task Queue ({visibleTasks.length})
+              Actionable Task Queue (<span className="tabular-nums">{visibleTasks.length}</span>)
             </h2>
-            <span className="text-xs text-[#A0A0A0] font-mono">
-              {selectedBucket}
+            <span className="text-xs text-[#A0A0A0]">
+              {BUCKET_META.find((b) => b.id === selectedBucket)?.label || 'All Tasks'}
             </span>
           </div>
 
@@ -224,6 +275,14 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
             <div className="divide-y divide-[#27272a]">
               {visibleTasks.map((task) => {
                 const isDone = task.bucket === 'COMPLETED' || task.status === 'COMPLETED';
+                const priorityLabel = String(task.priority || 'NORMAL')
+                  .replace(/_/g, ' ')
+                  .toLowerCase()
+                  .replace(/\b\w/g, (c) => c.toUpperCase());
+                const sourceLabel = String(task.sourceType || 'TASK')
+                  .replace(/_/g, ' ')
+                  .toLowerCase()
+                  .replace(/\b\w/g, (c) => c.toUpperCase());
                 return (
                   <div
                     key={task.id}
@@ -250,17 +309,17 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
                           <span className={`text-sm font-semibold ${isDone ? 'text-[#A0A0A0] line-through' : 'text-[#F5F5F5]'}`}>
                             {task.title}
                           </span>
-                          <span className="text-[11px] font-mono text-[#D4AF37]">
-                            [{task.priority}]
+                          <span className="text-xs font-medium text-[#D4AF37]">
+                            {priorityLabel} priority
                           </span>
-                          <span className="text-[11px] font-mono text-[#A0A0A0]">
-                            {task.sourceType}
+                          <span className="text-xs text-[#A0A0A0]">
+                            · {sourceLabel}
                           </span>
                         </div>
                         <p className="text-xs text-[#A0A0A0]">{task.description}</p>
                         {task.dueDate && (
-                          <div className="text-[11px] text-[#71717a] font-mono tabular-nums">
-                            Due / Logged: {new Date(task.dueDate).toLocaleDateString()} · Status: {task.status}
+                          <div className="text-xs text-[#71717a] tabular-nums">
+                            Logged {new Date(task.dueDate).toLocaleDateString()} · {String(task.status || '').replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())}
                           </div>
                         )}
                       </div>
@@ -282,53 +341,129 @@ export const TaskNotificationCenterView: React.FC<Props> = ({
         </section>
 
         <section className="bg-[#121212] border border-[#27272a] rounded-2xl overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-[#27272a] bg-[#0a0a0c] flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[#F5F5F5] flex items-center gap-2">
-              <Bell size={15} className="text-[#D4AF37]" aria-hidden="true" />
-              <span>Notifications ({notifications.length})</span>
-            </h2>
-            <span className="text-xs font-mono text-[#D4AF37] tabular-nums">
-              {unreadCount} unread
-            </span>
+          <div className="px-5 py-3.5 border-b border-[#27272a] bg-[#0a0a0c] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-[#F5F5F5] flex items-center gap-2">
+                <Bell size={15} className="text-[#D4AF37]" aria-hidden="true" />
+                <span>Notifications ({v26Notifications.length > 0 ? v26Notifications.length : notifications.length})</span>
+              </h2>
+              <span className="text-xs font-mono text-[#D4AF37] tabular-nums">
+                {unreadCount} unread
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                aria-label="Filter notifications by category"
+                value={notifCategory}
+                onChange={(e) => setNotifCategory(e.target.value)}
+                className="min-h-[36px] px-2.5 py-1 rounded-lg border border-[#27272a] bg-[#121212] text-xs text-[#F5F5F5]"
+              >
+                <option value="ALL">All Categories</option>
+                <option value="ORDERS">Orders</option>
+                <option value="WALLET">Wallet</option>
+                <option value="PROCUREMENT">Procurement</option>
+                <option value="SUPPORT">Support</option>
+                <option value="SYSTEM">System</option>
+              </select>
+              <label className="min-h-[36px] px-2.5 py-1 rounded-lg border border-[#27272a] bg-[#121212] text-xs text-[#C0C0C0] flex items-center gap-1.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={notifUnreadOnly}
+                  onChange={(e) => setNotifUnreadOnly(e.target.checked)}
+                  className="accent-[#D4AF37]"
+                />
+                <span>Unread only</span>
+              </label>
+            </div>
           </div>
 
-          {notifications.length === 0 ? (
+          {v26Notifications.length === 0 && notifications.length === 0 ? (
             <div className="p-8 text-center text-sm text-[#A0A0A0]">
-              No notifications recorded yet.
+              No notifications recorded in this filter.
             </div>
           ) : (
             <div className="divide-y divide-[#27272a] max-h-[540px] overflow-y-auto">
-              {notifications.map((n) => (
-                <div
-                  key={n.id}
-                  className={`p-4 space-y-2 ${n.read ? 'bg-[#121212]' : 'bg-[#181818]'}`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="text-sm font-medium text-[#F5F5F5]">{n.title}</div>
-                    {!n.read && (
-                      <span className="text-[10px] font-mono font-bold text-[#D4AF37] shrink-0">
-                        UNREAD
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-[#A0A0A0]">{n.body}</p>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-[11px] font-mono text-[#71717a]">
-                      {new Date(n.timestamp).toLocaleString()}
-                    </span>
-                    {!n.read && (
-                      <button
-                        type="button"
-                        onClick={() => handleMarkNotificationRead(n.id)}
-                        disabled={updatingId === n.id}
-                        className="min-h-[36px] px-3 py-1 rounded-lg border border-[#27272a] bg-[#0a0a0c] text-xs text-[#D4AF37] hover:border-[#D4AF37] cursor-pointer"
-                      >
-                        Mark Read
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+              {v26Notifications.length > 0
+                ? v26Notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`p-4 space-y-2 ${n.isRead ? 'bg-[#121212]' : 'bg-[#181818]'}`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="text-sm font-medium text-[#F5F5F5]">{n.title}</div>
+                        <span className="text-[10px] font-mono text-[#D4AF37] shrink-0">
+                          {n.isRead ? n.category : `UNREAD · ${n.category}`}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#A0A0A0]">{n.body}</p>
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <span className="text-[11px] font-mono text-[#71717a]">
+                          {new Date(n.createdAt).toLocaleString()}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {n.targetTabId && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateTab(n.targetTabId)}
+                              className="min-h-[36px] px-2.5 py-1 rounded-lg border border-[#27272a] bg-[#0a0a0c] text-xs text-[#F5F5F5] hover:border-[#D4AF37] cursor-pointer"
+                            >
+                              Open
+                            </button>
+                          )}
+                          {!n.isRead && (
+                            <button
+                              type="button"
+                              onClick={() => handleMarkNotificationRead(n.id, true)}
+                              disabled={updatingId === n.id}
+                              className="min-h-[36px] px-2.5 py-1 rounded-lg border border-[#27272a] bg-[#0a0a0c] text-xs text-[#D4AF37] hover:border-[#D4AF37] cursor-pointer"
+                            >
+                              Mark Read
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleArchiveNotification(n.id)}
+                            disabled={updatingId === n.id}
+                            className="min-h-[36px] px-2.5 py-1 rounded-lg border border-[#27272a] bg-[#0a0a0c] text-xs text-[#A0A0A0] hover:text-[#F5F5F5] flex items-center gap-1 cursor-pointer"
+                          >
+                            <Archive size={12} aria-hidden="true" />
+                            <span>Archive</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`p-4 space-y-2 ${n.read ? 'bg-[#121212]' : 'bg-[#181818]'}`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="text-sm font-medium text-[#F5F5F5]">{n.title}</div>
+                        {!n.read && (
+                          <span className="text-[10px] font-mono font-bold text-[#D4AF37] shrink-0">
+                            UNREAD
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#A0A0A0]">{n.body}</p>
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-[11px] font-mono text-[#71717a]">
+                          {new Date(n.timestamp).toLocaleString()}
+                        </span>
+                        {!n.read && (
+                          <button
+                            type="button"
+                            onClick={() => handleMarkNotificationRead(n.id, false)}
+                            disabled={updatingId === n.id}
+                            className="min-h-[36px] px-3 py-1 rounded-lg border border-[#27272a] bg-[#0a0a0c] text-xs text-[#D4AF37] hover:border-[#D4AF37] cursor-pointer"
+                          >
+                            Mark Read
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
             </div>
           )}
         </section>

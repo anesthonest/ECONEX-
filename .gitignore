@@ -14,6 +14,8 @@ data/aros_database.json.*
 data/*.backup.json
 data/.dev_kms_isolated.json
 data/backups/
+data/v25_vault/
+data/v28_vault/
 
 # Generated exports & verification artifacts
 exports/

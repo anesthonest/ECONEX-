@@ -25,6 +25,8 @@ import {
   X,
   ArrowRight,
 } from 'lucide-react';
+import { EconexImage } from '../ux/EconexImage.tsx';
+import { resolveMarketplaceAsset } from '../../config/econexAssetManifest.ts';
 
 interface MarketplaceViewProps {
   onOrderCreated: (order: Order) => void;
@@ -225,95 +227,88 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({ onOrderCreated
             No listings found matching your search and category filter. Try clearing filters.
           </div>
         ) : (
-          listings.map((item) => (
-            <div
-              key={item.id}
-              className="bg-[#121212] border border-[#27272a] hover:border-[#D4AF37]/50 rounded-xl overflow-hidden flex flex-col transition-all duration-200 shadow-md group"
-            >
-              {/* Product Image */}
-              <div className="relative h-44 bg-[#1c1c1f] overflow-hidden">
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => {
-                    // Fallback placeholder image
-                    (e.target as HTMLImageElement).src =
-                      'https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=600&q=80';
-                  }}
+          listings.map((item) => {
+            const media = resolveMarketplaceAsset({
+              imageUrl: item.imageUrl,
+              title: item.title,
+              category: item.category,
+            });
+            return (
+              <div
+                key={item.id}
+                className="bg-[#121212] border border-[#27272a] hover:border-[#D4AF37]/50 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 shadow-md group"
+              >
+                <EconexImage
+                  src={media.path}
+                  alt={item.title || media.alt}
+                  fallbackLabel={item.title}
+                  aspectClassName="h-44 w-full"
+                  overlayGradient
+                  className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
                 />
-                <div className="absolute top-2 left-2 flex flex-wrap gap-1">
-                  <span className="bg-[#050505]/85 backdrop-blur-md text-[10px] text-[#D4AF37] font-semibold px-2 py-0.5 rounded border border-[#D4AF37]/30">
-                    {item.category.replace(/_/g, ' ')}
-                  </span>
-                  {item.qualityGrade && (
-                    <span className="bg-[#050505]/85 text-[10px] text-[#F5F5F5] px-1.5 py-0.5 rounded border border-[#3f3f46]">
-                      {item.qualityGrade}
-                    </span>
-                  )}
-                </div>
-                {item.organicCertified && (
-                  <span className="absolute top-2 right-2 bg-emerald-950/90 text-emerald-300 text-[10px] px-2 py-0.5 rounded border border-emerald-600 font-medium">
-                    Organic
-                  </span>
-                )}
-              </div>
 
-              {/* Card Details */}
-              <div className="p-4 flex-1 flex flex-col justify-between space-y-3 text-xs">
-                <div>
-                  <h3 className="font-bold text-[#F5F5F5] text-sm line-clamp-1 group-hover:text-[#D4AF37] transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-[#A0A0A0] text-[11px] line-clamp-2 mt-1">{item.description}</p>
-                </div>
-
-                {/* Seller & Location Badge */}
-                <div className="bg-[#09090b] p-2 rounded border border-[#1f1f23] text-[11px] space-y-1">
-                  <div className="flex items-center justify-between text-[#F5F5F5]">
-                    <span className="truncate font-medium">{item.sellerName}</span>
-                    {item.isVerifiedSeller && (
-                      <span className="text-[#D4AF37] flex items-center gap-0.5 shrink-0 text-[10px]">
-                        <ShieldCheck size={12} /> Verified
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between text-[#71717a] text-[10px]">
-                    <span className="flex items-center gap-1">
-                      <MapPin size={11} className="text-[#D4AF37]" /> {item.district}
-                    </span>
-                    <span>Min: {item.minimumOrder} {item.unit}</span>
-                  </div>
-                </div>
-
-                {/* Price & Action */}
-                <div className="pt-2 border-t border-[#1e1e24] flex items-center justify-between">
+                {/* Card Details */}
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3 text-xs">
                   <div>
-                    <div className="text-base font-bold text-[#D4AF37] font-mono">
-                      {item.pricePerUnitUGX.toLocaleString()} <span className="text-[10px] font-sans font-normal text-[#A0A0A0]">UGX/{item.unit}</span>
+                    <div className="text-[11px] text-[#D4AF37] font-medium mb-1">
+                      {item.category.replace(/_/g, ' ')}
+                      {item.qualityGrade ? ` · ${item.qualityGrade}` : ''}
+                      {item.organicCertified ? ' · Organic' : ''}
                     </div>
-                    <div className="text-[10px] text-[#71717a]">
-                      Stock: {item.quantityAvailable.toLocaleString()} {item.unit}
+                    <h3 className="font-bold text-[#F5F5F5] text-sm line-clamp-1 group-hover:text-[#D4AF37] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-[#A0A0A0] text-[11px] line-clamp-2 mt-1">{item.description}</p>
+                  </div>
+
+                  {/* Seller & Location */}
+                  <div className="bg-[#09090b] p-2.5 rounded-xl border border-[#1f1f23] text-[11px] space-y-1">
+                    <div className="flex items-center justify-between text-[#F5F5F5]">
+                      <span className="truncate font-medium">{item.sellerName}</span>
+                      {item.isVerifiedSeller && (
+                        <span className="text-emerald-400 flex items-center gap-0.5 shrink-0 text-[10px]">
+                          <ShieldCheck size={12} aria-hidden="true" /> Verified
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between text-[#A0A0A0] text-[10px] tabular-nums">
+                      <span className="flex items-center gap-1">
+                        <MapPin size={11} className="text-[#D4AF37]" aria-hidden="true" /> {item.district}
+                      </span>
+                      <span>Min: {item.minimumOrder} {item.unit}</span>
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSelectedProduct(item);
-                      setOrderForm((prev) => ({
-                        ...prev,
-                        quantity: Math.max(item.minimumOrder, Math.min(100, item.quantityAvailable)),
-                      }));
-                      setOrderModalOpen(true);
-                    }}
-                    className="px-3 py-1.5 bg-[#D4AF37] hover:bg-[#e5bf43] text-black font-semibold rounded text-xs flex items-center gap-1 transition-colors shadow-sm"
-                  >
-                    Buy <ArrowRight size={12} />
-                  </button>
+                  {/* Price & Action */}
+                  <div className="pt-2 border-t border-[#1e1e24] flex items-center justify-between">
+                    <div>
+                      <div className="text-base font-bold text-[#D4AF37] tabular-nums">
+                        {item.pricePerUnitUGX.toLocaleString()} <span className="text-[10px] font-normal text-[#A0A0A0]">UGX/{item.unit}</span>
+                      </div>
+                      <div className="text-[10px] text-[#A0A0A0] tabular-nums">
+                        Stock: {item.quantityAvailable.toLocaleString()} {item.unit}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedProduct(item);
+                        setOrderForm((prev) => ({
+                          ...prev,
+                          quantity: Math.max(item.minimumOrder, Math.min(100, item.quantityAvailable)),
+                        }));
+                        setOrderModalOpen(true);
+                      }}
+                      className="min-h-[38px] px-3.5 py-1.5 bg-[#D4AF37] hover:bg-[#e5bf43] text-black font-semibold rounded-xl text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      Buy <ArrowRight size={12} aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

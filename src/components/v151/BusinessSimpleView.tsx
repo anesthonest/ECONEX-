@@ -80,9 +80,23 @@ export const BusinessSimpleView: React.FC<{ onNavigate: (tab: string) => void }>
           <button
             type="button"
             onClick={() => onNavigate('farmer-simple')}
-            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] text-[#050505] font-semibold text-sm cursor-pointer"
+            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#e5bf43] text-[#050505] font-semibold text-sm cursor-pointer"
           >
             + Add Product Listing
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('v22-businesses')}
+            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-sm text-[#F5F5F5] cursor-pointer"
+          >
+            Businesses &amp; Skilled Artisans
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('v22-marketplace')}
+            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#181818] border border-[#27272a] hover:border-[#D4AF37] text-sm text-[#F5F5F5] cursor-pointer"
+          >
+            Goods &amp; Services Market
           </button>
           {showAdvancedAccounting && (
             <button
@@ -168,6 +182,7 @@ export const BusinessSimpleView: React.FC<{ onNavigate: (tab: string) => void }>
                 amount={ord.totalAmountUGX}
                 dateIso={ord.createdAt}
                 rawStatus={ord.status}
+                showTimeline
                 actionLabel={
                   ord.status === 'SUBMITTED' && ord.sellerId === currentUser?.id
                     ? busyId === ord.id

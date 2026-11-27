@@ -117,6 +117,60 @@ const V24ProcurementLogisticsProjectsView = lazy(() =>
 const V24BusinessDocumentsExecutionView = lazy(() =>
   import('./components/v24/V24BusinessDocumentsExecutionView.tsx').then((m) => ({ default: m.V24BusinessDocumentsExecutionView }))
 );
+const V25InfrastructureCommandCentreView = lazy(() =>
+  import('./components/v25/V25InfrastructureCommandCentreView.tsx').then((m) => ({ default: m.V25InfrastructureCommandCentreView }))
+);
+const V25EnterpriseOrgIdentityView = lazy(() =>
+  import('./components/v25/V25EnterpriseOrgIdentityView.tsx').then((m) => ({ default: m.V25EnterpriseOrgIdentityView }))
+);
+const V25PostgresMigrationOpsView = lazy(() =>
+  import('./components/v25/V25PostgresMigrationOpsView.tsx').then((m) => ({ default: m.V25PostgresMigrationOpsView }))
+);
+const V25DeveloperPlatformIntegrationsView = lazy(() =>
+  import('./components/v25/V25DeveloperPlatformIntegrationsView.tsx').then((m) => ({ default: m.V25DeveloperPlatformIntegrationsView }))
+);
+const V26ActivationCommandHub = lazy(() =>
+  import('./components/v26/V26ActivationCommandHub.tsx').then((m) => ({ default: m.V26ActivationCommandHub }))
+);
+const V26DocumentsReportsVaultView = lazy(() =>
+  import('./components/v26/V26DocumentsReportsVaultView.tsx').then((m) => ({ default: m.V26DocumentsReportsVaultView }))
+);
+const V26InteractiveAuditAndRoutesView = lazy(() =>
+  import('./components/v26/V26InteractiveAuditAndRoutesView.tsx').then((m) => ({ default: m.V26InteractiveAuditAndRoutesView }))
+);
+const V27EconomicNetworkHub = lazy(() =>
+  import('./components/v27/V27EconomicNetworkHub.tsx').then((m) => ({ default: m.V27EconomicNetworkHub }))
+);
+const V27TrustDiscoveryMatchingView = lazy(() =>
+  import('./components/v27/V27TrustDiscoveryMatchingView.tsx').then((m) => ({ default: m.V27TrustDiscoveryMatchingView }))
+);
+const V27OpportunitiesCrmGrowthView = lazy(() =>
+  import('./components/v27/V27OpportunitiesCrmGrowthView.tsx').then((m) => ({ default: m.V27OpportunitiesCrmGrowthView }))
+);
+const V27IntelligenceAiPilotView = lazy(() =>
+  import('./components/v27/V27IntelligenceAiPilotView.tsx').then((m) => ({ default: m.V27IntelligenceAiPilotView }))
+);
+const V27FieldIntegrationSecurityView = lazy(() =>
+  import('./components/v27/V27FieldIntegrationSecurityView.tsx').then((m) => ({ default: m.V27FieldIntegrationSecurityView }))
+);
+const V28ExecutionWorkspaceView = lazy(() =>
+  import('./components/v28/V28ExecutionWorkspaceView.tsx').then((m) => ({ default: m.V28ExecutionWorkspaceView }))
+);
+const V28ContractsProcurementView = lazy(() =>
+  import('./components/v28/V28ContractsProcurementView.tsx').then((m) => ({ default: m.V28ContractsProcurementView }))
+);
+const V28FulfilmentCrossBorderView = lazy(() =>
+  import('./components/v28/V28FulfilmentCrossBorderView.tsx').then((m) => ({ default: m.V28FulfilmentCrossBorderView }))
+);
+const V28InteroperabilityEventsView = lazy(() =>
+  import('./components/v28/V28InteroperabilityEventsView.tsx').then((m) => ({ default: m.V28InteroperabilityEventsView }))
+);
+const V28ContinentalIntelligenceOpsView = lazy(() =>
+  import('./components/v28/V28ContinentalIntelligenceOpsView.tsx').then((m) => ({ default: m.V28ContinentalIntelligenceOpsView }))
+);
+const V28FieldRepoEngineeringView = lazy(() =>
+  import('./components/v28/V28FieldRepoEngineeringView.tsx').then((m) => ({ default: m.V28FieldRepoEngineeringView }))
+);
 const FarmerSimpleView = lazy(() =>
   import('./components/v151/FarmerSimpleView.tsx').then((m) => ({ default: m.FarmerSimpleView }))
 );
@@ -277,7 +331,7 @@ const V17NetworkControlCenter = lazy(() =>
   import('./components/V17NetworkControlCenter.tsx').then((m) => ({ default: m.V17NetworkControlCenter }))
 );
 
-const TOTAL_VERIFICATION_TESTS = 3600;
+const TOTAL_VERIFICATION_TESTS = 7700;
 
 function ModuleLoadingFallback() {
   return (
@@ -687,6 +741,7 @@ function MainAppShell() {
         return (
           <FinancialSimpleView
             onOpenPaymentModal={(order) => setPaymentModalOrder(order)}
+            onNavigate={(tab) => navigateToTab(tab)}
             onReportDispute={(subj) => {
               setHelpPrefill(subj);
               navigateToTab('help');
@@ -763,6 +818,90 @@ function MainAppShell() {
         return <V24ProcurementLogisticsProjectsView onNavigate={(tab) => navigateToTab(tab)} />;
       case 'v24-documents-settlement':
         return <V24BusinessDocumentsExecutionView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v25-command-centre':
+        return <V25InfrastructureCommandCentreView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v25-enterprise-org':
+        return <V25EnterpriseOrgIdentityView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v25-postgres-migration':
+        return <V25PostgresMigrationOpsView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v25-developer-platform':
+        return <V25DeveloperPlatformIntegrationsView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v26-hub':
+        return <V26ActivationCommandHub onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v26-reports':
+        return <V26DocumentsReportsVaultView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v26-audit':
+        return <V26InteractiveAuditAndRoutesView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v27-network-hub':
+        return <V27EconomicNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="DIRECTORY" />;
+      case 'v27-participants':
+        return <V27EconomicNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="DIRECTORY" />;
+      case 'v27-relationships':
+        return <V27EconomicNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="RELATIONSHIPS" />;
+      case 'v27-analytics':
+        return <V27EconomicNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="GROWTH" />;
+      case 'v27-discover':
+        return <V27TrustDiscoveryMatchingView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="DISCOVER" />;
+      case 'v27-matching':
+        return <V27TrustDiscoveryMatchingView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="MATCHING" />;
+      case 'v27-trust':
+        return <V27TrustDiscoveryMatchingView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="TRUST" />;
+      case 'v27-suppliers':
+        return <V27TrustDiscoveryMatchingView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="SUPPLIERS" />;
+      case 'v27-buyers':
+        return <V27TrustDiscoveryMatchingView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="BUYERS" />;
+      case 'v27-opportunities':
+        return <V27OpportunitiesCrmGrowthView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="OPPORTUNITIES" />;
+      case 'v27-crm':
+        return <V27OpportunitiesCrmGrowthView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CRM" />;
+      case 'v27-economic-intelligence':
+        return <V27IntelligenceAiPilotView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INTELLIGENCE" />;
+      case 'v27-pilot-operations':
+        return <V27IntelligenceAiPilotView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="PILOTS" />;
+      case 'v27-field-operations':
+        return <V27FieldIntegrationSecurityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="FIELD" />;
+      case 'v27-integration-centre':
+        return <V27FieldIntegrationSecurityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="PARTNERS" />;
+      case 'v28-execution-hub':
+        return <V28ExecutionWorkspaceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="EXECUTION" />;
+      case 'v28-workspace':
+        return <V28ExecutionWorkspaceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="WORKSPACE" />;
+      case 'v28-contracts':
+        return <V28ContractsProcurementView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CONTRACTS" />;
+      case 'v28-obligations':
+        return <V28ContractsProcurementView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="OBLIGATIONS" />;
+      case 'v28-procurement':
+        return <V28ContractsProcurementView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="PROCUREMENT" />;
+      case 'v28-procurement-approvals':
+        return <V28ContractsProcurementView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="APPROVALS" />;
+      case 'v28-fulfilment':
+        return <V28FulfilmentCrossBorderView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="FULFILMENT" />;
+      case 'v28-inventory':
+        return <V28FulfilmentCrossBorderView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INVENTORY" />;
+      case 'v28-cross-border':
+        return <V28FulfilmentCrossBorderView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CROSS_BORDER" />;
+      case 'v28-wallet-coordination':
+        return <V28FulfilmentCrossBorderView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="WALLET" />;
+      case 'v28-interoperability':
+        return <V28InteroperabilityEventsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INTEROPERABILITY" />;
+      case 'v28-events':
+        return <V28InteroperabilityEventsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="EVENTS" />;
+      case 'v28-vault':
+        return <V28InteroperabilityEventsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="VAULT" />;
+      case 'v28-intelligence':
+        return <V28ContinentalIntelligenceOpsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INTELLIGENCE" />;
+      case 'v28-ai-orchestrator':
+        return <V28ContinentalIntelligenceOpsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="AI" />;
+      case 'v28-control-centre':
+        return <V28ContinentalIntelligenceOpsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CONTROL_CENTRE" />;
+      case 'v28-dual-approvals':
+        return <V28ContinentalIntelligenceOpsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="DUAL_APPROVALS" />;
+      case 'v28-field-offline':
+        return <V28FieldRepoEngineeringView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="FIELD" />;
+      case 'v28-security':
+        return <V28FieldRepoEngineeringView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="SECURITY" />;
+      case 'v28-repository-health':
+        return <V28FieldRepoEngineeringView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="REPO_HEALTH" />;
       case 'v18-control-center':
         return <V18SystemControlCenter onNavigateTab={(tab) => navigateToTab(tab)} />;
       case 'v19-diagnostics':
@@ -934,7 +1073,7 @@ function MainAppShell() {
         totalTestsCount={TOTAL_VERIFICATION_TESTS}
       />
 
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
+      <div className="flex-1 flex max-w-[1440px] w-full mx-auto">
         <EconexDesktopSidebar
           activeTab={activeTab}
           setActiveTab={(t) => navigateToTab(t)}
@@ -1039,10 +1178,10 @@ function MainAppShell() {
 
       {/* Clean ECONEX Corporate Footer */}
       <footer className="bg-[#0a0a0c] border-t border-[#27272a] py-6 text-xs text-[#A0A0A0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="space-y-1 text-center md:text-left">
             <div className="font-display font-bold text-sm text-[#F5F5F5] tracking-wide">
-              ECONEX <span className="text-[#D4AF37] font-normal text-xs ml-1">V24.0</span>
+              ECONEX <span className="text-[#D4AF37] font-normal text-xs ml-1">V29.0</span>
             </div>
             <p className="text-xs text-[#A0A0A0]">Universal Economic Operating System</p>
             <p className="text-xs text-[#A0A0A0]">
@@ -1050,21 +1189,43 @@ function MainAppShell() {
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
+            <button type="button" onClick={() => navigateToTab('v22-discover')} className="hover:text-[#D4AF37] cursor-pointer">
+              Explore Sectors
+            </button>
+            <button type="button" onClick={() => navigateToTab('v22-marketplace')} className="hover:text-[#D4AF37] cursor-pointer">
+              Marketplace
+            </button>
+            <button type="button" onClick={() => navigateToTab('opportunities')} className="hover:text-[#D4AF37] cursor-pointer">
+              Opportunities
+            </button>
             <button type="button" onClick={() => navigateToTab('tasks')} className="hover:text-[#D4AF37] cursor-pointer">
               Tasks &amp; Alerts
             </button>
             <button type="button" onClick={() => setSearchOpen(true)} className="hover:text-[#D4AF37] cursor-pointer">
-              Global Search
+              Search
             </button>
             <button type="button" onClick={() => navigateToTab('help')} className="hover:text-[#D4AF37] cursor-pointer">
-              Help Centre
+              Help &amp; Support
             </button>
             <button type="button" onClick={() => setOnboardingOpen(true)} className="hover:text-[#D4AF37] cursor-pointer">
               Guided Setup
             </button>
             <button type="button" onClick={() => navigateToTab('account')} className="hover:text-[#D4AF37] cursor-pointer">
-              Language &amp; Accessibility
+              Account &amp; Language
             </button>
+            {role === 'PLATFORM_ADMIN' && (
+              <>
+                <button type="button" onClick={() => navigateToTab('v28-execution-hub')} className="text-[#D4AF37] hover:underline cursor-pointer">
+                  Execution Hub
+                </button>
+                <button type="button" onClick={() => navigateToTab('v26-audit')} className="text-[#D4AF37] hover:underline cursor-pointer">
+                  Route Audit
+                </button>
+                <button type="button" onClick={() => navigateToTab('tests')} className="text-[#D4AF37] hover:underline cursor-pointer">
+                  System Tests
+                </button>
+              </>
+            )}
           </div>
         </div>
       </footer>
@@ -1073,9 +1234,9 @@ function MainAppShell() {
 }
 
 function AppWithExperience() {
-  const { role } = useAuth();
+  const { role, currentUser } = useAuth();
   return (
-    <ExperienceProvider userRole={role}>
+    <ExperienceProvider userRole={role} userId={currentUser?.id}>
       <MainAppShell />
     </ExperienceProvider>
   );

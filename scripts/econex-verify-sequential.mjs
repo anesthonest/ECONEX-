@@ -98,6 +98,48 @@ const BATCH_SPECS = [
       { id: 'V23', file: './src/components/modules/v23WalletNetworkTests.ts', fn: 'runV23VerificationTests', passBase: true },
     ],
   },
+  {
+    batchId: 'BATCH_N_V24',
+    label: 'V24 Universal Commerce, Supply Chain & Economic Execution Network (T2951–T3600)',
+    suites: [
+      { id: 'V24', file: './src/components/modules/v24CommerceNetworkTests.ts', fn: 'runV24VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_O_V25',
+    label: 'V25 Continental Infrastructure, Cloud Transformation & Sovereign Platform (T3601–T4350)',
+    suites: [
+      { id: 'V25', file: './src/components/modules/v25ContinentalInfraTests.ts', fn: 'runV25VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_P_V26',
+    label: 'V26 Universal Platform Activation, Complete Workflow Execution & Interactive Experience Transformation (T4351–T5150)',
+    suites: [
+      { id: 'V26', file: './src/components/modules/v26PlatformActivationTests.ts', fn: 'runV26VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_Q_V27',
+    label: 'V27 Universal Economic Network, Trust Infrastructure & Continental Market Activation (T5151–T6000)',
+    suites: [
+      { id: 'V27', file: './src/components/modules/v27EconomicNetworkTests.ts', fn: 'runV27VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_R_V28',
+    label: 'V28 Universal Economic Execution, Interoperability & Continental Operations (T6901–T7800)',
+    suites: [
+      { id: 'V28', file: './src/components/modules/v28ExecutionTests.ts', fn: 'runV28ExecutionTestSuite', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_S_V29',
+    label: 'V29 Universal UI/UX Transformation, Visual Experience & Zero-Regression (T7801–T8600)',
+    suites: [
+      { id: 'V29', file: './src/components/modules/v29UiUxTests.ts', fn: 'runV29VerificationTests', passBase: true },
+    ],
+  },
 ];
 
 function runSingleSuiteIsolated(suite) {
@@ -166,10 +208,10 @@ function runSingleSuiteIsolated(suite) {
 
 function parseRequestedBatches() {
   const arg = process.argv.find((a) => a.startsWith('--batch='));
-  const val = arg ? arg.split('=')[1].toUpperCase() : 'V23';
+  const val = arg ? arg.split('=')[1].toUpperCase() : 'V29';
   if (val === 'ALL') return BATCH_SPECS;
-  if (val === 'VERIFY') return BATCH_SPECS.filter((b) => ['BATCH_H_V18', 'BATCH_I_V19', 'BATCH_J_V20', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23'].includes(b.batchId));
-  if (val === 'UNIT') return BATCH_SPECS.filter((b) => ['BATCH_E_V151_V159', 'BATCH_I_V19', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23'].includes(b.batchId));
+  if (val === 'VERIFY') return BATCH_SPECS.filter((b) => ['BATCH_H_V18', 'BATCH_I_V19', 'BATCH_J_V20', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23', 'BATCH_N_V24', 'BATCH_O_V25', 'BATCH_P_V26', 'BATCH_Q_V27', 'BATCH_R_V28', 'BATCH_S_V29'].includes(b.batchId));
+  if (val === 'UNIT') return BATCH_SPECS.filter((b) => ['BATCH_E_V151_V159', 'BATCH_I_V19', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23', 'BATCH_N_V24', 'BATCH_O_V25', 'BATCH_P_V26', 'BATCH_Q_V27', 'BATCH_R_V28', 'BATCH_S_V29'].includes(b.batchId));
 
   const tokens = val.split(',').map((t) => t.trim());
   const selected = [];
@@ -179,7 +221,7 @@ function parseRequestedBatches() {
       selected.push({ ...b, suites: filteredSuites });
     }
   }
-  return selected.length > 0 ? selected : BATCH_SPECS.filter((b) => b.batchId === 'BATCH_M_V23');
+  return selected.length > 0 ? selected : BATCH_SPECS.filter((b) => b.batchId === 'BATCH_S_V29');
 }
 
 async function main() {
@@ -215,7 +257,7 @@ async function main() {
   const totalFailed = suiteResults.reduce((acc, s) => acc + s.failed, 0);
 
   const report = {
-    release: 'V23.0-UNIVERSAL-WALLET-NETWORK',
+    release: 'V29.0-UNIVERSAL-UI-UX-TRANSFORMATION',
     baseUrl: BASE_URL,
     executedAt: startedAt,
     completedAt: new Date().toISOString(),

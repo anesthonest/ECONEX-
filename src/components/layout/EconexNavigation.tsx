@@ -33,8 +33,10 @@ import {
   Database,
   Eye,
   Factory,
+  FileLock2,
   FileSignature,
   FileSpreadsheet,
+  FileText,
   Flag,
   Gauge,
   Gavel,
@@ -48,6 +50,7 @@ import {
   Layers,
   LayoutDashboard,
   LineChart,
+  Lock,
   MapPin,
   Menu,
   MessageSquare,
@@ -94,11 +97,13 @@ import { useExperience, type ExperienceMode } from '../../context/ExperienceCont
 import { LanguageSelector } from '../ux/LanguageSelector.tsx';
 import {
   ALL_USER_ROLES,
-  getAuthorizedNavGroups,
   getBreadcrumbsForNavItem,
   getNavItemById,
+  getV29DisplayLabel,
+  getV29MenuCategories,
+  resolveV29MenuCategory,
 } from '../../navigation/navigationRegistry.ts';
-import type { UserRole, V18NavGroupId } from '../../types/index.ts';
+import type { UserRole } from '../../types/index.ts';
 
 interface Props {
   activeTab: string;
@@ -130,8 +135,10 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Database,
   Eye,
   Factory,
+  FileLock2,
   FileSignature,
   FileSpreadsheet,
+  FileText,
   Flag,
   Gauge,
   Gavel,
@@ -145,6 +152,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Layers,
   LayoutDashboard,
   LineChart,
+  Lock,
   MapPin,
   MessageSquare,
   Network,
@@ -158,6 +166,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Route,
   Scale,
   ScrollText,
+  Search,
   Server,
   Share2,
   Shield,
@@ -226,7 +235,7 @@ export const EconexTopBar: React.FC<Props> = ({
 
   return (
     <header className="sticky top-0 z-40 h-14 bg-[#050505]/95 backdrop-blur-md border-b border-[#27272a]">
-      <div className="max-w-7xl mx-auto h-full px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-3">
+      <div className="max-w-[1440px] mx-auto h-full px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             type="button"
@@ -241,7 +250,7 @@ export const EconexTopBar: React.FC<Props> = ({
                 ECONEX
               </div>
               <div className="text-[11px] text-[#A0A0A0] hidden sm:block mt-0.5 truncate">
-                VINEXSAH TECHNOLOGIES
+                Universal Economic Platform
               </div>
             </div>
           </button>
@@ -254,7 +263,7 @@ export const EconexTopBar: React.FC<Props> = ({
               className="hidden md:flex items-center gap-2 min-h-[38px] px-3 py-1.5 rounded-xl bg-[#121212] border border-[#27272a] hover:border-[#D4AF37] text-xs text-[#A0A0A0] hover:text-[#F5F5F5] cursor-pointer ml-2"
             >
               <Search size={14} className="text-[#D4AF37]" aria-hidden="true" />
-              <span>Search modules, produce, orders...</span>
+              <span>Search businesses, products, services, opportunities...</span>
               <kbd className="ml-2 px-1.5 py-0.5 rounded bg-[#181818] border border-[#27272a] text-[10px] font-mono text-[#A0A0A0]">
                 Ctrl+K
               </kbd>
@@ -391,7 +400,6 @@ export const EconexDesktopSidebar: React.FC<Props> = ({
   setActiveTab,
   unreadCount,
   onOpenSearch,
-  totalTestsCount,
 }) => {
   const { role } = useAuth();
   const { mode } = useExperience();
@@ -401,14 +409,12 @@ export const EconexDesktopSidebar: React.FC<Props> = ({
   });
   const [showAllPermitted, setShowAllPermitted] = useState<boolean>(false);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    HOME_PERSONAL: true,
-    DISCOVER_MARKETPLACE: true,
-    AGRICULTURE_PRODUCTION: true,
-    TRADE_COMMERCIAL: true,
-    BUSINESS_ENTERPRISE: true,
-    FINANCIAL_COORDINATION: true,
-    NETWORK_ADMIN: true,
-    HELP_ACCOUNT: true,
+    BUSINESS: true,
+    TRADE: true,
+    FINANCE: true,
+    NETWORK: true,
+    SUPPORT: true,
+    ADMINISTRATION: false,
   });
 
   useEffect(() => {
@@ -418,14 +424,16 @@ export const EconexDesktopSidebar: React.FC<Props> = ({
   }, [collapsed]);
 
   const activeItem = getNavItemById(activeTab);
-  const activeGroupId = activeItem?.groupId;
+  const activeCategoryId = activeItem ? resolveV29MenuCategory(activeItem) : 'BUSINESS';
 
-  const groups = getAuthorizedNavGroups(role, mode, showAllPermitted);
+  const categories = getV29MenuCategories(role, mode, {
+    includeTechnicalForAdmin: showAllPermitted && role === 'PLATFORM_ADMIN',
+  });
 
-  const toggleGroup = (groupId: V18NavGroupId) => {
+  const toggleGroup = (categoryId: string) => {
     setExpandedGroups((prev) => ({
       ...prev,
-      [groupId]: !(prev[groupId] ?? groupId === activeGroupId),
+      [categoryId]: !(prev[categoryId] ?? categoryId === activeCategoryId),
     }));
   };
 
@@ -439,7 +447,7 @@ export const EconexDesktopSidebar: React.FC<Props> = ({
       <div className="flex items-center justify-between gap-2 pb-3 border-b border-[#27272a]">
         {!collapsed && (
           <div className="min-w-0">
-            <div className="text-[11px] font-mono text-[#D4AF37] truncate">
+            <div className="text-xs font-semibold text-[#D4AF37] truncate">
               {ROLE_LABELS[role]}
             </div>
             <div className="text-[11px] text-[#A0A0A0] truncate">
@@ -473,54 +481,50 @@ export const EconexDesktopSidebar: React.FC<Props> = ({
               <span className="text-[10px] font-mono">Ctrl+K</span>
             </button>
           )}
-          <label className="flex items-center justify-between px-1 text-[11px] text-[#A0A0A0] cursor-pointer select-none">
-            <span>Show all role modules</span>
-            <input
-              type="checkbox"
-              checked={showAllPermitted}
-              onChange={(e) => setShowAllPermitted(e.target.checked)}
-              className="accent-[#D4AF37] w-3.5 h-3.5 cursor-pointer"
-            />
-          </label>
+          {role === 'PLATFORM_ADMIN' && (
+            <label className="flex items-center justify-between px-1 text-[11px] text-[#A0A0A0] cursor-pointer select-none">
+              <span>Show admin &amp; developer tools</span>
+              <input
+                type="checkbox"
+                checked={showAllPermitted}
+                onChange={(e) => setShowAllPermitted(e.target.checked)}
+                className="accent-[#D4AF37] w-3.5 h-3.5 cursor-pointer"
+              />
+            </label>
+          )}
         </div>
       )}
 
-      <nav className="flex-1 overflow-y-auto py-3 space-y-3" aria-label="Module groups">
-        {groups.map((group) => {
-          const isOpen = collapsed || (expandedGroups[group.groupId] ?? group.groupId === activeGroupId);
+      <nav className="flex-1 overflow-y-auto py-3 space-y-3" aria-label="Workspace sections">
+        {categories.map((cat) => {
+          const isOpen = collapsed || (expandedGroups[cat.id] ?? cat.id === activeCategoryId);
           return (
-            <div key={group.groupId} className="space-y-1">
+            <div key={cat.id} className="space-y-1">
               {!collapsed && (
                 <button
                   type="button"
-                  onClick={() => toggleGroup(group.groupId)}
+                  onClick={() => toggleGroup(cat.id)}
                   aria-expanded={isOpen}
                   className="w-full px-2.5 py-1 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-[#A0A0A0] hover:text-[#F5F5F5] cursor-pointer"
                 >
-                  <span className="truncate">{group.groupLabel}</span>
+                  <span className="truncate">{cat.label}</span>
                   {isOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
                 </button>
               )}
 
               {isOpen && (
                 <div className="space-y-0.5">
-                  {group.items.map((item) => {
+                  {cat.items.map((item) => {
                     const active = activeTab === item.id;
                     const badgeText =
-                      item.id === 'tasks' && unreadCount > 0
-                        ? String(unreadCount)
-                        : item.id === 'tests'
-                          ? String(totalTestsCount)
-                          : item.availability === 'SANDBOX_ONLY'
-                            ? 'SBX'
-                            : null;
+                      item.id === 'tasks' && unreadCount > 0 ? String(unreadCount) : null;
 
                     return (
                       <button
                         key={item.id}
                         type="button"
                         onClick={() => setActiveTab(item.id)}
-                        title={collapsed ? `${item.label} (${item.route})` : item.description}
+                        title={collapsed ? item.displayLabel : item.description}
                         aria-current={active ? 'page' : undefined}
                         className={`w-full min-h-[40px] ${
                           collapsed ? 'px-0 justify-center' : 'px-3 justify-between'
@@ -532,7 +536,7 @@ export const EconexDesktopSidebar: React.FC<Props> = ({
                       >
                         <span className="flex items-center gap-2.5 min-w-0">
                           {renderNavIcon(item.iconName, 16)}
-                          {!collapsed && <span className="truncate">{item.label}</span>}
+                          {!collapsed && <span className="truncate">{item.displayLabel}</span>}
                         </span>
                         {!collapsed && badgeText && (
                           <span className="text-[10px] font-mono text-[#D4AF37] tabular-nums shrink-0">
@@ -561,9 +565,19 @@ export const EconexBreadcrumbs: React.FC<{
   const { role } = useAuth();
   const { mode } = useExperience();
   const activeItem = getNavItemById(activeTab);
-  const trail = getBreadcrumbsForNavItem(activeTab);
+  const rawTrail = getBreadcrumbsForNavItem(activeTab);
 
   if (!activeItem && activeTab === 'home') return null;
+
+  const isAdminTechView = role === 'PLATFORM_ADMIN' && mode === 'ADMINISTRATOR';
+  const currentTitle = activeItem ? getV29DisplayLabel(activeItem) : 'Workspace';
+  const trail = rawTrail.map((crumb) => {
+    const matched = getNavItemById(crumb.id);
+    return {
+      ...crumb,
+      label: matched ? getV29DisplayLabel(matched) : crumb.label,
+    };
+  });
 
   return (
     <div className="mb-5 pb-3 border-b border-[#27272a] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -587,8 +601,8 @@ export const EconexBreadcrumbs: React.FC<{
               <React.Fragment key={crumb.id}>
                 {idx > 0 && <span className="text-[#52525b]">/</span>}
                 {isLast ? (
-                  <span className="text-[#D4AF37] font-medium truncate max-w-[240px]">
-                    {crumb.label}
+                  <span className="text-[#D4AF37] font-medium truncate max-w-[260px]">
+                    {currentTitle}
                   </span>
                 ) : (
                   <button
@@ -605,14 +619,14 @@ export const EconexBreadcrumbs: React.FC<{
         </nav>
       </div>
 
-      <div className="flex items-center gap-3 text-[11px] font-mono text-[#A0A0A0] shrink-0">
+      <div className="flex items-center gap-2.5 text-xs text-[#A0A0A0] shrink-0">
         {activeItem?.availability === 'SANDBOX_ONLY' && (
-          <span className="text-[#D4AF37]">SANDBOX / SIMULATION MODE</span>
+          <span className="text-[#D4AF37] font-medium">Sandbox environment</span>
         )}
-        <span>{activeItem?.route || '/home'}</span>
-        <span>·</span>
-        <span>{role}</span>
-        <span className="hidden sm:inline">· {mode}</span>
+        {isAdminTechView && activeItem?.route && (
+          <span className="font-mono text-[11px] text-[#A0A0A0]">{activeItem.route}</span>
+        )}
+        <span className="text-[#C0C0C0]">{ROLE_LABELS[role]}</span>
       </div>
     </div>
   );
@@ -686,7 +700,9 @@ export const EconexMobileDrawer: React.FC<{
 
   if (!isOpen) return null;
 
-  const groups = getAuthorizedNavGroups(role, mode, true);
+  const categories = getV29MenuCategories(role, mode, {
+    includeTechnicalForAdmin: role === 'PLATFORM_ADMIN',
+  });
 
   return (
     <div
@@ -721,7 +737,7 @@ export const EconexMobileDrawer: React.FC<{
             className="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-[#121212] border border-[#27272a] text-sm text-[#F5F5F5] flex items-center gap-2 cursor-pointer"
           >
             <Search size={16} className="text-[#D4AF37]" aria-hidden="true" />
-            <span>Search all modules &amp; records</span>
+            <span>Search businesses, products, services...</span>
           </button>
 
           <div className="grid grid-cols-2 gap-2">
@@ -765,13 +781,13 @@ export const EconexMobileDrawer: React.FC<{
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-5">
-          {groups.map((group) => (
-            <div key={group.groupId} className="space-y-1.5">
+          {categories.map((cat) => (
+            <div key={cat.id} className="space-y-1.5">
               <div className="text-[11px] font-semibold uppercase tracking-wider text-[#A0A0A0]">
-                {group.groupLabel}
+                {cat.label}
               </div>
               <div className="space-y-1">
-                {group.items.map((item) => {
+                {cat.items.map((item) => {
                   const active = activeTab === item.id;
                   return (
                     <button
@@ -789,9 +805,9 @@ export const EconexMobileDrawer: React.FC<{
                     >
                       <span className="flex items-center gap-2.5 truncate">
                         {renderNavIcon(item.iconName, 16)}
-                        <span className="truncate">{item.label}</span>
+                        <span className="truncate">{item.displayLabel}</span>
                       </span>
-                      <span className="text-[11px] font-mono text-[#A0A0A0]">{item.route}</span>
+                      <ChevronRight size={14} className="text-[#A0A0A0] shrink-0" aria-hidden="true" />
                     </button>
                   );
                 })}

@@ -241,7 +241,7 @@ export const V24ExecutionNetworkHub: React.FC<Props> = ({ onNavigate }) => {
         { label: newKeyLabel, scopes: ['orders:read', 'inventory:read', 'documents:read'] },
         actor
       );
-      setIssuedRawSecret(res.rawApiKey || null);
+      setIssuedRawSecret(res.oneTimeToken || res.rawApiKey || null);
       setFeedback(`Issued scoped credential ${res.credential?.keyPrefix}... (secret shown once).`);
       await loadHub();
     } catch (err: any) {
@@ -419,7 +419,7 @@ export const V24ExecutionNetworkHub: React.FC<Props> = ({ onNavigate }) => {
                 {intelligence?.actualMetrics?.ordersCount ?? 0}
               </div>
               <div className="text-xs text-[#A0A0A0] font-mono tabular-nums">
-                Volume: {fmtMinor(intelligence?.actualMetrics?.completedVolumeMinor ?? 0, 'UGX')}
+                Volume: {fmtMinor(intelligence?.actualMetrics?.volumeMinor ?? 0, 'UGX')}
               </div>
             </div>
             <div className="bg-[#121212] border border-[#27272a] rounded-xl p-5 space-y-1.5">
@@ -504,16 +504,13 @@ export const V24ExecutionNetworkHub: React.FC<Props> = ({ onNavigate }) => {
               </button>
             </form>
             {searchResults && (
-              <div className="border-t border-[#27272a] pt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-xs">
+              <div className="border-t border-[#27272a] pt-4 grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
                 {[
-                  ['Sectors', searchResults.sectors?.length ?? 0],
-                  ['Participants', searchResults.participants?.length ?? 0],
                   ['Listings', searchResults.listings?.length ?? 0],
-                  ['RFQs', searchResults.rfqs?.length ?? 0],
                   ['Orders', searchResults.orders?.length ?? 0],
-                  ['Agreements', searchResults.agreements?.length ?? 0],
-                  ['Warehouses', searchResults.warehouses?.length ?? 0],
+                  ['Documents', searchResults.documents?.length ?? 0],
                   ['Projects', searchResults.projects?.length ?? 0],
+                  ['Inventory', searchResults.inventory?.length ?? 0],
                 ].map(([label, count]) => (
                   <div key={String(label)} className="bg-[#181818] border border-[#27272a] rounded-lg p-3">
                     <div className="text-[#A0A0A0]">{label}</div>

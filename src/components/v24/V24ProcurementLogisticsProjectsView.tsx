@@ -53,13 +53,13 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
 
   // Procurement form
   const [procTitle, setProcTitle] = useState<string>('');
-  const [procCategory, setProcCategory] = useState<V24ProcurementCategory>('PRIVATE_BUSINESS');
+  const [procCategory, setProcCategory] = useState<V24ProcurementCategory>('ENTERPRISE_INTERNAL');
   const [procBudgetMajor, setProcBudgetMajor] = useState<number>(3500000);
   const [grnInput, setGrnInput] = useState<string>('GRN-V24-001');
   const [invInput, setInvInput] = useState<string>('DOC-V24-001');
 
   // Shipment form
-  const [corridorCode, setCorridorCode] = useState<string>('MOMBASA_KAMPALA');
+  const [corridorCode, setCorridorCode] = useState<string>('CORR-UG-KE-MALABA');
   const [vehiclePlate, setVehiclePlate] = useState<string>('UBG 412T');
   const [reportedLoc, setReportedLoc] = useState<string>('Malaba Border Approach');
 
@@ -203,7 +203,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
         {
           nextStatus,
           reportedLocation: reportedLoc,
-          locationSource: 'MANUAL_CARRIER_REPORT',
+          locationSource: 'CARRIER_SELF_REPORT',
           note: `Status updated to ${nextStatus}`,
         },
         actor
@@ -352,7 +352,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
               onChange={(e) => setProcCategory(e.target.value as V24ProcurementCategory)}
               className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#27272a] text-[#F5F5F5]"
             >
-              {['PRIVATE_BUSINESS', 'MANUFACTURING_INPUTS', 'CONSTRUCTION_MATERIALS', 'INSTITUTIONAL', 'COOPERATIVE', 'SERVICE', 'EQUIPMENT', 'LOGISTICS'].map((c) => (
+              {['ENTERPRISE_INTERNAL', 'COOPERATIVE_BULK', 'INSTITUTIONAL_SUPPLY', 'NGO_PROJECT', 'PUBLIC_PREPARATION'].map((c) => (
                 <option key={c} value={c}>
                   {c}
                 </option>
@@ -393,7 +393,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
                         {r.category} · Budget: {fmtMinor(r.estimatedBudgetMinor, r.currency)} · Requester: {r.requesterUserId} · Status: {r.status}
                       </div>
                     </div>
-                    {(r.status === 'REQUESTED' || r.status === 'PENDING_APPROVAL') && (
+                    {(r.status === 'DRAFT' || r.status === 'PENDING_APPROVAL') && (
                       <div className="flex gap-2 shrink-0">
                         <button
                           type="button"
@@ -438,7 +438,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
                 {purchaseOrders.map((po) => (
                   <div key={po.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <div className="font-medium text-sm text-[#F5F5F5]">{po.poNumber} · v{po.version}</div>
+                      <div className="font-medium text-sm text-[#F5F5F5]">{po.poNumber} · Req {po.procurementRequestId}</div>
                       <div className="text-[#A0A0A0] font-mono tabular-nums">
                         Total: {fmtMinor(po.totalAmountMinor, po.currency)} · 3-Way Match: {po.threeWayMatchStatus} · Status: {po.status}
                       </div>
@@ -465,9 +465,9 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
               <div key={c.corridorCode} className="bg-[#121212] border border-[#27272a] rounded-xl p-5 space-y-2 text-xs">
                 <div className="font-display font-semibold text-sm text-[#F5F5F5]">{c.name}</div>
                 <div className="text-[#D4AF37] font-mono">
-                  {c.originCountry} → {c.destinationCountry} · Est {c.estimatedTransitHours}h · customsClearanceClaimed: {String(c.customsClearanceClaimed)}
+                  {c.originCountry} → {c.destinationCountry} · Est {c.distanceKmEstimate}km · customsClearanceClaimed: {String(c.customsClearanceClaimed)}
                 </div>
-                <div className="text-[#A0A0A0]">Borders: {c.keyBorderPosts.join(', ')}</div>
+                <div className="text-[#A0A0A0]">Border: {c.borderPost}</div>
                 <div className="text-[#A0A0A0]">Guidance Docs: {c.requiredGuidanceDocs.join(', ')}</div>
               </div>
             ))}
@@ -527,7 +527,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
                       <span className="font-mono text-[#D4AF37]">{s.status}</span>
                     </div>
                     <div className="text-[#A0A0A0] font-mono">
-                      Last Reported: {s.lastReportedLocation} · Events: {s.events.length} · gpsClaimed: false
+                      Last Reported: {s.events[s.events.length - 1]?.reportedLocation || s.originLocation} · Events: {s.events.length} · gpsClaimed: false
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {s.status === 'CREATED' && (
@@ -542,13 +542,22 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
                       {['BOOKED', 'ASSIGNED', 'PICKUP_PENDING'].includes(s.status) && (
                         <button
                           type="button"
+                          onClick={() => handleTransitionShipment(s, 'PICKED_UP')}
+                          className="px-3 py-1 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
+                        >
+                          Mark Picked Up
+                        </button>
+                      )}
+                      {['PICKED_UP', 'ARRIVED_HUB', 'ARRIVED_BORDER'].includes(s.status) && (
+                        <button
+                          type="button"
                           onClick={() => handleTransitionShipment(s, 'IN_TRANSIT')}
                           className="px-3 py-1 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
                         >
                           Report In Transit
                         </button>
                       )}
-                      {['IN_TRANSIT', 'AT_CHECKPOINT'].includes(s.status) && (
+                      {['IN_TRANSIT', 'OUT_FOR_DELIVERY', 'CUSTOMS_COORDINATION_NOTE'].includes(s.status) && (
                         <button
                           type="button"
                           onClick={() => handleTransitionShipment(s, 'DELIVERED')}
@@ -585,7 +594,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
               onChange={(e) => setProjType(e.target.value as V24ProjectType)}
               className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#27272a] text-[#F5F5F5]"
             >
-              {['CONSTRUCTION', 'ENGINEERING', 'INFRASTRUCTURE_SERVICE', 'INSTALLATION', 'SOFTWARE_DEVELOPMENT', 'RENEWABLE_ENERGY', 'INDUSTRIAL_PROJECT'].map((t) => (
+              {['CONSTRUCTION', 'EQUIPMENT_INSTALLATION', 'MAINTENANCE_CONTRACT', 'SOLAR_DEPLOYMENT', 'AGRICULTURAL_PROCESSING_SETUP', 'IT_INFRASTRUCTURE', 'CREATIVE_DELIVERY', 'COMMUNITY_DEVELOPMENT'].map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -623,7 +632,7 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
 
           <div className="lg:col-span-2 bg-[#121212] border border-[#27272a] rounded-xl p-6 space-y-4 text-xs">
             <h2 className="text-base font-display font-semibold text-[#F5F5F5]">
-              Commercial Projects & 8-State Milestones (autoEscrowRelease: false)
+              Commercial Projects & Milestones (autoEscrowRelease: false)
             </h2>
             <div className="divide-y divide-[#27272a]">
               {projects.map((p) => (
@@ -650,22 +659,22 @@ export const V24ProcurementLogisticsProjectsView: React.FC<Props> = ({ onNavigat
                           {m.status === 'PLANNED' && (
                             <button
                               type="button"
-                              onClick={() => handleTransitionMilestone(p.id, m.id, 'APPROVED')}
+                              onClick={() => handleTransitionMilestone(p.id, m.id, 'IN_PROGRESS')}
                               className="px-2.5 py-1 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
                             >
-                              Approve
+                              Start Work
                             </button>
                           )}
-                          {(m.status === 'APPROVED' || m.status === 'IN_PROGRESS') && (
+                          {m.status === 'IN_PROGRESS' && (
                             <button
                               type="button"
-                              onClick={() => handleTransitionMilestone(p.id, m.id, 'SUBMITTED_FOR_REVIEW')}
+                              onClick={() => handleTransitionMilestone(p.id, m.id, 'SUBMITTED')}
                               className="px-2.5 py-1 rounded border border-[#27272a] bg-[#181818] text-[#F5F5F5] cursor-pointer"
                             >
                               Submit Evidence
                             </button>
                           )}
-                          {m.status === 'SUBMITTED_FOR_REVIEW' && (
+                          {m.status === 'SUBMITTED' && (
                             <button
                               type="button"
                               onClick={() => handleTransitionMilestone(p.id, m.id, 'ACCEPTED')}

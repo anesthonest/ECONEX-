@@ -371,8 +371,8 @@ export const V23UniversalWalletDashboard: React.FC<Props> = ({ onNavigate }) => 
       {/* Header & Truthful Mode Notice */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#27272a] pb-4">
         <div>
-          <div className="text-xs font-mono uppercase tracking-wider text-[#D4AF37]">
-            ECONEX V23.0 · UNIVERSAL ECONOMIC WALLET NETWORK · SANDBOX MODE
+          <div className="text-xs font-semibold text-[#D4AF37]">
+            Universal Wallet Network · Sandbox Mode
           </div>
           <h1 className="text-2xl font-display font-bold text-[#F5F5F5] mt-1">
             Universal Wallet &amp; Permanent Identity
@@ -385,43 +385,43 @@ export const V23UniversalWalletDashboard: React.FC<Props> = ({ onNavigate }) => 
           <button
             type="button"
             onClick={() => setShowNewWallet((v) => !v)}
-            className="min-h-[40px] px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#050505] font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
+            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#e5bf43] text-[#050505] font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
           >
-            <Plus size={14} /> Issue New EUWN
+            <Plus size={14} aria-hidden="true" /> Issue New EUWN
           </button>
           <button
             type="button"
             onClick={() => loadData()}
             disabled={loading}
-            className="min-h-[40px] px-3.5 py-2 rounded-lg border border-[#27272a] bg-[#121212] text-xs text-[#F5F5F5] hover:border-[#D4AF37] flex items-center gap-1.5 cursor-pointer"
+            className="min-h-[44px] px-4 py-2 rounded-xl border border-[#27272a] bg-[#121212] text-xs text-[#F5F5F5] hover:border-[#D4AF37] flex items-center gap-1.5 cursor-pointer"
           >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} aria-hidden="true" /> Refresh
           </button>
         </div>
       </div>
 
       {/* Explicit Real-Value vs Sandbox Separation Bar */}
-      <div className="bg-[#121212] border border-[#27272a] rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="bg-[#121212] border border-[#27272a] rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="text-[#A0A0A0]">
           <span className="text-amber-300 font-semibold">Sandbox Simulation Active · </span>
           <span>Live Real-Value Volume: </span>
           <span className="font-mono tabular-nums text-[#F5F5F5]">0 UGX</span>
-          <span className="mx-2 text-[#52525b]">/</span>
+          <span className="mx-2 text-[#52525b]">·</span>
           <span>Live Revenue Recognized: </span>
           <span className="font-mono tabular-nums text-[#F5F5F5]">0 UGX</span>
-          <span className="mx-2 text-[#52525b]">/</span>
+          <span className="mx-2 text-[#52525b]">·</span>
           <span>Active Wallets: </span>
           <span className="font-mono tabular-nums text-[#F5F5F5]">{overview?.counts?.wallets ?? bundles.length}</span>
         </div>
-        <div className="flex items-center gap-3 text-xs">
-          <button type="button" onClick={() => onNavigate('v23-merchant')} className="text-[#D4AF37] hover:underline flex items-center gap-1 cursor-pointer">
-            <QrCode size={13} /> Merchant QR
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          <button type="button" onClick={() => onNavigate('v23-merchant')} className="min-h-[36px] text-[#D4AF37] hover:underline flex items-center gap-1 cursor-pointer">
+            <QrCode size={13} aria-hidden="true" /> Merchant QR
           </button>
-          <button type="button" onClick={() => onNavigate('v23-cards')} className="text-[#D4AF37] hover:underline flex items-center gap-1 cursor-pointer">
+          <button type="button" onClick={() => onNavigate('v23-cards')} className="min-h-[36px] text-[#D4AF37] hover:underline flex items-center gap-1 cursor-pointer">
             Cards
           </button>
-          <button type="button" onClick={() => onNavigate('v23-country-network')} className="text-[#D4AF37] hover:underline flex items-center gap-1 cursor-pointer">
-            <Globe size={13} /> Countries &amp; Gates
+          <button type="button" onClick={() => onNavigate('v23-country-network')} className="min-h-[36px] text-[#D4AF37] hover:underline flex items-center gap-1 cursor-pointer">
+            <Globe size={13} aria-hidden="true" /> Countries &amp; Gates
           </button>
         </div>
       </div>
