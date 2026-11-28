@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { CreditCard, Lock, Plus, RefreshCw, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { ApiClient } from '../../services/apiClient.ts';
-import type { V23PhysicalCard, V23PhysicalCardStage, V23VirtualCard } from '../../types/index.ts';
+import type { V23PhysicalCard, V23PhysicalCardStage, V23VirtualCard, V30WalletCardProfile } from '../../types/index.ts';
 
 interface Props {
   onNavigate: (tab: string) => void;
@@ -38,6 +38,7 @@ export const V23CardsInfrastructureView: React.FC<Props> = ({ onNavigate }) => {
 
   const [virtualCards, setVirtualCards] = useState<V23VirtualCard[]>([]);
   const [physicalCards, setPhysicalCards] = useState<V23PhysicalCard[]>([]);
+  const [v30CardProfiles, setV30CardProfiles] = useState<V30WalletCardProfile[]>([]);
   const [wallets, setWallets] = useState<any[]>([]);
   const [selectedWalletId, setSelectedWalletId] = useState<string>('WLT-V23-001');
   const [cardholderName, setCardholderName] = useState<string>('SARAH NAMUBIRU');
@@ -52,12 +53,14 @@ export const V23CardsInfrastructureView: React.FC<Props> = ({ onNavigate }) => {
     setLoading(true);
     setError(null);
     try {
-      const [cRes, wRes] = await Promise.all([
+      const [cRes, wRes, uRes] = await Promise.all([
         ApiClient.v23GetCards(actor),
         ApiClient.v23GetWallets(role === 'PLATFORM_ADMIN' ? 'all' : 'own', actor),
+        ApiClient.v30GetUniversalWalletOverview(actor).catch(() => ({ cardProfiles: [] })),
       ]);
       setVirtualCards(cRes.virtualCards || []);
       setPhysicalCards(cRes.physicalCards || []);
+      setV30CardProfiles(uRes?.cardProfiles || []);
       const wl = Array.isArray(wRes) ? wRes : [];
       setWallets(wl);
       if (wl.length > 0 && !wl.some((b: any) => b.wallet.id === selectedWalletId)) {
@@ -168,6 +171,26 @@ export const V23CardsInfrastructureView: React.FC<Props> = ({ onNavigate }) => {
       await loadData();
     } catch (e: any) {
       setError(e?.message || 'Unable to advance workflow.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleV30CardControl = async (
+    card: V30WalletCardProfile,
+    patch: { frozen?: boolean; dailySpendLimitMinor?: number; monthlySpendLimitMinor?: number }
+  ) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const updated = await ApiClient.v30UpdateCardControls(card.id, patch, actor);
+      if (updated?.error) throw new Error(updated.error);
+      setFeedback(
+        `V30 Card Governance updated ${updated.tokenizedCardRef}: frozen=${updated.frozen}, dailyCap=${Number(updated.dailySpendLimitMinor).toLocaleString()} minor units (schemeCertified=false).`
+      );
+      await loadData();
+    } catch (e: any) {
+      setError(e?.message || 'Unable to update V30 card governance.');
     } finally {
       setBusy(false);
     }
@@ -378,6 +401,68 @@ export const V23CardsInfrastructureView: React.FC<Props> = ({ onNavigate }) => {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* V30 Spend-Limit & Freeze Governance Controls */}
+      <div className="bg-[#121212] border border-[#27272a] rounded-xl p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              V30 Card Spend-Limit &amp; Freeze Governance ({v30CardProfiles.length}) · Sandbox Token Controls
+            </h2>
+            <p className="text-xs text-[#A0A0A0] mt-0.5">
+              Enforces daily/monthly spend caps, merchant category controls &amp; instant freeze while strictly maintaining schemeCertified=false and liveIssuanceEnabled=false.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate('v30-wallet-universal')}
+            className="px-3 py-1.5 rounded-lg border border-[#D4AF37] text-xs text-[#D4AF37] cursor-pointer self-start sm:self-auto"
+          >
+            Open Universal Wallet
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          {v30CardProfiles.map((cp) => (
+            <div key={cp.id} className="bg-[#0a0a0c] border border-[#27272a] rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[#D4AF37]">{cp.tokenizedCardRef}</span>
+                <span className={`font-mono ${cp.frozen ? 'text-amber-300' : 'text-emerald-300'}`}>
+                  {cp.frozen ? 'FROZEN' : 'ACTIVE_SANDBOX'}
+                </span>
+              </div>
+              <div className="text-[#F5F5F5] font-medium">
+                Wallet {cp.walletId} · Daily Cap {cp.dailySpendLimitMinor.toLocaleString()} · Monthly Cap {cp.monthlySpendLimitMinor.toLocaleString()} minor
+              </div>
+              <div className="text-[#A0A0A0] font-mono">
+                Categories: {cp.allowedCategories.join(', ')} · schemeCertified={String(cp.schemeCertified)} · liveIssuanceEnabled={String(cp.liveIssuanceEnabled)}
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => handleV30CardControl(cp, { frozen: !cp.frozen })}
+                  className="px-3 py-1.5 rounded-lg border border-[#27272a] hover:border-[#D4AF37] text-[#F5F5F5] cursor-pointer"
+                >
+                  {cp.frozen ? 'Unfreeze Card' : 'Freeze Card'}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() =>
+                    handleV30CardControl(cp, {
+                      dailySpendLimitMinor: cp.dailySpendLimitMinor + 250000,
+                      monthlySpendLimitMinor: Math.max(cp.monthlySpendLimitMinor, (cp.dailySpendLimitMinor + 250000) * 4),
+                    })
+                  }
+                  className="px-3 py-1.5 rounded-lg border border-[#27272a] hover:border-[#D4AF37] text-[#D4AF37] cursor-pointer"
+                >
+                  +250,000 Minor Daily Cap
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

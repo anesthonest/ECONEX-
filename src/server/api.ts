@@ -28,6 +28,8 @@ import { v25Router } from './v25Routes.ts';
 import { v26Router } from './v26Routes.ts';
 import { v27Router } from './v27Routes.ts';
 import { v28Router } from './v28Routes.ts';
+import { v30Router } from './v30Routes.ts';
+import { v31Router } from './v31Routes.ts';
 import {
   UserProfile,
   UserRole,
@@ -6190,6 +6192,9 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     v26Release: 'V26.0-UNIVERSAL-PLATFORM-ACTIVATION',
     v27Release: 'V27.0-UNIVERSAL-ECONOMIC-NETWORK',
     v28Release: 'V28.0-UNIVERSAL-ECONOMIC-EXECUTION',
+    v29Release: 'V29.0-UNIVERSAL-UI-UX-TRANSFORMATION',
+    v30Release: 'V30.0-UNIVERSAL-FINANCIAL-RESILIENCE',
+    v31Release: 'V31.0-SOVEREIGN-INFRASTRUCTURE-AND-DEPLOYMENT',
     consolidationRelease: 'V15.9-FINAL-CONSOLIDATION-AND-RELEASE',
     v17Release: 'V17.0-VERIFIED-ECONOMIC-NETWORK-OPERATIONS',
     attribution: 'Developed under VINEXSAH TECHNOLOGIES. All rights reserved.',
@@ -6236,6 +6241,8 @@ apiRouter.use('/v25', v25Router);
 apiRouter.use('/v26', v26Router);
 apiRouter.use('/v27', v27Router);
 apiRouter.use('/v28', v28Router);
+apiRouter.use('/v30', v30Router);
+apiRouter.use('/v31', v31Router);
 
 // Prevent missing API routes from falling through to Vite SPA HTML
 apiRouter.use((_req: Request, res: Response) => {

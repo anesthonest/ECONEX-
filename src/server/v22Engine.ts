@@ -15,7 +15,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI } from '@google/genai';
+import { safeGenerateGeminiText } from './gemini.ts';
 import { db } from './db.ts';
 import { detectPromptInjection } from './gemini.ts';
 import { logIntelligenceAudit } from './v12Engine.ts';
@@ -1062,25 +1062,16 @@ export async function askV22EconomicAssistant(params: {
   let answer = '';
   let modelUsed = 'econex-v22-grounded-engine';
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    try {
-      const ai = new GoogleGenAI({ apiKey });
-      const res = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `User question: ${query}\n\nVerified internal ECONEX records:\n${JSON.stringify(groundedContext, null, 2)}`,
-        config: {
-          systemInstruction:
-            'You are the ECONEX V22 Universal Economic Assistant (VINEXSAH TECHNOLOGIES). Answer concisely using ONLY verified platform facts provided in the context. Never invent national GDP/macro statistics, revenue figures, or subscriber numbers. Remind the user that human confirmation is required before executing commercial or financial commitments.',
-        },
-      });
-      if (res.text) {
-        answer = res.text;
-        modelUsed = 'gemini-2.5-flash';
-      }
-    } catch {
-      // Fallback cleanly to deterministic grounded answer
-    }
+  const { text: geminiAnswer } = await safeGenerateGeminiText({
+    contents: `User question: ${query}\n\nVerified internal ECONEX records:\n${JSON.stringify(groundedContext, null, 2)}`,
+    systemInstruction:
+      'You are the ECONEX V22 Universal Economic Assistant (VINEXSAH TECHNOLOGIES). Answer concisely using ONLY verified platform facts provided in the context. Never invent national GDP/macro statistics, revenue figures, or subscriber numbers. Remind the user that human confirmation is required before executing commercial or financial commitments.',
+    timeoutMs: 5000,
+    label: 'ECONEX V22 Assistant',
+  });
+  if (geminiAnswer) {
+    answer = geminiAnswer;
+    modelUsed = 'gemini-4-hydrogen';
   }
 
   if (!answer) {

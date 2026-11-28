@@ -15,9 +15,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
 const EXPORT_DIR = path.join(ROOT, 'exports');
-const ARCHIVE_NAME = 'ECONEX-V29.0-SOURCE.zip';
+const ARCHIVE_NAME = 'ECONEX-V30.0-SOURCE.zip';
 const ARCHIVE_PATH = path.join(EXPORT_DIR, ARCHIVE_NAME);
-const MANIFEST_PATH = path.join(EXPORT_DIR, 'ECONEX-V29.0-EXPORT-MANIFEST.json');
+const MANIFEST_PATH = path.join(EXPORT_DIR, 'ECONEX-V30.0-EXPORT-MANIFEST.json');
 
 const EXCLUDED_TOP_OR_ANY_DIRS = new Set([
   'node_modules',
@@ -355,6 +355,38 @@ export function verifyZipArchive(archivePath = ARCHIVE_PATH) {
       'docs/releases/V29_READINESS_MATRIX.md',
       'docs/releases/V29_IMPLEMENTATION_SUMMARY.md',
       'docs/releases/V29_MASTER_RELEASE_REPORT.md',
+      'database/schema_v27.sql',
+      'src/server/postgres/schema_v27.sql',
+      'src/server/v30Seed.ts',
+      'src/server/v30Engine.ts',
+      'src/server/v30GitHubEngine.ts',
+      'src/server/v30Routes.ts',
+      'src/components/v30/V30FinancialNetworkHub.tsx',
+      'src/components/v30/V30CorridorsAgentsLiquidityView.tsx',
+      'src/components/v30/V30BusinessDisputesComplianceView.tsx',
+      'src/components/v30/V30UniversalWalletAndCardsView.tsx',
+      'src/components/v30/V30DeveloperGitHubIntegrationsView.tsx',
+      'src/components/modules/v30FinancialResilienceTests.ts',
+      'public/assets/econex/finance/enterprise-finance-hub.jpg',
+      'public/assets/econex/finance/corridor-border-trade.jpg',
+      'public/assets/econex/finance/mobile-money-agent.jpg',
+      'public/assets/econex/finance/digital-treasury.jpg',
+      'public/assets/econex/finance/merchant-qr-counter.jpg',
+      'public/assets/econex/finance/rural-agro-finance.jpg',
+      'ECONEX_FULL_BLUEPRINT.md',
+      'V30_ARCHITECTURE.md',
+      'V30_FINANCIAL_INTEROPERABILITY.md',
+      'V30_PROVIDER_ADAPTERS.md',
+      'V30_WALLET_ARCHITECTURE.md',
+      'V30_FINANCIAL_RESILIENCE.md',
+      'V30_REGULATORY_READINESS.md',
+      'V30_SECURITY_AND_FRAUD.md',
+      'V30_AI_GOVERNANCE.md',
+      'V30_GITHUB_WORKFLOW.md',
+      'V30_UI_UX_GUIDE.md',
+      'V30_TEST_REPORT.md',
+      'V30_RELEASE_REPORT.md',
+      'V30_SCHEMA_CHANGELOG.md',
     ];
 
     const missingRequired = requiredFiles.filter((rel) => !fs.existsSync(path.join(tmpExtract, rel)));
@@ -414,7 +446,7 @@ export function generateAndVerifyExport({ verifyOnly = false } = {}) {
   const verification = verifyZipArchive(ARCHIVE_PATH);
   const manifest = {
     product: 'ECONEX',
-    release: 'V29.0-UNIVERSAL-UI-UX-TRANSFORMATION',
+    release: 'V30.0-UNIVERSAL-FINANCIAL-RESILIENCE',
     attribution: 'Developed under VINEXSAH TECHNOLOGIES. All rights reserved.',
     secretScan,
     verification,

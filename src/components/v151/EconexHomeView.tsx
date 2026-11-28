@@ -23,6 +23,8 @@ import {
   Globe,
   MapPin,
   ShieldCheck,
+  ArrowLeftRight,
+  Landmark,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { useExperience, EAC_ACTIVE_COUNTRIES } from '../../context/ExperienceContext.tsx';
@@ -224,9 +226,25 @@ export const EconexHomeView: React.FC<Props> = ({
     {
       id: 'wallet',
       icon: Wallet,
-      label: 'Wallet & Payments',
-      desc: 'Balances, escrow & history',
-      tab: 'v23-wallet',
+      label: 'Send, Pay & Wallet',
+      desc: 'Smart multi-rail pay & escrow',
+      tab: 'v30-routing',
+      primary: false,
+    },
+    {
+      id: 'corridors',
+      icon: ArrowLeftRight,
+      label: 'Cross-Border & FX',
+      desc: '8 EAC & AfCFTA corridors',
+      tab: 'v30-corridors',
+      primary: false,
+    },
+    {
+      id: 'finnetwork',
+      icon: Landmark,
+      label: 'Financial Network',
+      desc: 'Agents, *284# USSD & rails',
+      tab: 'v30-financial-network',
       primary: false,
     },
   ];

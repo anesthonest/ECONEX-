@@ -16,8 +16,11 @@ data/.dev_kms_isolated.json
 data/backups/
 data/v25_vault/
 data/v28_vault/
+data/v30_vault/
+*.sqlite*
 
 # Generated exports & verification artifacts
 exports/
 .econex-reports/
 .tmp/
+.aistudio/

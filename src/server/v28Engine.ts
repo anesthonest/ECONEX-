@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI } from '@google/genai';
+import { safeGenerateGeminiText } from './gemini.ts';
 import { db } from './db.ts';
 import { detectPromptInjection, sanitizeExternalSourceText } from './gemini.ts';
 import { cleanV26Text, createInAppNotification, uidV26 } from './v26Engine.ts';
@@ -232,7 +232,7 @@ export function createExecutionWorkflow(
   };
   db.v28ExecutionWorkflows.set(wf.id, wf);
   emitV28DomainEvent('EXECUTION', 'EXECUTION.WORKFLOW_CREATED', { workflowId: wf.id, stage: wf.stage, status: wf.status }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return wf;
 }
 
@@ -333,7 +333,7 @@ export function transitionExecutionWorkflow(
   wf.updatedAt = now;
   db.v28ExecutionWorkflows.set(wf.id, wf);
   emitV28DomainEvent('EXECUTION', `EXECUTION.${payload.toStatus}`, { workflowId: wf.id, stage: wf.stage }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return wf;
 }
 
@@ -502,7 +502,7 @@ export function createContract(
   };
   db.v28Contracts.set(ctr.id, ctr);
   emitV28DomainEvent('CONTRACT', 'CONTRACT.CREATED', { contractId: ctr.id, contractNumber }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return ctr;
 }
 
@@ -559,7 +559,7 @@ export function transitionContract(
   ctr.updatedAt = now;
   db.v28Contracts.set(ctr.id, ctr);
   emitV28DomainEvent('CONTRACT', `CONTRACT.${payload.action}`, { contractId: ctr.id, status: ctr.status }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return ctr;
 }
 
@@ -590,7 +590,7 @@ export function createContractObligation(
     updatedAt: now,
   };
   db.v28ContractObligations.set(obl.id, obl);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return obl;
 }
 
@@ -631,7 +631,7 @@ export function createProcurementPlan(
     updatedAt: now,
   };
   db.v28ProcurementPlans.set(plan.id, plan);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return plan;
 }
 
@@ -663,7 +663,7 @@ export function createProcurementRequisition(
   };
   db.v28ProcurementRequisitions.set(reqItem.id, reqItem);
   emitV28DomainEvent('PROCUREMENT', 'PROCUREMENT.REQUISITION_SUBMITTED', { reqId: reqItem.id }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return reqItem;
 }
 
@@ -704,7 +704,7 @@ export function approveProcurementRequisition(
   reqItem.updatedAt = now;
   db.v28ProcurementRequisitions.set(reqId, reqItem);
   emitV28DomainEvent('PROCUREMENT', `PROCUREMENT.${reqItem.status}`, { reqId }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return reqItem;
 }
 
@@ -740,7 +740,7 @@ export function submitProcurementEvaluation(
     evaluatedAt: new Date().toISOString(),
   };
   db.v28ProcurementEvaluations.set(ev.id, ev);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return ev;
 }
 
@@ -829,7 +829,7 @@ export function createFulfilmentAndReserveStock(
   db.v28InventoryReservations.set(reservation.id, reservation);
 
   emitV28DomainEvent('FULFILMENT', 'FULFILMENT.INVENTORY_RESERVED', { planId: plan.id, inventoryId: inv.id, qty }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { plan, reservation, inventoryRemainingAvailable: inv.availableToPromiseQty };
 }
 
@@ -916,7 +916,7 @@ export function recordFulfilmentDispatchOrDelivery(
   plan.updatedAt = now;
   db.v28FulfilmentPlans.set(plan.id, plan);
   emitV28DomainEvent('FULFILMENT', `FULFILMENT.${payload.action}`, { planId: plan.id, status: plan.status }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { plan, evidence };
 }
 
@@ -977,7 +977,7 @@ export function createCrossBorderExecution(
   };
   db.v28CrossBorderExecutions.set(xb.id, xb);
   emitV28DomainEvent('CROSS_BORDER', 'CROSS_BORDER.INITIATED', { xbId: xb.id, corridor: `${origin.countryCode}-${dest.countryCode}` }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return xb;
 }
 
@@ -1159,7 +1159,7 @@ export function executeSandboxObligationTransfer(
   }
 
   emitV28DomainEvent('WALLET', 'WALLET.SANDBOX_TRANSFER_SETTLED', { txId: tx.id, amountMinor, currency: payload.currency }, ctx, idem);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { idempotentReplay: false, transaction: tx, ledgerPosting: posting };
 }
 
@@ -1234,7 +1234,7 @@ export function reverseSandboxTransfer(txId: string, reason: string, ctx: V28Act
   };
   db.v23LedgerPostings.set(revPosting.id, revPosting);
   emitV28DomainEvent('WALLET', 'WALLET.COMPENSATING_REVERSAL', { origTxId: orig.id, revPostingId: revPosting.id }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { reversedTx: orig, compensatingPosting: revPosting };
 }
 
@@ -1271,7 +1271,7 @@ export function transitionInteroperabilityConnector(
   conn.updatedAt = new Date().toISOString();
   db.v28InteroperabilityConnectors.set(conn.id, conn);
   emitV28DomainEvent('INTEGRATION', `CONNECTOR.STATE_${payload.state}`, { connectorId: conn.id }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return conn;
 }
 
@@ -1306,7 +1306,7 @@ export function replayDeadLetterEvent(dlqId: string, ctx: V28ActorCtx) {
     evt.nextRetryAt = now;
     db.v28DomainEvents.set(evt.id, evt);
   }
-  db.persistToDiskSync();
+  db.scheduleSave();
   return dlq;
 }
 
@@ -1364,7 +1364,7 @@ export function registerVaultDocument(
     updatedAt: now,
   };
   db.v28DocumentEvidenceRecords.set(doc.id, doc);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return doc;
 }
 
@@ -1393,7 +1393,7 @@ export function updateVaultDocumentGovernance(
   }
   doc.updatedAt = now;
   db.v28DocumentEvidenceRecords.set(doc.id, doc);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return doc;
 }
 
@@ -1460,31 +1460,16 @@ export async function runGuardedV28AiOrchestration(
   const contextSources = ['v28ExecutionWorkflows', 'v28Contracts', 'v28FulfilmentPlans', 'v28CountryProfiles'];
   let summary = `Advisory summary (${payload.taskType}) for ${ctx.organisationId}: ${intel.indicators[0].value} execution workflows and ${db.v28Contracts.size} contracts evaluated. Human confirmation is mandatory before state transitions.`;
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    try {
-      const ai = new GoogleGenAI({ apiKey, httpOptions: { headers: { 'User-Agent': 'aistudio-build' } } });
-      const res = await Promise.race([
-        ai.models.generateContent({
-          model: 'gemini-4-hydrogen',
-          contents: `Task=${payload.taskType}\nContext=${JSON.stringify(intel.indicators.slice(0, 4))}\nPrompt=${safePrompt}`,
-          config: {
-            systemInstruction:
-              'You are ECONEX V28 Advisory Orchestrator. Never claim to transfer money, sign legally binding contracts, or bypass SoD/human checkpoints.',
-          },
-        }),
-        new Promise<never>((_, rej) => setTimeout(() => rej(new Error('V28 Gemini timeout')), 4500)),
-      ]);
-      const text = String(res.text || '').trim();
-      if (text.length > 20) {
-        summary = text.slice(0, 650);
-        V28_AI_COUNTERS.liveModelCalls += 1;
-      } else {
-        V28_AI_COUNTERS.deterministicFallbacks += 1;
-      }
-    } catch {
-      V28_AI_COUNTERS.deterministicFallbacks += 1;
-    }
+  const { text } = await safeGenerateGeminiText({
+    contents: `Task=${payload.taskType}\nContext=${JSON.stringify(intel.indicators.slice(0, 4))}\nPrompt=${safePrompt}`,
+    systemInstruction:
+      'You are ECONEX V28 Advisory Orchestrator. Never claim to transfer money, sign legally binding contracts, or bypass SoD/human checkpoints.',
+    timeoutMs: 4500,
+    label: 'ECONEX V28 Orchestrator',
+  });
+  if (text && text.length > 20) {
+    summary = text.slice(0, 650);
+    V28_AI_COUNTERS.liveModelCalls += 1;
   } else {
     V28_AI_COUNTERS.deterministicFallbacks += 1;
   }
@@ -1507,7 +1492,7 @@ export async function runGuardedV28AiOrchestration(
     createdAt: new Date().toISOString(),
   };
   db.v28AiOrchestrationRuns.set(run.id, run);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return run;
 }
 
@@ -1544,7 +1529,7 @@ export function resolveOperationalException(
   ex.resolutionNote = sanitize(payload.resolutionNote) || ex.resolutionNote;
   ex.updatedAt = new Date().toISOString();
   db.v28OperationalExceptions.set(ex.id, ex);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return ex;
 }
 
@@ -1567,7 +1552,7 @@ export function createDualApprovalRequest(
     updatedAt: now,
   };
   db.v28DualApprovalRequests.set(reqItem.id, reqItem);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return reqItem;
 }
 
@@ -1603,7 +1588,7 @@ export function decideDualApprovalRequest(
 
   reqItem.updatedAt = now;
   db.v28DualApprovalRequests.set(reqItem.id, reqItem);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return reqItem;
 }
 
@@ -1639,7 +1624,7 @@ export function syncFieldOfflineRecordWithConflictDetection(
       existing.updatedAt = now;
       db.v28FieldOfflineRecords.set(existing.id, existing);
       emitV28DomainEvent('FIELD', 'FIELD.SYNC_CONFLICT_DETECTED', { recordId: existing.id, clientVersion: payload.baseVersion, serverVersion: existing.version }, ctx);
-      db.persistToDiskSync();
+      db.scheduleSave();
       return existing;
     }
 
@@ -1649,7 +1634,7 @@ export function syncFieldOfflineRecordWithConflictDetection(
     existing.syncState = 'REQUIRES_REVIEW';
     existing.updatedAt = now;
     db.v28FieldOfflineRecords.set(existing.id, existing);
-    db.persistToDiskSync();
+    db.scheduleSave();
     return existing;
   }
 
@@ -1672,7 +1657,7 @@ export function syncFieldOfflineRecordWithConflictDetection(
   };
   db.v28FieldOfflineRecords.set(created.id, created);
   emitV28DomainEvent('FIELD', 'FIELD.OFFLINE_RECORD_SYNCED', { recordId: created.id }, ctx);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return created;
 }
 
@@ -1703,7 +1688,7 @@ export function resolveFieldOfflineConflict(
   rec.syncState = 'SYNCED';
   rec.updatedAt = new Date().toISOString();
   db.v28FieldOfflineRecords.set(rec.id, rec);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rec;
 }
 

@@ -15,6 +15,8 @@ import {
   AiAgentResponse,
 } from '../types/index.ts';
 
+import crypto from 'crypto';
+
 const apiKey = process.env.GEMINI_API_KEY;
 
 let ai: GoogleGenAI | null = null;
@@ -27,6 +29,304 @@ if (apiKey) {
       },
     },
   });
+}
+
+export type GeminiFaultClass =
+  | 'LIVE_SUCCESS'
+  | 'CACHE_HIT'
+  | 'DEDUP_HIT'
+  | 'COOLDOWN_FALLBACK'
+  | 'QUOTA_429'
+  | 'AUTH_ERROR'
+  | 'UPSTREAM_5XX'
+  | 'TIMEOUT'
+  | 'UNCONFIGURED';
+
+export interface GeminiTelemetrySnapshot {
+  model: string;
+  configured: boolean;
+  cooldownActive: boolean;
+  cooldownUntilIso: string | null;
+  lastUnavailableReason: string | null;
+  lastErrorClass: GeminiFaultClass | null;
+  counters: {
+    totalCalls: number;
+    liveSuccesses: number;
+    cacheHits: number;
+    dedupHits: number;
+    cooldownFallbacks: number;
+    quota429Count: number;
+    authErrorCount: number;
+    upstream5xxCount: number;
+    timeoutCount: number;
+    retryAttempts: number;
+  };
+  cacheSize: number;
+  inflightCount: number;
+}
+
+const GEMINI_MODEL = 'gemini-4-hydrogen';
+const CACHE_MAX_ENTRIES = 120;
+const CACHE_TTL_MS = 300_000;
+
+let geminiCooldownUntilMs = 0;
+let geminiCooldownLoggedAt = 0;
+let lastGeminiUnavailableReason: string | null = null;
+let lastGeminiErrorClass: GeminiFaultClass | null = null;
+
+const geminiCounters = {
+  totalCalls: 0,
+  liveSuccesses: 0,
+  cacheHits: 0,
+  dedupHits: 0,
+  cooldownFallbacks: 0,
+  quota429Count: 0,
+  authErrorCount: 0,
+  upstream5xxCount: 0,
+  timeoutCount: 0,
+  retryAttempts: 0,
+};
+
+const responseCache = new Map<string, { text: string; expiresAt: number }>();
+const inflightRequests = new Map<string, Promise<{ text: string | null; fallbackReason: string | null; outcome: GeminiFaultClass; retryCount: number }>>();
+
+type SimulatedFaultType = null | 'HTTP_429' | 'HTTP_500' | 'HTTP_503' | 'TIMEOUT' | 'INVALID_CREDENTIALS' | 'RECOVER_OK';
+let simulatedFaultQueue: SimulatedFaultType[] = [];
+
+export function setSimulatedGeminiFaultQueueForTests(faults: SimulatedFaultType[]) {
+  simulatedFaultQueue = [...faults];
+}
+
+export function resetGeminiResilienceStateForTests() {
+  geminiCooldownUntilMs = 0;
+  geminiCooldownLoggedAt = 0;
+  lastGeminiUnavailableReason = null;
+  lastGeminiErrorClass = null;
+  simulatedFaultQueue = [];
+  responseCache.clear();
+  inflightRequests.clear();
+  Object.keys(geminiCounters).forEach((k) => {
+    (geminiCounters as any)[k] = 0;
+  });
+}
+
+export function forceGeminiCooldownExpiryForTests() {
+  geminiCooldownUntilMs = Date.now() - 1;
+}
+
+export function getGeminiTelemetrySnapshot(): GeminiTelemetrySnapshot {
+  const now = Date.now();
+  return {
+    model: GEMINI_MODEL,
+    configured: Boolean(ai),
+    cooldownActive: now < geminiCooldownUntilMs,
+    cooldownUntilIso: now < geminiCooldownUntilMs ? new Date(geminiCooldownUntilMs).toISOString() : null,
+    lastUnavailableReason: lastGeminiUnavailableReason,
+    lastErrorClass: lastGeminiErrorClass,
+    counters: { ...geminiCounters },
+    cacheSize: responseCache.size,
+    inflightCount: inflightRequests.size,
+  };
+}
+
+function parseRetryDelayMs(errText: string): number {
+  const secMatch = errText.match(/"retryDelay"\s*:\s*"(\d+)s"/i);
+  if (secMatch) {
+    const secs = Number(secMatch[1]);
+    if (Number.isFinite(secs) && secs > 0) {
+      return Math.min(Math.max(secs * 1000, 60_000), 3_600_000);
+    }
+  }
+  return 900_000;
+}
+
+function makeRequestHash(contents: unknown, systemInstruction?: string): string {
+  const raw = JSON.stringify({ model: GEMINI_MODEL, sys: systemInstruction || '', contents });
+  return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 24);
+}
+
+function putBoundedCache(key: string, text: string) {
+  if (responseCache.size >= CACHE_MAX_ENTRIES) {
+    const oldestKey = responseCache.keys().next().value;
+    if (oldestKey) responseCache.delete(oldestKey);
+  }
+  responseCache.set(key, { text, expiresAt: Date.now() + CACHE_TTL_MS });
+}
+
+function classifyError(errText: string): { kind: 'QUOTA' | 'AUTH' | 'UPSTREAM_5XX' | 'TIMEOUT' | 'OTHER'; retryable: boolean } {
+  const upper = errText.toUpperCase();
+  if (upper.includes('429') || upper.includes('RESOURCE_EXHAUSTED') || upper.includes('QUOTA') || upper.includes('RATE-LIMIT')) {
+    return { kind: 'QUOTA', retryable: false };
+  }
+  if (
+    upper.includes('401') ||
+    upper.includes('403') ||
+    upper.includes('400') ||
+    upper.includes('404') ||
+    upper.includes('API_KEY_INVALID') ||
+    upper.includes('PERMISSION_DENIED') ||
+    upper.includes('INVALID_CREDENTIALS') ||
+    upper.includes('NOT_FOUND')
+  ) {
+    return { kind: 'AUTH', retryable: false };
+  }
+  if (upper.includes('TIMEOUT') || upper.includes('ETIMEDOUT') || upper.includes('ECONNABORTED')) {
+    return { kind: 'TIMEOUT', retryable: true };
+  }
+  if (upper.includes('500') || upper.includes('502') || upper.includes('503') || upper.includes('504') || upper.includes('UNAVAILABLE')) {
+    return { kind: 'UPSTREAM_5XX', retryable: true };
+  }
+  return { kind: 'OTHER', retryable: true };
+}
+
+export async function safeGenerateGeminiText(opts: {
+  contents: any;
+  systemInstruction?: string;
+  timeoutMs?: number;
+  label?: string;
+  allowCache?: boolean;
+  bypassDeduplication?: boolean;
+}): Promise<{ text: string | null; fallbackReason: string | null; outcome?: GeminiFaultClass; retryCount?: number }> {
+  geminiCounters.totalCalls += 1;
+  const simFault = simulatedFaultQueue.length > 0 ? simulatedFaultQueue.shift()! : null;
+
+  if (!ai && !simFault) {
+    lastGeminiErrorClass = 'UNCONFIGURED';
+    return { text: null, fallbackReason: 'GEMINI_API_KEY_NOT_CONFIGURED', outcome: 'UNCONFIGURED', retryCount: 0 };
+  }
+
+  const reqKey = makeRequestHash(opts.contents, opts.systemInstruction);
+  const canCache = opts.allowCache !== false && typeof opts.contents === 'string';
+
+  if (canCache && !simFault) {
+    const cached = responseCache.get(reqKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      geminiCounters.cacheHits += 1;
+      return { text: cached.text, fallbackReason: null, outcome: 'CACHE_HIT', retryCount: 0 };
+    }
+    if (cached) responseCache.delete(reqKey);
+  }
+
+  const now = Date.now();
+  if (now < geminiCooldownUntilMs && simFault !== 'RECOVER_OK') {
+    geminiCounters.cooldownFallbacks += 1;
+    return {
+      text: null,
+      fallbackReason: lastGeminiUnavailableReason || 'GEMINI_QUOTA_COOLDOWN_ACTIVE',
+      outcome: 'COOLDOWN_FALLBACK',
+      retryCount: 0,
+    };
+  }
+
+  if (!opts.bypassDeduplication && !simFault && inflightRequests.has(reqKey)) {
+    geminiCounters.dedupHits += 1;
+    const shared = await inflightRequests.get(reqKey)!;
+    return { ...shared, outcome: shared.text ? 'DEDUP_HIT' : shared.outcome };
+  }
+
+  const executeAttempt = async (injectedFault: SimulatedFaultType) => {
+    if (injectedFault === 'HTTP_429') throw new Error('429 RESOURCE_EXHAUSTED {"retryDelay":"120s"}');
+    if (injectedFault === 'HTTP_500') throw new Error('500 INTERNAL_SERVER_ERROR');
+    if (injectedFault === 'HTTP_503') throw new Error('503 SERVICE_UNAVAILABLE');
+    if (injectedFault === 'TIMEOUT') throw new Error(`${opts.label || 'Gemini'} TIMEOUT after ${opts.timeoutMs ?? 6000}ms`);
+    if (injectedFault === 'INVALID_CREDENTIALS') throw new Error('403 API_KEY_INVALID');
+    if (injectedFault === 'RECOVER_OK') return { text: 'Live Gemini operational intelligence synthesis recovered and active.' };
+
+    const generatePromise = ai!.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: opts.contents,
+      config: opts.systemInstruction ? { systemInstruction: opts.systemInstruction } : undefined,
+    });
+    const timeoutMs = opts.timeoutMs ?? 6000;
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`${opts.label || 'Gemini'} TIMEOUT after ${timeoutMs}ms`)), timeoutMs)
+    );
+    return Promise.race([generatePromise, timeoutPromise]);
+  };
+
+  const runner = (async (): Promise<{ text: string | null; fallbackReason: string | null; outcome: GeminiFaultClass; retryCount: number }> => {
+    const maxRetries = 2;
+    let attempt = 0;
+    let currentFault: SimulatedFaultType = simFault;
+
+    while (attempt <= maxRetries) {
+      try {
+        const response = await executeAttempt(currentFault);
+        const text = String(response?.text || '').trim() || null;
+        if (text) {
+          geminiCounters.liveSuccesses += 1;
+          lastGeminiErrorClass = 'LIVE_SUCCESS';
+          lastGeminiUnavailableReason = null;
+          if (canCache) putBoundedCache(reqKey, text);
+          return { text, fallbackReason: null, outcome: 'LIVE_SUCCESS', retryCount: attempt };
+        }
+        return { text: null, fallbackReason: 'EMPTY_MODEL_RESPONSE', outcome: 'UPSTREAM_5XX', retryCount: attempt };
+      } catch (err: any) {
+        const msg = String(err?.message || err || 'Unknown error');
+        const classified = classifyError(msg);
+
+        if (classified.kind === 'QUOTA') {
+          geminiCounters.quota429Count += 1;
+          lastGeminiErrorClass = 'QUOTA_429';
+          const delayMs = parseRetryDelayMs(msg);
+          geminiCooldownUntilMs = Date.now() + delayMs;
+          lastGeminiUnavailableReason =
+            'Gemini live quota temporarily reached; grounded deterministic local advisory active.';
+          if (Date.now() - geminiCooldownLoggedAt > 60_000) {
+            geminiCooldownLoggedAt = Date.now();
+            console.info(`[ECONEX AI] Gemini 429 quota cooldown active (${Math.round(delayMs / 1000)}s); serving deterministic local advisory.`);
+          }
+          return { text: null, fallbackReason: lastGeminiUnavailableReason, outcome: 'QUOTA_429', retryCount: attempt };
+        }
+
+        if (classified.kind === 'AUTH') {
+          geminiCounters.authErrorCount += 1;
+          lastGeminiErrorClass = 'AUTH_ERROR';
+          geminiCooldownUntilMs = Date.now() + 600_000;
+          lastGeminiUnavailableReason =
+            'Gemini API key or model configuration unavailable; verify server secrets. Grounded local advisory active.';
+          if (Date.now() - geminiCooldownLoggedAt > 60_000) {
+            geminiCooldownLoggedAt = Date.now();
+            console.info('[ECONEX AI] Gemini authentication/configuration unavailable; serving local advisory.');
+          }
+          return { text: null, fallbackReason: lastGeminiUnavailableReason, outcome: 'AUTH_ERROR', retryCount: attempt };
+        }
+
+        if (classified.kind === 'TIMEOUT') geminiCounters.timeoutCount += 1;
+        else geminiCounters.upstream5xxCount += 1;
+
+        if (!classified.retryable || attempt >= maxRetries) {
+          lastGeminiErrorClass = classified.kind === 'TIMEOUT' ? 'TIMEOUT' : 'UPSTREAM_5XX';
+          geminiCooldownUntilMs = Date.now() + 30_000;
+          lastGeminiUnavailableReason =
+            classified.kind === 'TIMEOUT'
+              ? 'Gemini request timed out; grounded deterministic local advisory active.'
+              : 'Gemini upstream service temporarily unreachable; grounded local advisory active.';
+          return { text: null, fallbackReason: lastGeminiUnavailableReason, outcome: lastGeminiErrorClass, retryCount: attempt };
+        }
+
+        attempt += 1;
+        geminiCounters.retryAttempts += 1;
+        const jitterMs = Math.floor(Math.random() * 45);
+        const backoffMs = simFault ? 10 : Math.min(200 * Math.pow(2, attempt - 1) + jitterMs, 900);
+        await new Promise((r) => setTimeout(r, backoffMs));
+        if (simulatedFaultQueue.length > 0 && currentFault !== null) {
+          currentFault = simulatedFaultQueue.shift()!;
+        }
+      }
+    }
+
+    return { text: null, fallbackReason: 'GEMINI_FALLBACK_EXHAUSTED', outcome: 'UPSTREAM_5XX', retryCount: attempt };
+  })();
+
+  if (!opts.bypassDeduplication && !simFault) {
+    inflightRequests.set(reqKey, runner);
+  }
+  try {
+    return await runner;
+  } finally {
+    inflightRequests.delete(reqKey);
+  }
 }
 
 /**
@@ -126,38 +426,37 @@ Provide agronomic diagnosis, preventive measures, integrated pest/soil managemen
         };
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
+      const { text: responseText } = await safeGenerateGeminiText({
         contents,
-        config: {
-          systemInstruction,
-        },
+        systemInstruction,
+        timeoutMs: 6000,
+        label: 'AROS Crop Advisory',
       });
+      if (responseText) {
+        const lines = responseText.split('\n');
+        const actionItems = lines
+          .filter((l) => /^\d+\.|\*|-/.test(l.trim()))
+          .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
+          .slice(0, 5);
 
-      const responseText = response.text || '';
-      const lines = responseText.split('\n');
-      const actionItems = lines
-        .filter((l) => /^\d+\.|\*|-/.test(l.trim()))
-        .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
-        .slice(0, 5);
-
-      return {
-        answer: responseText,
-        confidence: 'HIGH',
-        recommendedActions:
-          actionItems.length > 0
-            ? actionItems
-            : [
-                'Conduct close morning scouting across your plots.',
-                'Maintain soil organic matter and mulch cover.',
-                'Report persistent unusual pest occurrences to the district agricultural officer.',
-              ],
-        disclaimer,
-        source: 'GEMINI_SERVER_API',
-        requiresExtensionOfficerAudit: false,
-      };
-    } catch (err: any) {
-      console.warn('[AROS AI] Gemini API call warning, falling back to calibrated regional agronomy base:', err?.message || err);
+        return {
+          answer: responseText,
+          confidence: 'HIGH',
+          recommendedActions:
+            actionItems.length > 0
+              ? actionItems
+              : [
+                  'Conduct close morning scouting across your plots.',
+                  'Maintain soil organic matter and mulch cover.',
+                  'Report persistent unusual pest occurrences to the district agricultural officer.',
+                ],
+          disclaimer,
+          source: 'GEMINI_SERVER_API',
+          requiresExtensionOfficerAudit: false,
+        };
+      }
+    } catch {
+      // Handled cleanly by safeGenerateGeminiText fallback
     }
   }
 
@@ -252,21 +551,13 @@ export async function executeAiAgent(query: AiAgentQuery): Promise<AiAgentRespon
     'DISCLAIMER: AI Economic Intelligence provides analytical decision-support based on verified application data and economic models. It cannot enter binding contracts, approve loans, or authorize financial transactions independently.';
 
   if (ai) {
-    try {
-      const generatePromise = ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: `Context Data: ${JSON.stringify(query.contextData || {})}\n\nUser Inquiry: ${query.prompt}`,
-        config: {
-          systemInstruction: agentInstructions[query.agentType],
-        },
-      });
-
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini API timeout')), 6000)
-      );
-
-      const response = await Promise.race([generatePromise, timeoutPromise]);
-      const responseText = response.text || '';
+    const { text: responseText } = await safeGenerateGeminiText({
+      contents: `Context Data: ${JSON.stringify(query.contextData || {})}\n\nUser Inquiry: ${query.prompt}`,
+      systemInstruction: agentInstructions[query.agentType],
+      timeoutMs: 6000,
+      label: `AROS Agent ${query.agentType}`,
+    });
+    if (responseText) {
       const lines = responseText.split('\n');
       const actionItems = lines
         .filter((l) => /^\d+\.|\*|-/.test(l.trim()))
@@ -289,8 +580,6 @@ export async function executeAiAgent(query: AiAgentQuery): Promise<AiAgentRespon
         disclaimer,
         timestamp: new Date().toISOString(),
       };
-    } catch (err: any) {
-      console.warn(`[AROS AI Agent: ${query.agentType}] Gemini API warning, using calibrated economic rule-base:`, err?.message || err);
     }
   }
 
@@ -597,19 +886,13 @@ Strict Grounding & Honesty Contract:
         opportunities: ctx.authorizedOpportunities.slice(0, 5),
       };
 
-      const generatePromise = ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
+      const { text } = await safeGenerateGeminiText({
         contents: `Authorized Context JSON:\n${JSON.stringify(payload)}\n\nQuestion: ${ctx.question}`,
-        config: { systemInstruction },
+        systemInstruction,
+        timeoutMs: 6000,
+        label: 'AROS V12 Assistant',
       });
-
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini V12 assistant timeout')), 6000)
-      );
-
-      const response = await Promise.race([generatePromise, timeoutPromise]);
-      const text = (response.text || '').trim();
-      if (text.length > 20) {
+      if (text && text.length > 20) {
         return {
           answer: text,
           citedSourceIds: Array.from(citedIds),
@@ -627,8 +910,8 @@ Strict Grounding & Honesty Contract:
           usedFallbackEngine: false,
         };
       }
-    } catch (err: any) {
-      console.warn('[AROS V12 Assistant] Gemini unavailable/timed out, using grounded deterministic synthesis:', err?.message || err);
+    } catch {
+      // Handled cleanly by safeGenerateGeminiText fallback
     }
   }
 
@@ -784,44 +1067,34 @@ export async function executeV20OperationalAssist(
   }
 
   if (ai) {
-    try {
-      const generatePromise = ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: `Task: ${req.taskType}\nContext: ${JSON.stringify(req.contextData || {})}\nPrompt: ${req.prompt}`,
-        config: {
-          systemInstruction:
-            'You are ECONEX V20 Commercial & Operations Drafting Assistant. Produce concise, factual drafts, comparisons, or document checklists grounded strictly in the provided context. Never claim to execute payments, sign contracts, or approve official compliance.',
+    const { text: txt } = await safeGenerateGeminiText({
+      contents: `Task: ${req.taskType}\nContext: ${JSON.stringify(req.contextData || {})}\nPrompt: ${req.prompt}`,
+      systemInstruction:
+        'You are ECONEX V20 Commercial & Operations Drafting Assistant. Produce concise, factual drafts, comparisons, or document checklists grounded strictly in the provided context. Never claim to execute payments, sign contracts, or approve official compliance.',
+      timeoutMs: 6000,
+      label: 'ECONEX V20 Assist',
+    });
+    if (txt && txt.length > 15) {
+      const items = txt
+        .split('\n')
+        .filter((l) => /^(\d+\.|\*|-)/.test(l.trim()))
+        .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
+        .slice(0, 5);
+      return {
+        statusCode: 200,
+        result: {
+          taskType: req.taskType,
+          draftText: txt,
+          checklistItems: items.length > 0 ? items : ['Review draft accuracy', 'Confirm quantities and unit pricing before saving'],
+          requiresHumanConfirmation: true,
+          canExecuteAutonomousAction: false,
+          promptInjectionBlocked: false,
+          modelDependency: 'gemini-4-hydrogen',
+          usedFallbackEngine: false,
+          disclaimer,
+          generatedAt: new Date().toISOString(),
         },
-      });
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini V20 assist timeout')), 6000)
-      );
-      const response = await Promise.race([generatePromise, timeoutPromise]);
-      const txt = (response.text || '').trim();
-      if (txt.length > 15) {
-        const items = txt
-          .split('\n')
-          .filter((l) => /^(\d+\.|\*|-)/.test(l.trim()))
-          .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
-          .slice(0, 5);
-        return {
-          statusCode: 200,
-          result: {
-            taskType: req.taskType,
-            draftText: txt,
-            checklistItems: items.length > 0 ? items : ['Review draft accuracy', 'Confirm quantities and unit pricing before saving'],
-            requiresHumanConfirmation: true,
-            canExecuteAutonomousAction: false,
-            promptInjectionBlocked: false,
-            modelDependency: 'gemini-4-hydrogen',
-            usedFallbackEngine: false,
-            disclaimer,
-            generatedAt: new Date().toISOString(),
-          },
-        };
-      }
-    } catch (err: any) {
-      console.warn('[ECONEX V20 AI] Gemini unavailable/timeout, using deterministic drafting fallback:', err?.message || err);
+      };
     }
   }
 
@@ -1017,54 +1290,44 @@ export async function runV24AiCommerceAssist(
   ].filter(Boolean);
 
   if (ai) {
-    try {
-      const generatePromise = ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: `Task: ${req.taskType}\nLocale: ${req.targetLocale || 'en'}\nVerified System Context: ${JSON.stringify(verifiedFacts)}\nUser Prompt: ${req.prompt}`,
-        config: {
-          systemInstruction:
-            'You are ECONEX V24 Commercial Operations Assistant. Provide concise, practical analysis clearly distinguishing verified context facts from suggestions and uncertainties. Never claim to transfer funds, sign contracts, or execute state changes.',
+    const { text: txt } = await safeGenerateGeminiText({
+      contents: `Task: ${req.taskType}\nLocale: ${req.targetLocale || 'en'}\nVerified System Context: ${JSON.stringify(verifiedFacts)}\nUser Prompt: ${req.prompt}`,
+      systemInstruction:
+        'You are ECONEX V24 Commercial Operations Assistant. Provide concise, practical analysis clearly distinguishing verified context facts from suggestions and uncertainties. Never claim to transfer funds, sign contracts, or execute state changes.',
+      timeoutMs: 6000,
+      label: 'ECONEX V24 Assist',
+    });
+    if (txt && txt.length > 15) {
+      const lines = txt
+        .split('\n')
+        .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
+        .filter(Boolean);
+      return {
+        statusCode: 200,
+        result: {
+          taskType: req.taskType,
+          summary: lines[0] || txt.slice(0, 220),
+          verifiedSystemData: verifiedFacts,
+          userProvidedInfo: userProvided,
+          modelInference: lines.slice(0, 4),
+          uncertainties: [
+            'Live market prices, border transit queues, and external tax authorities are not queried in real time.',
+            'Counterparty operational capacity remains subject to physical inspection.',
+          ],
+          recommendedChecklist: [
+            'Verify counterparty verification tier and past delivery evidence',
+            'Confirm quantities, minor-unit pricing, and human sign-off before execution',
+          ],
+          requiresHumanConfirmation: true,
+          canExecuteAutonomousAction: false,
+          autonomousExecutionAllowed: false,
+          promptInjectionBlocked: false,
+          modelDependency: 'gemini-4-hydrogen',
+          usedFallbackEngine: false,
+          disclaimer,
+          generatedAt: new Date().toISOString(),
         },
-      });
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini V24 assist timeout')), 6000)
-      );
-      const response = await Promise.race([generatePromise, timeoutPromise]);
-      const txt = (response.text || '').trim();
-      if (txt.length > 15) {
-        const lines = txt
-          .split('\n')
-          .map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim())
-          .filter(Boolean);
-        return {
-          statusCode: 200,
-          result: {
-            taskType: req.taskType,
-            summary: lines[0] || txt.slice(0, 220),
-            verifiedSystemData: verifiedFacts,
-            userProvidedInfo: userProvided,
-            modelInference: lines.slice(0, 4),
-            uncertainties: [
-              'Live market prices, border transit queues, and external tax authorities are not queried in real time.',
-              'Counterparty operational capacity remains subject to physical inspection.',
-            ],
-            recommendedChecklist: [
-              'Verify counterparty verification tier and past delivery evidence',
-              'Confirm quantities, minor-unit pricing, and human sign-off before execution',
-            ],
-            requiresHumanConfirmation: true,
-            canExecuteAutonomousAction: false,
-            autonomousExecutionAllowed: false,
-            promptInjectionBlocked: false,
-            modelDependency: 'gemini-4-hydrogen',
-            usedFallbackEngine: false,
-            disclaimer,
-            generatedAt: new Date().toISOString(),
-          },
-        };
-      }
-    } catch (err: any) {
-      console.warn('[ECONEX V24 AI] Gemini unavailable/timeout, using deterministic commerce fallback:', err?.message || err);
+      };
     }
   }
 
@@ -1241,48 +1504,38 @@ export async function runV25AiPlatformAssist(req: V25AiAssistRequest) {
   v25AiTelemetryState.estimatedInputTokens += estInTokens;
 
   if (ai) {
-    try {
-      const genPromise = ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: `Task: ${req.taskType}\nVerified Facts: ${JSON.stringify(verifiedFacts)}\nRequest: ${promptText}`,
-        config: {
-          systemInstruction:
-            'You are ECONEX V25 Platform Operations Advisor. Never claim to run migrations autonomously, transfer funds, approve KYC, or sign contracts. Cite verified facts separately from recommendations.',
-        },
-      });
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini V25 assist timeout')), 6000)
+    const { text: txt } = await safeGenerateGeminiText({
+      contents: `Task: ${req.taskType}\nVerified Facts: ${JSON.stringify(verifiedFacts)}\nRequest: ${promptText}`,
+      systemInstruction:
+        'You are ECONEX V25 Platform Operations Advisor. Never claim to run migrations autonomously, transfer funds, approve KYC, or sign contracts. Cite verified facts separately from recommendations.',
+      timeoutMs: 6000,
+      label: 'ECONEX V25 Assist',
+    });
+    if (txt && txt.length > 10) {
+      v25AiTelemetryState.liveModelCalls += 1;
+      const estOut = Math.ceil(txt.length / 4);
+      v25AiTelemetryState.estimatedOutputTokens += estOut;
+      v25AiTelemetryState.estimatedCostUsd = Number(
+        ((v25AiTelemetryState.estimatedInputTokens * 0.000001 + v25AiTelemetryState.estimatedOutputTokens * 0.000004)).toFixed(6)
       );
-      const response = await Promise.race([genPromise, timeoutPromise]);
-      const txt = (response.text || '').trim();
-      if (txt.length > 10) {
-        v25AiTelemetryState.liveModelCalls += 1;
-        const estOut = Math.ceil(txt.length / 4);
-        v25AiTelemetryState.estimatedOutputTokens += estOut;
-        v25AiTelemetryState.estimatedCostUsd = Number(
-          ((v25AiTelemetryState.estimatedInputTokens * 0.000001 + v25AiTelemetryState.estimatedOutputTokens * 0.000004)).toFixed(6)
-        );
-        const lines = txt.split('\n').map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim()).filter(Boolean);
-        return {
-          statusCode: 200,
-          result: {
-            taskType: req.taskType,
-            summary: lines[0] || txt.slice(0, 220),
-            promptInjectionBlocked: false,
-            autonomousExecutionBlocked: false,
-            requiresHumanConfirmation: true,
-            canExecuteAutonomousAction: false,
-            verifiedSystemData: verifiedFacts,
-            recommendations: lines.slice(0, 5),
-            modelDependency: 'gemini-4-hydrogen',
-            usedFallbackEngine: false,
-            telemetry: getV25AiTelemetryStats(),
-            generatedAt: new Date().toISOString(),
-          },
-        };
-      }
-    } catch (err: any) {
-      console.warn('[ECONEX V25 AI] Gemini unavailable, using calibrated advisory fallback:', err?.message || err);
+      const lines = txt.split('\n').map((l) => l.replace(/^(\d+\.|\*|-)\s*/, '').trim()).filter(Boolean);
+      return {
+        statusCode: 200,
+        result: {
+          taskType: req.taskType,
+          summary: lines[0] || txt.slice(0, 220),
+          promptInjectionBlocked: false,
+          autonomousExecutionBlocked: false,
+          requiresHumanConfirmation: true,
+          canExecuteAutonomousAction: false,
+          verifiedSystemData: verifiedFacts,
+          recommendations: lines.slice(0, 5),
+          modelDependency: 'gemini-4-hydrogen',
+          usedFallbackEngine: false,
+          telemetry: getV25AiTelemetryStats(),
+          generatedAt: new Date().toISOString(),
+        },
+      };
     }
   }
 

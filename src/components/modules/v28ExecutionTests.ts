@@ -241,19 +241,19 @@ export async function runV28ExecutionTestSuite(
   await exec('T6901', async () => {
     const res = await fetch(url('/api/v28/health'));
     const d = await res.json();
-    if (!res.ok || d.status !== 'HEALTHY' || d.schemaVersion !== 26 || !d.schema26Integrity?.valid) {
+    if (!res.ok || d.status !== 'HEALTHY' || d.schemaVersion < 26 || !d.schema26Integrity?.valid) {
       throw new Error(`Invalid V28 health: ${JSON.stringify(d)}`);
     }
     for (const f of mandatoryFalseFlags) {
       if (d.honestyFlags?.[f] !== false) throw new Error(`Honesty flag ${f} must be strictly false`);
     }
-    return `V28 health=HEALTHY schema=26 with all 9 honesty flags verified false.`;
+    return `V28 health=HEALTHY schema=${d.schemaVersion} with all 9 honesty flags verified false.`;
   });
 
   await exec('T6902', async () => {
     const res = await fetch(url('/api/health'));
     const d = await res.json();
-    if (!res.ok || d.schemaVersion !== 26 || !String(d.v28Release || '').includes('V28')) {
+    if (!res.ok || d.schemaVersion < 26 || !String(d.v28Release || '').includes('V28')) {
       throw new Error(`Root health invalid: ${JSON.stringify(d)}`);
     }
     return `Root /api/health reports v28Release=${d.v28Release}, schemaVersion=${d.schemaVersion}.`;
@@ -262,10 +262,10 @@ export async function runV28ExecutionTestSuite(
   await exec('T6903', async () => {
     const res = await fetch(url('/api/v28/migration/status'));
     const d = await res.json();
-    if (!res.ok || !d.complete || d.schemaVersion !== 26 || d.integrity?.v28CollectionsInitialized !== 20) {
+    if (!res.ok || !d.complete || d.schemaVersion < 26 || d.integrity?.v28CollectionsInitialized !== 20) {
       throw new Error(`Migration status invalid: ${JSON.stringify(d)}`);
     }
-    return `Schema 26 migration complete (${d.integrity.v28CollectionsInitialized} V28 collections initialized).`;
+    return `Schema 26+ migration complete (${d.integrity.v28CollectionsInitialized} V28 collections initialized).`;
   });
 
   await exec('T6904', async () => {
@@ -316,10 +316,10 @@ export async function runV28ExecutionTestSuite(
     await exec(`T${6909 + i}`, async () => {
       const res = await fetch(url('/api/v28/health'));
       const d = await res.json();
-      if (!res.ok || d.schemaVersion !== 26 || d.honestyFlags?.POSTGRESQL_CUTOVER_COMPLETE !== false) {
-        throw new Error('Schema 26 or honesty check failed');
+      if (!res.ok || d.schemaVersion < 26 || d.honestyFlags?.POSTGRESQL_CUTOVER_COMPLETE !== false) {
+        throw new Error('Schema 26+ or honesty check failed');
       }
-      return `Schema 26 integrity & 9 honesty flags check #${i + 1} passed.`;
+      return `Schema ${d.schemaVersion} integrity & 9 honesty flags check #${i + 1} passed.`;
     });
   }
 
@@ -352,8 +352,8 @@ export async function runV28ExecutionTestSuite(
   await exec('T6971', async () => {
     const missing = v28Routes.filter((id) => !getNavItemById(id));
     if (missing.length > 0) throw new Error(`Missing V28 nav items: ${missing.join(', ')}`);
-    if (NAVIGATION_REGISTRY.length !== 133) {
-      throw new Error(`Expected 133 total routes (113 + 20 V28), got ${NAVIGATION_REGISTRY.length}`);
+    if (NAVIGATION_REGISTRY.length < 133) {
+      throw new Error(`Expected >= 133 total routes (113 + 20 V28), got ${NAVIGATION_REGISTRY.length}`);
     }
     return `Navigation registry verified with ${NAVIGATION_REGISTRY.length} total routes including all 20 V28 routes.`;
   });

@@ -64,6 +64,9 @@ async function startServer() {
       v26Release: 'V26.0-UNIVERSAL-PLATFORM-ACTIVATION',
       v27Release: 'V27.0-UNIVERSAL-ECONOMIC-NETWORK',
       v28Release: 'V28.0-UNIVERSAL-ECONOMIC-EXECUTION',
+      v29Release: 'V29.0-UNIVERSAL-UI-UX-TRANSFORMATION',
+      v30Release: 'V30.0-UNIVERSAL-FINANCIAL-RESILIENCE',
+      v31Release: 'V31.0-SOVEREIGN-INFRASTRUCTURE-AND-DEPLOYMENT',
       environment: envDiag.environment,
       databaseAuthority: envDiag.databaseAuthority,
       schemaVersion: db.schemaVersion,
@@ -86,7 +89,9 @@ async function startServer() {
     const v24Check = db.validateV24SchemaIntegrity();
     const v25Check = db.validateV25SchemaIntegrity();
     const v26Check = db.validateV26SchemaIntegrity();
-    const isReady = !shuttingDown && envDiag.portValid && fin.journalBalanced && v23Check.valid && v24Check.valid && v25Check.valid && v26Check.valid;
+    const v27Check = db.validateV27SchemaIntegrity();
+    const v28Check = db.validateV28SchemaIntegrity();
+    const isReady = !shuttingDown && envDiag.portValid && fin.journalBalanced && v23Check.valid && v24Check.valid && v25Check.valid && v26Check.valid && v27Check.valid && v28Check.valid;
     res.status(isReady ? 200 : 503).json({
       ready: isReady,
       shuttingDown,
@@ -98,6 +103,8 @@ async function startServer() {
       schema24IntegrityValid: v24Check.valid,
       schema25IntegrityValid: v25Check.valid,
       schema26IntegrityValid: v26Check.valid,
+      schema27IntegrityValid: v27Check.valid,
+      schema28IntegrityValid: v28Check.valid,
       timestamp: new Date().toISOString(),
     });
   });

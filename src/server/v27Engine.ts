@@ -9,7 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI } from '@google/genai';
+import { safeGenerateGeminiText } from './gemini.ts';
 import { db } from './db.ts';
 import { detectPromptInjection, sanitizeExternalSourceText } from './gemini.ts';
 import { getV25PostgresDiagnostics } from './v25PostgresEngine.ts';
@@ -441,7 +441,7 @@ export function createNetworkProfile(
     updatedAt: now,
   };
   db.v27NetworkProfiles.set(id, profile);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return sanitizeProfileForViewer(profile, ctx);
 }
 
@@ -476,7 +476,7 @@ export function updateProfilePrivacy(
   }
   profile.updatedAt = new Date().toISOString();
   db.v27NetworkProfiles.set(profileId, profile);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return sanitizeProfileForViewer(profile, ctx);
 }
 
@@ -534,7 +534,7 @@ export function createRelationshipInvite(
     updatedAt: now,
   };
   db.v27Relationships.set(rel.id, rel);
-  db.persistToDiskSync();
+  db.scheduleSave();
 
   if (target.userId) {
     createInAppNotification({
@@ -578,7 +578,7 @@ export function respondToRelationship(
     timestamp: now,
   });
   db.v27Relationships.set(relId, rel);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rel;
 }
 
@@ -604,7 +604,7 @@ export function updateRelationshipStatus(
     timestamp: now,
   });
   db.v27Relationships.set(relId, rel);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rel;
 }
 
@@ -673,7 +673,7 @@ export function submitVerificationRecord(
   profile.verificationProvenance = 'USER_SUBMITTED';
   profile.updatedAt = now;
   db.v27NetworkProfiles.set(profile.id, profile);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rec;
 }
 
@@ -734,7 +734,7 @@ export function decideVerificationRecord(
     profile.updatedAt = now;
     db.v27NetworkProfiles.set(profile.id, profile);
   }
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rec;
 }
 
@@ -849,7 +849,7 @@ export function submitReputationReview(
   };
   db.v27ReputationReviews.set(review.id, review);
   recalculateProfileTrustScore(target.id);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return review;
 }
 
@@ -882,7 +882,7 @@ export function fileReputationAppeal(
   review.updatedAt = now;
   db.v27ReputationReviews.set(review.id, review);
   db.v27ReputationAppeals.set(appeal.id, appeal);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return appeal;
 }
 
@@ -908,7 +908,7 @@ export function decideReputationAppeal(
     db.v27ReputationReviews.set(review.id, review);
     recalculateProfileTrustScore(review.targetProfileId);
   }
-  db.persistToDiskSync();
+  db.scheduleSave();
   return appeal;
 }
 
@@ -1003,7 +1003,7 @@ export function discoverEconomicNetwork(
   if (allHist.length > 200) {
     db.v27SearchHistory.delete(allHist[0].id);
   }
-  db.persistToDiskSync();
+  db.scheduleSave();
 
   return {
     page,
@@ -1046,7 +1046,7 @@ export function createSavedSearch(
     createdAt: new Date().toISOString(),
   };
   db.v27SavedSearches.set(item.id, item);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return item;
 }
 
@@ -1055,7 +1055,7 @@ export function deleteSavedSearch(searchId: string, ctx: V27ActorCtx) {
   if (!item) throw new V27HttpError(404, 'SAVED_SEARCH_NOT_FOUND');
   if (!ctx.isPlatformAdmin && item.userId !== ctx.userId) throw new V27HttpError(403, 'FORBIDDEN');
   db.v27SavedSearches.delete(searchId);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { deleted: true, id: searchId };
 }
 
@@ -1116,7 +1116,7 @@ export function getExplainableMatchRecommendations(ctx: V27ActorCtx, sectorFilte
     return rec;
   });
 
-  db.persistToDiskSync();
+  db.scheduleSave();
   return {
     forProfile: sanitizeProfileForViewer(myProfile, ctx),
     recommendations: generated.sort((a, b) => b.overallScore - a.overallScore),
@@ -1139,7 +1139,7 @@ export function submitMatchFeedback(
     createdAt: new Date().toISOString(),
   };
   db.v27MatchFeedback.set(fb.id, fb);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return fb;
 }
 
@@ -1215,7 +1215,7 @@ export function createOpportunity(
     updatedAt: now,
   };
   db.v27Opportunities.set(opp.id, opp);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return opp;
 }
 
@@ -1232,7 +1232,7 @@ export function transitionOpportunityStatus(
   opp.status = payload.status;
   opp.updatedAt = new Date().toISOString();
   db.v27Opportunities.set(opportunityId, opp);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return opp;
 }
 
@@ -1275,7 +1275,7 @@ export function respondToOpportunity(
   }
   opp.updatedAt = now;
   db.v27Opportunities.set(opp.id, opp);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { opportunity: opp, response: resp };
 }
 
@@ -1313,7 +1313,7 @@ export function awardOpportunityResponse(
   opp.awardedResponseId = resp.id;
   opp.updatedAt = now;
   db.v27Opportunities.set(opp.id, opp);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { opportunity: opp, awardedResponse: resp, linkedRfqId: rfqId };
 }
 
@@ -1352,7 +1352,7 @@ export function linkOpportunityToWalletObligation(opportunityId: string, ctx: V2
   db.v24Obligations.set(oblId, obligation);
   awarded.linkedOrderId = oblId;
   db.v27OpportunityResponses.set(awarded.id, awarded);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return {
     obligationId: oblId,
     opportunityId: opp.id,
@@ -1403,7 +1403,7 @@ export function createBuyerRequirement(
     createdAt: new Date().toISOString(),
   };
   db.v27BuyerRequirements.set(item.id, item);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return item;
 }
 
@@ -1444,7 +1444,7 @@ export function createSupplierCapability(
     updatedAt: now,
   };
   db.v27SupplierCapabilities.set(cap.id, cap);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return cap;
 }
 
@@ -1460,7 +1460,7 @@ export function verifySupplierCapability(
   cap.verifiedCapacityProvenance = payload.provenance || 'HUMAN_REVIEWED';
   cap.updatedAt = new Date().toISOString();
   db.v27SupplierCapabilities.set(capId, cap);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return cap;
 }
 
@@ -1505,7 +1505,7 @@ export function createCrmLead(
     updatedAt: now,
   };
   db.v27CrmLeads.set(lead.id, lead);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return lead;
 }
 
@@ -1524,7 +1524,7 @@ export function updateCrmLeadStage(
   if (payload.nextActionText) lead.nextActionText = sanitizeInput(payload.nextActionText);
   lead.updatedAt = new Date().toISOString();
   db.v27CrmLeads.set(leadId, lead);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return lead;
 }
 
@@ -1558,7 +1558,7 @@ export function createPaidPromotion(
     createdAt: now,
   };
   db.v27PaidPromotions.set(promo.id, promo);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return promo;
 }
 
@@ -1610,7 +1610,7 @@ export function createNetworkThread(
     createdAt: now,
   };
   db.v27NetworkMessages.set(msg.id, msg);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return { thread, messages: [msg] };
 }
 
@@ -1632,7 +1632,7 @@ export function postNetworkMessage(threadId: string, payload: { body: string }, 
   db.v27NetworkMessages.set(msg.id, msg);
   thread.lastMessageAt = now;
   db.v27NetworkThreads.set(thread.id, thread);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return msg;
 }
 
@@ -1810,42 +1810,26 @@ export async function executeV27NetworkAiAssist(
     `ReadinessPolicy=PILOT_ACTIVE:${getV27ReadinessMatrix().flags.V27_PILOT_ACTIVE}`,
   ];
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    try {
-      const ai = new GoogleGenAI({
-        apiKey,
-        httpOptions: { headers: { 'User-Agent': 'aistudio-build' } },
-      });
-      const res = await Promise.race([
-        ai.models.generateContent({
-          model: 'gemini-4-hydrogen',
-          contents: `Task=${payload.taskType || 'INTELLIGENCE_BRIEF'}\nCitations=${JSON.stringify(citations)}\nUserQuery=${safeQuestion}`,
-          config: {
-            systemInstruction:
-              'You are ECONEX V27 Economic Intelligence Advisor. Never fabricate numbers, never override permissions, and never claim to approve transactions, verifications, or pilots.',
-          },
-        }),
-        new Promise<never>((_, rej) => setTimeout(() => rej(new Error('V27 Gemini timeout')), 4500)),
-      ]);
-      const txt = String(res.text || '').trim();
-      if (txt.length > 15) {
-        AI_TELEMETRY.liveModelCalls += 1;
-        return {
-          taskType: payload.taskType || 'INTELLIGENCE_BRIEF',
-          summary: txt.slice(0, 600),
-          citations,
-          verifiedMetricsSnapshot: intel.metrics.slice(0, 4),
-          canExecuteAutonomousAction: false,
-          requiresHumanConfirmation: true,
-          modelDependency: 'gemini-4-hydrogen',
-          usedFallbackEngine: false,
-          generatedAt: new Date().toISOString(),
-        };
-      }
-    } catch {
-      // Fall through cleanly to grounded deterministic advisor
-    }
+  const { text: txt } = await safeGenerateGeminiText({
+    contents: `Task=${payload.taskType || 'INTELLIGENCE_BRIEF'}\nCitations=${JSON.stringify(citations)}\nUserQuery=${safeQuestion}`,
+    systemInstruction:
+      'You are ECONEX V27 Economic Intelligence Advisor. Never fabricate numbers, never override permissions, and never claim to approve transactions, verifications, or pilots.',
+    timeoutMs: 4500,
+    label: 'ECONEX V27 Advisor',
+  });
+  if (txt && txt.length > 15) {
+    AI_TELEMETRY.liveModelCalls += 1;
+    return {
+      taskType: payload.taskType || 'INTELLIGENCE_BRIEF',
+      summary: txt.slice(0, 600),
+      citations,
+      verifiedMetricsSnapshot: intel.metrics.slice(0, 4),
+      canExecuteAutonomousAction: false,
+      requiresHumanConfirmation: true,
+      modelDependency: 'gemini-4-hydrogen',
+      usedFallbackEngine: false,
+      generatedAt: new Date().toISOString(),
+    };
   }
 
   AI_TELEMETRY.deterministicFallbacks += 1;
@@ -1895,7 +1879,7 @@ export function createReferralAttribution(payload: { referredEmail: string }, ct
     updatedAt: now,
   };
   db.v27Referrals.set(ref.id, ref);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return ref;
 }
 
@@ -1920,7 +1904,7 @@ export function recordOutcomeMetric(
     recordedAt: new Date().toISOString(),
   };
   db.v27OutcomeMetrics.set(m.id, m);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return m;
 }
 
@@ -1962,7 +1946,7 @@ export function createPilotProgramme(
     updatedAt: now,
   };
   db.v27PilotProgrammes.set(pilot.id, pilot);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return pilot;
 }
 
@@ -1982,7 +1966,7 @@ export function transitionPilotStatus(pilotId: string, payload: { status: V27Pil
   pilot.status = payload.status;
   pilot.updatedAt = new Date().toISOString();
   db.v27PilotProgrammes.set(pilotId, pilot);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return pilot;
 }
 
@@ -2011,7 +1995,7 @@ export function enrollPilotParticipant(
   pilot.enrolledParticipantCount = Array.from(db.v27PilotParticipants.values()).filter((x) => x.pilotId === pilot.id).length;
   pilot.updatedAt = new Date().toISOString();
   db.v27PilotProgrammes.set(pilot.id, pilot);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return pp;
 }
 
@@ -2043,7 +2027,7 @@ export function createFieldAssignment(
     updatedAt: now,
   };
   db.v27FieldAssignments.set(asg.id, asg);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return asg;
 }
 
@@ -2096,7 +2080,7 @@ export function syncFieldReport(
     asg.updatedAt = now;
     db.v27FieldAssignments.set(asg.id, asg);
   }
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rep;
 }
 
@@ -2117,7 +2101,7 @@ export function reviewFieldReport(
   rep.reviewDecisionNote = sanitizeInput(payload.reviewDecisionNote);
   rep.updatedAt = now;
   db.v27FieldReports.set(reportId, rep);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return rep;
 }
 
@@ -2148,7 +2132,7 @@ export function registerIntegrationPartner(
     updatedAt: now,
   };
   db.v27IntegrationPartners.set(partner.id, partner);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return partner;
 }
 
@@ -2188,7 +2172,7 @@ export function transitionIntegrationPartner(
   partner.status = payload.status;
   partner.updatedAt = new Date().toISOString();
   db.v27IntegrationPartners.set(partnerId, partner);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return partner;
 }
 
@@ -2215,7 +2199,7 @@ export function reportModerationCase(
     updatedAt: now,
   };
   db.v27ModerationCases.set(c.id, c);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return c;
 }
 
@@ -2243,7 +2227,7 @@ export function decideModerationCase(
       db.v27NetworkProfiles.set(p.id, p);
     }
   }
-  db.persistToDiskSync();
+  db.scheduleSave();
   return c;
 }
 
@@ -2254,6 +2238,6 @@ export function appealModerationCase(caseId: string, payload: { appealNote: stri
   c.appealNote = sanitizeInput(payload.appealNote);
   c.updatedAt = new Date().toISOString();
   db.v27ModerationCases.set(caseId, c);
-  db.persistToDiskSync();
+  db.scheduleSave();
   return c;
 }

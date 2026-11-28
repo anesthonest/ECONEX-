@@ -7484,6 +7484,572 @@ export class ApiClient {
   static async v28GetRepositoryHealth() {
     return this.v12Json('/api/v28/developer/repository-health', { headers: this.v28Headers() });
   }
+
+  // ==========================================
+  // V30 UNIVERSAL FINANCIAL INTEROPERABILITY, RESILIENCE & EXECUTION APIs
+  // ==========================================
+
+  private static v30Headers(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v27Headers(actor);
+  }
+
+  static async v30GetHealth() {
+    return this.v12Json('/api/v30/health', { headers: this.v30Headers() });
+  }
+
+  static async v30GetReadinessMatrix() {
+    return this.v12Json('/api/v30/readiness-matrix', { headers: this.v30Headers() });
+  }
+
+  static async v30GetMigrationStatus() {
+    return this.v12Json('/api/v30/migration/status', { headers: this.v30Headers() });
+  }
+
+  static async v30GetBackupVerify() {
+    return this.v12Json('/api/v30/migration/backup-verify', { headers: this.v30Headers() });
+  }
+
+  static async v30GetOverview(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/overview', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30GetProviders(
+    filters?: { country?: string; currency?: string; category?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    const p = new URLSearchParams();
+    if (filters?.country && filters.country !== 'ALL') p.set('country', filters.country);
+    if (filters?.currency && filters.currency !== 'ALL') p.set('currency', filters.currency);
+    if (filters?.category && filters.category !== 'ALL') p.set('category', filters.category);
+    const qs = p.toString() ? `?${p.toString()}` : '';
+    return this.v12Json(`/api/v30/providers${qs}`, { headers: this.v30Headers(actor) });
+  }
+
+  static async v30TransitionProviderHealth(
+    providerId: string,
+    payload: { newStatus: string; reason: string; latencyMs?: number; errorRateBps?: number },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/providers/${encodeURIComponent(providerId)}/health`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30EvaluateRouting(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/routing/evaluate', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetPayments(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/payments', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30ExecutePayment(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/payments', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30TransitionPayment(
+    paymentId: string,
+    payload: { targetState: string; reason?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/payments/${encodeURIComponent(paymentId)}/transition`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30ResolveReconciliation(
+    caseId: string,
+    payload: { status: string; resolutionNote: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/reconciliation/${encodeURIComponent(caseId)}/resolve`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetCorridors(
+    origin?: string,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    const qs = origin && origin !== 'ALL' ? `?origin=${encodeURIComponent(origin)}` : '';
+    return this.v12Json(`/api/v30/corridors${qs}`, { headers: this.v30Headers(actor) });
+  }
+
+  static async v30GetAgents(
+    filters?: { country?: string; district?: string; provider?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    const p = new URLSearchParams();
+    if (filters?.country && filters.country !== 'ALL') p.set('country', filters.country);
+    if (filters?.district && filters.district !== 'ALL') p.set('district', filters.district);
+    if (filters?.provider && filters.provider !== 'ALL') p.set('provider', filters.provider);
+    const qs = p.toString() ? `?${p.toString()}` : '';
+    return this.v12Json(`/api/v30/agents${qs}`, { headers: this.v30Headers(actor) });
+  }
+
+  static async v30SubmitLiquidityReport(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/liquidity/report', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetBusinessFinanceDocs(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/business-finance', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30CreateBusinessFinanceDoc(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/business-finance', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30DecideBusinessFinanceDoc(
+    docId: string,
+    decision: 'APPROVE' | 'REJECT',
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/business-finance/${encodeURIComponent(docId)}/decide`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify({ decision }),
+    });
+  }
+
+  static async v30GetDisputes(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/disputes', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30CreateDispute(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/disputes', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30TransitionDispute(
+    disputeId: string,
+    payload: { targetStatus: string; resolutionNote?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/disputes/${encodeURIComponent(disputeId)}/transition`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetFraudEvents(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/fraud-events', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30ReviewFraudEvent(
+    eventId: string,
+    payload: { decision: 'CLEARED' | 'BLOCKED_CONFIRMED' | 'FALSE_POSITIVE'; reviewNote: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/fraud-events/${encodeURIComponent(eventId)}/review`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetRegulatoryReadiness(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/regulatory', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30SubmitRegulatoryEvidence(
+    payload: { requirementId: string; documentTitle: string; contentDigestSource: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/regulatory/evidence', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetUniversalWalletOverview(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/wallet/universal', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30UpdateCardControls(
+    cardProfileId: string,
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v30/wallet/cards/${encodeURIComponent(cardProfileId)}/controls`, {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetUssdSessions(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/ussd/sessions', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30SimulateUssd(
+    payload: { msisdn: string; dialString: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/ussd/simulate', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30RunAiAdvisor(
+    payload: { domainTask: string; prompt: string; countryCode?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v30/ai/advise', {
+      method: 'POST',
+      headers: this.v30Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v30GetAiTelemetry(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/ai/telemetry', { headers: this.v30Headers(actor) });
+  }
+
+  static async v30GetGitHubDiagnostics() {
+    return this.v12Json('/api/v30/developer/github-diagnostics', { headers: this.v30Headers() });
+  }
+
+  static async v30GetRepairRegister(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v30/repair-register', { headers: this.v30Headers(actor) });
+  }
+
+  // ==========================================
+  // V31 SOVEREIGN INFRASTRUCTURE, CONNECTIVITY & CONTINENTAL DEPLOYMENT APIs
+  // ==========================================
+
+  private static v31Headers(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v27Headers(actor);
+  }
+
+  static async v31GetHealth() {
+    return this.v12Json('/api/v31/health', { headers: this.v31Headers() });
+  }
+
+  static async v31GetOverview(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v31/overview', { headers: this.v31Headers(actor) });
+  }
+
+  static async v31GetReadinessMatrix() {
+    return this.v12Json('/api/v31/readiness-matrix', { headers: this.v31Headers() });
+  }
+
+  static async v31GetOpenApiSpec() {
+    return this.v12Json('/api/v31/openapi.json', { headers: this.v31Headers() });
+  }
+
+  static async v31GetPostgresStatus() {
+    return this.v12Json('/api/v31/postgres/status', { headers: this.v31Headers() });
+  }
+
+  static async v31RunPostgresDryRun(
+    payload: { simulateInterrupt?: boolean } = {},
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/postgres/migrate-dry-run', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31RunBackupDrill(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v31/postgres/backup-drill', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v31GetResidencyPolicies() {
+    return this.v12Json('/api/v31/residency/policies', { headers: this.v31Headers() });
+  }
+
+  static async v31UpsertResidencyPolicy(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/residency/policies', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31GetProviderCertifications() {
+    return this.v12Json('/api/v31/providers/certifications', { headers: this.v31Headers() });
+  }
+
+  static async v31RunProviderCertHarness(
+    providerId: string,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v31/providers/${encodeURIComponent(providerId)}/certify`, {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v31AdvanceProviderCertStage(
+    providerId: string,
+    targetStage: string,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v31/providers/${encodeURIComponent(providerId)}/advance`, {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify({ targetStage }),
+    });
+  }
+
+  static async v31RotateCredentialMetadata(
+    credentialId: string,
+    rotationIntervalDays?: number,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v31/providers/credentials/${encodeURIComponent(credentialId)}/rotate`, {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify({ rotationIntervalDays }),
+    });
+  }
+
+  static async v31GetCountries() {
+    return this.v12Json('/api/v31/countries', { headers: this.v31Headers() });
+  }
+
+  static async v31UpsertCountry(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/countries', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31CalculateCountryTax(countryCode: string, grossMinor: number) {
+    return this.v12Json(`/api/v31/countries/${encodeURIComponent(countryCode)}/tax-calculate`, {
+      method: 'POST',
+      headers: this.v31Headers(),
+      body: JSON.stringify({ grossMinor }),
+    });
+  }
+
+  static async v31GetEnterpriseOverview(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v31/enterprise/overview', { headers: this.v31Headers(actor) });
+  }
+
+  static async v31CreateOrganization(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/enterprise/organizations', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31CreateBranch(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/enterprise/branches', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31CreateCommercialCase(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/enterprise/cases', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31TransitionCommercialCase(
+    caseId: string,
+    payload: { action: string; note?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v31/enterprise/cases/${encodeURIComponent(caseId)}/transition`, {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31GetPilotOverview() {
+    return this.v12Json('/api/v31/pilot/overview', { headers: this.v31Headers() });
+  }
+
+  static async v31AdvancePilotStage(
+    payload: { programId?: string; targetStageNumber: number },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/pilot/advance-stage', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31RegisterPilotParticipant(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/pilot/participants', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31RecordFieldValidation(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/pilot/field-validations', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31LogPilotIncident(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/pilot/incidents', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31GetSecurityOverview(actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }) {
+    return this.v12Json('/api/v31/security/overview', { headers: this.v31Headers(actor) });
+  }
+
+  static async v31RevokeSession(
+    sessionId: string,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v31/security/sessions/${encodeURIComponent(sessionId)}/revoke`, {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify({}),
+    });
+  }
+
+  static async v31TransitionSecurityIncident(
+    incidentId: string,
+    payload: { status: string; containmentAction?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json(`/api/v31/security/incidents/${encodeURIComponent(incidentId)}/transition`, {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31GetContinentalAnalytics(countryCode?: string) {
+    const qs = countryCode && countryCode !== 'ALL' ? `?countryCode=${encodeURIComponent(countryCode)}` : '';
+    return this.v12Json(`/api/v31/intelligence/analytics${qs}`, { headers: this.v31Headers() });
+  }
+
+  static async v31CreateAnalyticsSnapshot(
+    payload: Record<string, any>,
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/intelligence/analytics', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31RunCountryAiAdvisor(
+    payload: { prompt: string; countryCode?: string; forceLocalSimulation?: boolean },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/intelligence/ai-advisor', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async v31GetGitHubDiagnostics() {
+    return this.v12Json('/api/v31/github/diagnostics', { headers: this.v31Headers() });
+  }
+
+  static async v31GetDeployments() {
+    return this.v12Json('/api/v31/deployments', { headers: this.v31Headers() });
+  }
+
+  static async v31VerifyEnvironment(
+    payload: { environment: 'DEV' | 'TEST' | 'STAGING' | 'PROD'; notes?: string },
+    actor?: { userId?: string; userRole?: string; organisationId?: string; countryCode?: string }
+  ) {
+    return this.v12Json('/api/v31/deployments/verify', {
+      method: 'POST',
+      headers: this.v31Headers(actor),
+      body: JSON.stringify(payload),
+    });
+  }
 }
 
 export const api = ApiClient;

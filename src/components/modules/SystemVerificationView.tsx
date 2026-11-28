@@ -6,7 +6,7 @@
  * Developed under VINEXSAH TECHNOLOGIES. All rights reserved.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CheckCircle2,
   XCircle,
@@ -17,27 +17,6 @@ import {
   Terminal,
   Activity,
 } from 'lucide-react';
-import { V11_INITIAL_TESTS, runV11VerificationTests } from './v11VerificationTests';
-import { V12_INITIAL_TESTS, runV12VerificationTests } from './v12IntelligenceVerificationTests';
-import { V13_INITIAL_TESTS, runV13VerificationTests } from './v13InfrastructureVerificationTests';
-import { V14_INITIAL_TESTS, runV14VerificationTests } from './v14OperationsVerificationTests';
-import { V15_INITIAL_TESTS, runV15VerificationTests } from './v15ActivationVerificationTests';
-import { V151_INITIAL_TESTS, runV151UxVerificationTests } from './v151UxVerificationTests';
-import { V159_INITIAL_TESTS, runV159ConsolidationTests } from './v159ConsolidationTests';
-import { V16_INITIAL_TESTS, runV16OperationsTests } from './v16OperationsTests';
-import { V17_INITIAL_TESTS, runV17VerificationTests } from './v17NetworkOperationsTests';
-import { V18_INITIAL_TESTS, runV18VerificationTests } from './v18ConsolidationTests';
-import { V19_INITIAL_TESTS, runV19VerificationTests } from './v19StabilityTests';
-import { V20_INITIAL_TESTS, runV20VerificationTests } from './v20UnifiedOperationsTests';
-import { V21_INITIAL_TESTS, runV21VerificationTests } from './v21PilotOperationsTests';
-import { V22_INITIAL_TESTS, runV22VerificationTests } from './v22UniversalEconomyTests';
-import { V23_INITIAL_TESTS, runV23VerificationTests } from './v23WalletNetworkTests';
-import { V24_INITIAL_TESTS, runV24VerificationTests } from './v24CommerceNetworkTests';
-import { V25_INITIAL_TESTS, runV25VerificationTests } from './v25ContinentalInfraTests';
-import { V26_INITIAL_TESTS, runV26VerificationTests } from './v26PlatformActivationTests';
-import { V27_INITIAL_TESTS, runV27VerificationTests } from './v27EconomicNetworkTests';
-import { V28_INITIAL_TESTS, runV28ExecutionTestSuite } from './v28ExecutionTests';
-import { V29_INITIAL_TESTS, runV29VerificationTests } from './v29UiUxTests';
 
 interface TestCaseResult {
   id: string;
@@ -356,30 +335,50 @@ export const SystemVerificationView: React.FC = () => {
     { id: 'T298', name: 'Durable Disk Persistence Atomic WAL Verification for Schema Version 10', category: 'INTEGRITY', status: 'PENDING' },
     { id: 'T299', name: 'Zero-Regression Baseline: Preservation of V1 Through V9 Full Feature Suite', category: 'INTEGRITY', status: 'PENDING' },
     { id: 'T300', name: 'Master Synthesis: AETHER–AROS V10 Global Economic Execution & Institutional Operations', category: 'INTEGRITY', status: 'PENDING' },
-    ...V11_INITIAL_TESTS,
-    ...V12_INITIAL_TESTS,
-    ...V13_INITIAL_TESTS,
-    ...V14_INITIAL_TESTS,
-    ...V15_INITIAL_TESTS,
-    ...V151_INITIAL_TESTS,
-    ...V159_INITIAL_TESTS,
-    ...V16_INITIAL_TESTS,
-    ...V17_INITIAL_TESTS,
-    ...V18_INITIAL_TESTS,
-    ...V19_INITIAL_TESTS,
-    ...V20_INITIAL_TESTS,
-    ...V21_INITIAL_TESTS,
-    ...V22_INITIAL_TESTS,
-    ...V23_INITIAL_TESTS,
-    ...V24_INITIAL_TESTS,
-    ...V25_INITIAL_TESTS,
-    ...V26_INITIAL_TESTS,
-    ...V27_INITIAL_TESTS,
-    ...V28_INITIAL_TESTS,
-    ...V29_INITIAL_TESTS,
   ];
 
+  const loadDynamicInitialTests = async (): Promise<TestCaseResult[]> => {
+    const mods = await Promise.all([
+      import('./v11VerificationTests').then((m) => m.V11_INITIAL_TESTS),
+      import('./v12IntelligenceVerificationTests').then((m) => m.V12_INITIAL_TESTS),
+      import('./v13InfrastructureVerificationTests').then((m) => m.V13_INITIAL_TESTS),
+      import('./v14OperationsVerificationTests').then((m) => m.V14_INITIAL_TESTS),
+      import('./v15ActivationVerificationTests').then((m) => m.V15_INITIAL_TESTS),
+      import('./v151UxVerificationTests').then((m) => m.V151_INITIAL_TESTS),
+      import('./v159ConsolidationTests').then((m) => m.V159_INITIAL_TESTS),
+      import('./v16OperationsTests').then((m) => m.V16_INITIAL_TESTS),
+      import('./v17NetworkOperationsTests').then((m) => m.V17_INITIAL_TESTS),
+      import('./v18ConsolidationTests').then((m) => m.V18_INITIAL_TESTS),
+      import('./v19StabilityTests').then((m) => m.V19_INITIAL_TESTS),
+      import('./v20UnifiedOperationsTests').then((m) => m.V20_INITIAL_TESTS),
+      import('./v21PilotOperationsTests').then((m) => m.V21_INITIAL_TESTS),
+      import('./v22UniversalEconomyTests').then((m) => m.V22_INITIAL_TESTS),
+      import('./v23WalletNetworkTests').then((m) => m.V23_INITIAL_TESTS),
+      import('./v24CommerceNetworkTests').then((m) => m.V24_INITIAL_TESTS),
+      import('./v25ContinentalInfraTests').then((m) => m.V25_INITIAL_TESTS),
+      import('./v26PlatformActivationTests').then((m) => m.V26_INITIAL_TESTS),
+      import('./v27EconomicNetworkTests').then((m) => m.V27_INITIAL_TESTS),
+      import('./v28ExecutionTests').then((m) => m.V28_INITIAL_TESTS),
+      import('./v29UiUxTests').then((m) => m.V29_INITIAL_TESTS),
+      import('./v30FinancialResilienceTests').then((m) => m.V30_INITIAL_TESTS),
+      import('./v31SovereignInfraTests').then((m) => m.V31_INITIAL_TESTS),
+    ]);
+    return [...initialTests, ...mods.flat()];
+  };
+
   const [tests, setTests] = useState<TestCaseResult[]>(initialTests);
+
+  useEffect(() => {
+    let active = true;
+    loadDynamicInitialTests()
+      .then((all) => {
+        if (active) setTests(all);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const updateTestStatus = (
     id: string,
@@ -400,8 +399,9 @@ export const SystemVerificationView: React.FC = () => {
     let passedCount = 0;
     let failedCount = 0;
 
-    // Reset status to pending
-    setTests(initialTests);
+    // Reset status to pending with dynamically loaded suites
+    const fullList = await loadDynamicInitialTests();
+    setTests(fullList);
 
     // TEST 1: User Registration
     try {
@@ -7727,89 +7727,97 @@ export const SystemVerificationView: React.FC = () => {
       updateTestStatus('T300', 'FAILED', 0, undefined, e.message);
     }
 
-    const v11Res = await runV11VerificationTests(updateTestStatus);
+    const v11Res = await (await import('./v11VerificationTests')).runV11VerificationTests(updateTestStatus);
     passedCount += v11Res.passed;
     failedCount += v11Res.failed;
 
-    const v12Res = await runV12VerificationTests(updateTestStatus);
+    const v12Res = await (await import('./v12IntelligenceVerificationTests')).runV12VerificationTests(updateTestStatus);
     passedCount += v12Res.passed;
     failedCount += v12Res.failed;
 
-    const v13Res = await runV13VerificationTests(updateTestStatus);
+    const v13Res = await (await import('./v13InfrastructureVerificationTests')).runV13VerificationTests(updateTestStatus);
     passedCount += v13Res.passed;
     failedCount += v13Res.failed;
 
-    const v14Res = await runV14VerificationTests(updateTestStatus);
+    const v14Res = await (await import('./v14OperationsVerificationTests')).runV14VerificationTests(updateTestStatus);
     passedCount += v14Res.passed;
     failedCount += v14Res.failed;
 
-    const v15Res = await runV15VerificationTests(updateTestStatus);
+    const v15Res = await (await import('./v15ActivationVerificationTests')).runV15VerificationTests(updateTestStatus);
     passedCount += v15Res.passed;
     failedCount += v15Res.failed;
 
-    const v151Res = await runV151UxVerificationTests(updateTestStatus);
+    const v151Res = await (await import('./v151UxVerificationTests')).runV151UxVerificationTests(updateTestStatus);
     passedCount += v151Res.passed;
     failedCount += v151Res.failed;
 
-    const v159Res = await runV159ConsolidationTests(updateTestStatus);
+    const v159Res = await (await import('./v159ConsolidationTests')).runV159ConsolidationTests(updateTestStatus);
     passedCount += v159Res.passed;
     failedCount += v159Res.failed;
 
-    const v16Res = await runV16OperationsTests(updateTestStatus);
+    const v16Res = await (await import('./v16OperationsTests')).runV16OperationsTests(updateTestStatus);
     passedCount += v16Res.passed;
     failedCount += v16Res.failed;
 
-    const v17Res = await runV17VerificationTests(updateTestStatus);
+    const v17Res = await (await import('./v17NetworkOperationsTests')).runV17VerificationTests(updateTestStatus);
     passedCount += v17Res.passed;
     failedCount += v17Res.failed;
 
-    const v18Res = await runV18VerificationTests(updateTestStatus);
+    const v18Res = await (await import('./v18ConsolidationTests')).runV18VerificationTests(updateTestStatus);
     passedCount += v18Res.passed;
     failedCount += v18Res.failed;
 
-    const v19Res = await runV19VerificationTests(updateTestStatus);
+    const v19Res = await (await import('./v19StabilityTests')).runV19VerificationTests(updateTestStatus);
     passedCount += v19Res.passed;
     failedCount += v19Res.failed;
 
-    const v20Res = await runV20VerificationTests(updateTestStatus);
+    const v20Res = await (await import('./v20UnifiedOperationsTests')).runV20VerificationTests(updateTestStatus);
     passedCount += v20Res.passed;
     failedCount += v20Res.failed;
 
-    const v21Res = await runV21VerificationTests(updateTestStatus);
+    const v21Res = await (await import('./v21PilotOperationsTests')).runV21VerificationTests(updateTestStatus);
     passedCount += v21Res.passed;
     failedCount += v21Res.failed;
 
-    const v22Res = await runV22VerificationTests(updateTestStatus);
+    const v22Res = await (await import('./v22UniversalEconomyTests')).runV22VerificationTests(updateTestStatus);
     passedCount += v22Res.passed;
     failedCount += v22Res.failed;
 
-    const v23Res = await runV23VerificationTests(updateTestStatus);
+    const v23Res = await (await import('./v23WalletNetworkTests')).runV23VerificationTests(updateTestStatus);
     passedCount += v23Res.passed;
     failedCount += v23Res.failed;
 
-    const v24Res = await runV24VerificationTests(updateTestStatus);
+    const v24Res = await (await import('./v24CommerceNetworkTests')).runV24VerificationTests(updateTestStatus);
     passedCount += v24Res.passed;
     failedCount += v24Res.failed;
 
-    const v25Res = await runV25VerificationTests(updateTestStatus);
+    const v25Res = await (await import('./v25ContinentalInfraTests')).runV25VerificationTests(updateTestStatus);
     passedCount += v25Res.passed;
     failedCount += v25Res.failed;
 
-    const v26Res = await runV26VerificationTests(updateTestStatus);
+    const v26Res = await (await import('./v26PlatformActivationTests')).runV26VerificationTests(updateTestStatus);
     passedCount += v26Res.passed;
     failedCount += v26Res.failed;
 
-    const v27Res = await runV27VerificationTests(updateTestStatus);
+    const v27Res = await (await import('./v27EconomicNetworkTests')).runV27VerificationTests(updateTestStatus);
     passedCount += v27Res.passed;
     failedCount += v27Res.failed;
 
-    const v28Res = await runV28ExecutionTestSuite(updateTestStatus);
+    const v28Res = await (await import('./v28ExecutionTests')).runV28ExecutionTestSuite(updateTestStatus);
     passedCount += v28Res.passed;
     failedCount += v28Res.failed;
 
-    const v29Res = await runV29VerificationTests(updateTestStatus);
+    const v29Res = await (await import('./v29UiUxTests')).runV29VerificationTests(updateTestStatus);
     passedCount += v29Res.passed;
     failedCount += v29Res.failed;
+
+    const v30Res = await (await import('./v30FinancialResilienceTests')).runV30VerificationTests(updateTestStatus);
+    passedCount += v30Res.passed;
+    failedCount += v30Res.failed;
+
+    const v31Res = await (await import('./v31SovereignInfraTests')).runV31VerificationTests(updateTestStatus);
+    passedCount += v31Res.passed;
+    failedCount += v31Res.failed;
 
     setSummary({
       total: passedCount + failedCount,
@@ -7830,11 +7838,11 @@ export const SystemVerificationView: React.FC = () => {
                 <Activity size={20} className="text-[#D4AF37]" /> Automated System Verification Suite
               </h1>
               <span className="text-[10px] bg-[#18181b] text-[#D4AF37] border border-[#27272a] px-2 py-0.5 rounded font-mono">
-                7,700 Automated Assertions (V29.0 Universal UI/UX Transformation &amp; V1–V28 Zero-Regression)
+                9,800 Automated Assertions (V31.0 Sovereign Infrastructure &amp; V1–V30 Zero-Regression)
               </span>
             </div>
             <p className="text-xs text-[#A0A0A0] mt-1">
-              Live end-to-end integration tests verifying V1–V28 baseline (T01–T7800) and V29.0 Universal UI/UX Transformation: 133-Route 6-Category Menu Architecture &amp; Role Scoping, 12 Curated Local Visual Assets &amp; Zero-Unsplash Media Compliance, 5-Stage Visual Order Timeline, 7-Language Localization &amp; Tabular Currency Formatting, Schema 26 &amp; 9-Flag Truthfulness Matrix, and Live Multi-Sector Economy &amp; Discovery Flows (T7801–T8600).
+              Live end-to-end integration tests verifying V1–V30 baseline (T01–T9600) and V31.0 Sovereign Data Infrastructure, PostgreSQL 16 Rehearsal, Provider Certification, Multi-Country Engine, Enterprise SoD, Uganda Pilot Prep, Security Continuity, CI/CD &amp; 200 E2E Journeys (T9601–T10700).
             </p>
           </div>
 
@@ -7847,12 +7855,12 @@ export const SystemVerificationView: React.FC = () => {
             {isRunning ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                <span>Executing 7,700 Automated Tests...</span>
+                <span>Executing 9,800 Automated Tests...</span>
               </>
             ) : (
               <>
                 <Play size={14} fill="currentColor" />
-                <span>Run System Verification Suite (7,700 Tests)</span>
+                <span>Run System Verification Suite (9,800 Tests)</span>
               </>
             )}
           </button>

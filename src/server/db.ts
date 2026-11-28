@@ -543,6 +543,48 @@ import {
   V28ProcurementRequisition,
   V28ShipmentEvidence,
   V28VaultDocumentRecord,
+  V30AgentProfile,
+  V30AiRequestMetric,
+  V30BusinessFinanceDoc,
+  V30FinancialCorridor,
+  V30FinancialDispute,
+  V30FinancialProvider,
+  V30FraudRiskEvent,
+  V30GitSyncEvent,
+  V30LiquidityReport,
+  V30OfflineUssdSession,
+  V30PaymentAttempt,
+  V30PaymentInstruction,
+  V30PaymentRoutingPolicy,
+  V30ProviderCapability,
+  V30ProviderHealthEvent,
+  V30ReconciliationCase,
+  V30RegulatoryEvidence,
+  V30RegulatoryRequirement,
+  V30RepairRecord,
+  V30SettlementRecord,
+  V30WalletCardProfile,
+  V31CommercialWorkflowCase,
+  V31ContinentalAnalyticsSnapshot,
+  V31CountryOperatingProfile,
+  V31DataResidencyPolicy,
+  V31DatabaseBackupRecord,
+  V31DatabaseIntegrityCheck,
+  V31DatabaseMigrationRun,
+  V31DeploymentRecord,
+  V31EnterpriseApprovalPolicy,
+  V31FieldValidationRecord,
+  V31InstitutionalOrganization,
+  V31IntegrationCredentialMetadata,
+  V31IntegrationHealthHistory,
+  V31OrganizationBranch,
+  V31OrganizationDepartment,
+  V31PilotIncident,
+  V31PilotParticipant,
+  V31PilotProgram,
+  V31ProviderCertificationRun,
+  V31ReleaseVerificationRecord,
+  V31SecurityIncident,
 } from '../types/index.ts';
 import type { V26InteractiveControlRecord, V26RouteInventoryRecord } from './v26AuditRegistry.ts';
 import { seedV11Collections } from './v11Seed.ts';
@@ -561,6 +603,8 @@ import { seedV25Collections } from './v25Seed.ts';
 import { seedV26Collections } from './v26Seed.ts';
 import { seedV27Collections } from './v27Seed.ts';
 import { seedV28Collections } from './v28Seed.ts';
+import { seedV30Collections } from './v30Seed.ts';
+import { seedV31Collections } from './v31Seed.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -579,6 +623,8 @@ let cachedV24BackupCheck: { mtimeMs: number; size: number; value: any } | null =
 let cachedV25BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
 let cachedV26BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
 let cachedV27BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
+let cachedV29BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
+let cachedV30BackupCheck: { mtimeMs: number; size: number; value: any } | null = null;
 
 
 export interface SessionRecord {
@@ -1199,6 +1245,52 @@ export class ArosDatabase {
   v28FieldOfflineRecords: Map<string, V28FieldOfflineRecord> = new Map();
   v28AiOrchestrationRuns: Map<string, V28AiOrchestrationRun> = new Map();
 
+  // V30 Universal Financial Interoperability, Resilience & Execution (Schema 27 - 21 Collections)
+  v30FinancialProviders: Map<string, V30FinancialProvider> = new Map();
+  v30ProviderCapabilities: Map<string, V30ProviderCapability> = new Map();
+  v30ProviderHealthEvents: Map<string, V30ProviderHealthEvent> = new Map();
+  v30PaymentRoutingPolicies: Map<string, V30PaymentRoutingPolicy> = new Map();
+  v30PaymentInstructions: Map<string, V30PaymentInstruction> = new Map();
+  v30PaymentAttempts: Map<string, V30PaymentAttempt> = new Map();
+  v30SettlementRecords: Map<string, V30SettlementRecord> = new Map();
+  v30ReconciliationCases: Map<string, V30ReconciliationCase> = new Map();
+  v30FinancialCorridors: Map<string, V30FinancialCorridor> = new Map();
+  v30AgentProfiles: Map<string, V30AgentProfile> = new Map();
+  v30LiquidityReports: Map<string, V30LiquidityReport> = new Map();
+  v30FinancialDisputes: Map<string, V30FinancialDispute> = new Map();
+  v30FraudRiskEvents: Map<string, V30FraudRiskEvent> = new Map();
+  v30RegulatoryRequirements: Map<string, V30RegulatoryRequirement> = new Map();
+  v30RegulatoryEvidence: Map<string, V30RegulatoryEvidence> = new Map();
+  v30WalletCardProfiles: Map<string, V30WalletCardProfile> = new Map();
+  v30BusinessFinanceDocs: Map<string, V30BusinessFinanceDoc> = new Map();
+  v30OfflineUssdSessions: Map<string, V30OfflineUssdSession> = new Map();
+  v30AiRequestMetrics: Map<string, V30AiRequestMetric> = new Map();
+  v30RepairRegister: Map<string, V30RepairRecord> = new Map();
+  v30GitSyncEvents: Map<string, V30GitSyncEvent> = new Map();
+
+  // V31 Sovereign Infrastructure, Connectivity Certification & Continental Deployment (Schema 28 - 21 Collections)
+  v31DatabaseMigrationRuns: Map<string, V31DatabaseMigrationRun> = new Map();
+  v31DatabaseIntegrityChecks: Map<string, V31DatabaseIntegrityCheck> = new Map();
+  v31DatabaseBackupRecords: Map<string, V31DatabaseBackupRecord> = new Map();
+  v31CountryOperatingProfiles: Map<string, V31CountryOperatingProfile> = new Map();
+  v31DataResidencyPolicies: Map<string, V31DataResidencyPolicy> = new Map();
+  v31ProviderCertificationRuns: Map<string, V31ProviderCertificationRun> = new Map();
+  v31IntegrationCredentialsMetadata: Map<string, V31IntegrationCredentialMetadata> = new Map();
+  v31IntegrationHealthHistory: Map<string, V31IntegrationHealthHistory> = new Map();
+  v31InstitutionalOrganizations: Map<string, V31InstitutionalOrganization> = new Map();
+  v31OrganizationBranches: Map<string, V31OrganizationBranch> = new Map();
+  v31OrganizationDepartments: Map<string, V31OrganizationDepartment> = new Map();
+  v31EnterpriseApprovalPolicies: Map<string, V31EnterpriseApprovalPolicy> = new Map();
+  v31CommercialWorkflowCases: Map<string, V31CommercialWorkflowCase> = new Map();
+  v31PilotPrograms: Map<string, V31PilotProgram> = new Map();
+  v31PilotParticipants: Map<string, V31PilotParticipant> = new Map();
+  v31FieldValidationRecords: Map<string, V31FieldValidationRecord> = new Map();
+  v31PilotIncidents: Map<string, V31PilotIncident> = new Map();
+  v31SecurityIncidents: Map<string, V31SecurityIncident> = new Map();
+  v31DeploymentRecords: Map<string, V31DeploymentRecord> = new Map();
+  v31ReleaseVerificationRecords: Map<string, V31ReleaseVerificationRecord> = new Map();
+  v31ContinentalAnalyticsSnapshots: Map<string, V31ContinentalAnalyticsSnapshot> = new Map();
+
   private isTransactionLocked = false;
   private saveTimeout: NodeJS.Timeout | null = null;
   private isSavingAsync = false;
@@ -1209,6 +1301,12 @@ export class ArosDatabase {
   constructor() {
     this.ensureDirectories();
     this.cleanupStaleTempFiles();
+    if (fs.existsSync(DB_FILE)) {
+      this.loadFromDisk();
+    } else {
+      this.seedDatabase();
+      this.persistToDiskSync();
+    }
     this.pruneRollingBackups('aros_backup_', 1);
     this.pruneRollingBackups('aros_pre_v13_baseline_', 0);
     this.pruneRollingBackups('aros_pre_v14_baseline_', 0);
@@ -1227,12 +1325,6 @@ export class ArosDatabase {
     this.pruneRollingBackups('aros_pre_v26_migration_', 1);
     this.pruneRollingBackups('v25_dr_drill_', 0);
     this.pruneRollingBackups('aros_v11_verified_', 1);
-    if (fs.existsSync(DB_FILE)) {
-      this.loadFromDisk();
-    } else {
-      this.seedDatabase();
-      this.persistToDiskSync();
-    }
   }
 
   private cleanupStaleTempFiles() {
@@ -1914,13 +2006,57 @@ export class ArosDatabase {
         v28DualApprovalRequests: Array.from(this.v28DualApprovalRequests.values()),
         v28FieldOfflineRecords: Array.from(this.v28FieldOfflineRecords.values()),
         v28AiOrchestrationRuns: Array.from(this.v28AiOrchestrationRuns.values()),
+        // V30 Serialized (Schema 27 - 21 Collections)
+        v30FinancialProviders: Array.from(this.v30FinancialProviders.values()),
+        v30ProviderCapabilities: Array.from(this.v30ProviderCapabilities.values()),
+        v30ProviderHealthEvents: Array.from(this.v30ProviderHealthEvents.values()),
+        v30PaymentRoutingPolicies: Array.from(this.v30PaymentRoutingPolicies.values()),
+        v30PaymentInstructions: Array.from(this.v30PaymentInstructions.values()),
+        v30PaymentAttempts: Array.from(this.v30PaymentAttempts.values()),
+        v30SettlementRecords: Array.from(this.v30SettlementRecords.values()),
+        v30ReconciliationCases: Array.from(this.v30ReconciliationCases.values()),
+        v30FinancialCorridors: Array.from(this.v30FinancialCorridors.values()),
+        v30AgentProfiles: Array.from(this.v30AgentProfiles.values()),
+        v30LiquidityReports: Array.from(this.v30LiquidityReports.values()),
+        v30FinancialDisputes: Array.from(this.v30FinancialDisputes.values()),
+        v30FraudRiskEvents: Array.from(this.v30FraudRiskEvents.values()),
+        v30RegulatoryRequirements: Array.from(this.v30RegulatoryRequirements.values()),
+        v30RegulatoryEvidence: Array.from(this.v30RegulatoryEvidence.values()),
+        v30WalletCardProfiles: Array.from(this.v30WalletCardProfiles.values()),
+        v30BusinessFinanceDocs: Array.from(this.v30BusinessFinanceDocs.values()),
+        v30OfflineUssdSessions: Array.from(this.v30OfflineUssdSessions.values()),
+        v30AiRequestMetrics: Array.from(this.v30AiRequestMetrics.values()),
+        v30RepairRegister: Array.from(this.v30RepairRegister.values()),
+        v30GitSyncEvents: Array.from(this.v30GitSyncEvents.values()),
+        // V31 Serialized (Schema 28 - 21 Collections)
+        v31DatabaseMigrationRuns: Array.from(this.v31DatabaseMigrationRuns.values()),
+        v31DatabaseIntegrityChecks: Array.from(this.v31DatabaseIntegrityChecks.values()),
+        v31DatabaseBackupRecords: Array.from(this.v31DatabaseBackupRecords.values()),
+        v31CountryOperatingProfiles: Array.from(this.v31CountryOperatingProfiles.values()),
+        v31DataResidencyPolicies: Array.from(this.v31DataResidencyPolicies.values()),
+        v31ProviderCertificationRuns: Array.from(this.v31ProviderCertificationRuns.values()),
+        v31IntegrationCredentialsMetadata: Array.from(this.v31IntegrationCredentialsMetadata.values()),
+        v31IntegrationHealthHistory: Array.from(this.v31IntegrationHealthHistory.values()),
+        v31InstitutionalOrganizations: Array.from(this.v31InstitutionalOrganizations.values()),
+        v31OrganizationBranches: Array.from(this.v31OrganizationBranches.values()),
+        v31OrganizationDepartments: Array.from(this.v31OrganizationDepartments.values()),
+        v31EnterpriseApprovalPolicies: Array.from(this.v31EnterpriseApprovalPolicies.values()),
+        v31CommercialWorkflowCases: Array.from(this.v31CommercialWorkflowCases.values()),
+        v31PilotPrograms: Array.from(this.v31PilotPrograms.values()),
+        v31PilotParticipants: Array.from(this.v31PilotParticipants.values()),
+        v31FieldValidationRecords: Array.from(this.v31FieldValidationRecords.values()),
+        v31PilotIncidents: Array.from(this.v31PilotIncidents.values()),
+        v31SecurityIncidents: Array.from(this.v31SecurityIncidents.values()),
+        v31DeploymentRecords: Array.from(this.v31DeploymentRecords.values()),
+        v31ReleaseVerificationRecords: Array.from(this.v31ReleaseVerificationRecords.values()),
+        v31ContinentalAnalyticsSnapshots: Array.from(this.v31ContinentalAnalyticsSnapshots.values()),
       };
   }
 
   persistToDiskSync() {
     try {
       const serialized = this.buildSerializedState();
-      const tempFile = `${DB_FILE}.tmp.${Date.now()}`;
+      const tempFile = `${DB_FILE}.tmp.${Date.now()}.${Math.random().toString(36).slice(2, 7)}`;
       fs.writeFileSync(tempFile, JSON.stringify(serialized), 'utf8');
       fs.renameSync(tempFile, DB_FILE);
     } catch (err) {
@@ -2473,8 +2609,8 @@ export class ArosDatabase {
         this.seedV6Collections();
       }
 
-      // If V7 collections empty, seed V7 collections
-      if (this.chartOfAccounts.size === 0) {
+      // If V7 collections empty or missing core settlement account, seed V7 collections
+      if (this.chartOfAccounts.size === 0 || !this.chartOfAccounts.has('COA-1010')) {
         this.seedV7Collections();
       } else if (!this.chartOfAccounts.has('COA-3010')) {
         this.chartOfAccounts.set('COA-3010', {
@@ -2534,8 +2670,8 @@ export class ArosDatabase {
       this.paymentProviders.clear();
       data.paymentProviders?.forEach((pp: UniversalPaymentProvider) => this.paymentProviders.set(pp.id, pp));
 
-      // If V8 collections empty, seed V8 collections
-      if (this.economicRelationships.size === 0) {
+      // If V8 collections or discovery listings are empty, seed V8 collections
+      if (this.economicRelationships.size === 0 || this.discoveryListings.size === 0) {
         this.seedV8Collections();
       }
 
@@ -3439,6 +3575,94 @@ export class ArosDatabase {
       this.v28AiOrchestrationRuns.clear();
       data.v28AiOrchestrationRuns?.forEach((x: V28AiOrchestrationRun) => this.v28AiOrchestrationRuns.set(x.id, x));
 
+      // V30 Deserialization (Schema 27)
+      this.v30FinancialProviders.clear();
+      data.v30FinancialProviders?.forEach((x: V30FinancialProvider) => this.v30FinancialProviders.set(x.id, x));
+      this.v30ProviderCapabilities.clear();
+      data.v30ProviderCapabilities?.forEach((x: V30ProviderCapability) => this.v30ProviderCapabilities.set(x.id, x));
+      this.v30ProviderHealthEvents.clear();
+      data.v30ProviderHealthEvents?.forEach((x: V30ProviderHealthEvent) => this.v30ProviderHealthEvents.set(x.id, x));
+      this.v30PaymentRoutingPolicies.clear();
+      data.v30PaymentRoutingPolicies?.forEach((x: V30PaymentRoutingPolicy) => this.v30PaymentRoutingPolicies.set(x.id, x));
+      this.v30PaymentInstructions.clear();
+      data.v30PaymentInstructions?.forEach((x: V30PaymentInstruction) => this.v30PaymentInstructions.set(x.id, x));
+      this.v30PaymentAttempts.clear();
+      data.v30PaymentAttempts?.forEach((x: V30PaymentAttempt) => this.v30PaymentAttempts.set(x.id, x));
+      this.v30SettlementRecords.clear();
+      data.v30SettlementRecords?.forEach((x: V30SettlementRecord) => this.v30SettlementRecords.set(x.id, x));
+      this.v30ReconciliationCases.clear();
+      data.v30ReconciliationCases?.forEach((x: V30ReconciliationCase) => this.v30ReconciliationCases.set(x.id, x));
+      this.v30FinancialCorridors.clear();
+      data.v30FinancialCorridors?.forEach((x: V30FinancialCorridor) => this.v30FinancialCorridors.set(x.id, x));
+      this.v30AgentProfiles.clear();
+      data.v30AgentProfiles?.forEach((x: V30AgentProfile) => this.v30AgentProfiles.set(x.id, x));
+      this.v30LiquidityReports.clear();
+      data.v30LiquidityReports?.forEach((x: V30LiquidityReport) => this.v30LiquidityReports.set(x.id, x));
+      this.v30FinancialDisputes.clear();
+      data.v30FinancialDisputes?.forEach((x: V30FinancialDispute) => this.v30FinancialDisputes.set(x.id, x));
+      this.v30FraudRiskEvents.clear();
+      data.v30FraudRiskEvents?.forEach((x: V30FraudRiskEvent) => this.v30FraudRiskEvents.set(x.id, x));
+      this.v30RegulatoryRequirements.clear();
+      data.v30RegulatoryRequirements?.forEach((x: V30RegulatoryRequirement) => this.v30RegulatoryRequirements.set(x.id, x));
+      this.v30RegulatoryEvidence.clear();
+      data.v30RegulatoryEvidence?.forEach((x: V30RegulatoryEvidence) => this.v30RegulatoryEvidence.set(x.id, x));
+      this.v30WalletCardProfiles.clear();
+      data.v30WalletCardProfiles?.forEach((x: V30WalletCardProfile) => this.v30WalletCardProfiles.set(x.id, x));
+      this.v30BusinessFinanceDocs.clear();
+      data.v30BusinessFinanceDocs?.forEach((x: V30BusinessFinanceDoc) => this.v30BusinessFinanceDocs.set(x.id, x));
+      this.v30OfflineUssdSessions.clear();
+      data.v30OfflineUssdSessions?.forEach((x: V30OfflineUssdSession) => this.v30OfflineUssdSessions.set(x.id, x));
+      this.v30AiRequestMetrics.clear();
+      data.v30AiRequestMetrics?.forEach((x: V30AiRequestMetric) => this.v30AiRequestMetrics.set(x.id, x));
+      this.v30RepairRegister.clear();
+      data.v30RepairRegister?.forEach((x: V30RepairRecord) => this.v30RepairRegister.set(x.id, x));
+      this.v30GitSyncEvents.clear();
+      data.v30GitSyncEvents?.forEach((x: V30GitSyncEvent) => this.v30GitSyncEvents.set(x.id, x));
+
+      // V31 Deserialization (Schema 28)
+      this.v31DatabaseMigrationRuns.clear();
+      data.v31DatabaseMigrationRuns?.forEach((x: V31DatabaseMigrationRun) => this.v31DatabaseMigrationRuns.set(x.id, x));
+      this.v31DatabaseIntegrityChecks.clear();
+      data.v31DatabaseIntegrityChecks?.forEach((x: V31DatabaseIntegrityCheck) => this.v31DatabaseIntegrityChecks.set(x.id, x));
+      this.v31DatabaseBackupRecords.clear();
+      data.v31DatabaseBackupRecords?.forEach((x: V31DatabaseBackupRecord) => this.v31DatabaseBackupRecords.set(x.id, x));
+      this.v31CountryOperatingProfiles.clear();
+      data.v31CountryOperatingProfiles?.forEach((x: V31CountryOperatingProfile) => this.v31CountryOperatingProfiles.set(x.id, x));
+      this.v31DataResidencyPolicies.clear();
+      data.v31DataResidencyPolicies?.forEach((x: V31DataResidencyPolicy) => this.v31DataResidencyPolicies.set(x.id, x));
+      this.v31ProviderCertificationRuns.clear();
+      data.v31ProviderCertificationRuns?.forEach((x: V31ProviderCertificationRun) => this.v31ProviderCertificationRuns.set(x.id, x));
+      this.v31IntegrationCredentialsMetadata.clear();
+      data.v31IntegrationCredentialsMetadata?.forEach((x: V31IntegrationCredentialMetadata) => this.v31IntegrationCredentialsMetadata.set(x.id, x));
+      this.v31IntegrationHealthHistory.clear();
+      data.v31IntegrationHealthHistory?.forEach((x: V31IntegrationHealthHistory) => this.v31IntegrationHealthHistory.set(x.id, x));
+      this.v31InstitutionalOrganizations.clear();
+      data.v31InstitutionalOrganizations?.forEach((x: V31InstitutionalOrganization) => this.v31InstitutionalOrganizations.set(x.id, x));
+      this.v31OrganizationBranches.clear();
+      data.v31OrganizationBranches?.forEach((x: V31OrganizationBranch) => this.v31OrganizationBranches.set(x.id, x));
+      this.v31OrganizationDepartments.clear();
+      data.v31OrganizationDepartments?.forEach((x: V31OrganizationDepartment) => this.v31OrganizationDepartments.set(x.id, x));
+      this.v31EnterpriseApprovalPolicies.clear();
+      data.v31EnterpriseApprovalPolicies?.forEach((x: V31EnterpriseApprovalPolicy) => this.v31EnterpriseApprovalPolicies.set(x.id, x));
+      this.v31CommercialWorkflowCases.clear();
+      data.v31CommercialWorkflowCases?.forEach((x: V31CommercialWorkflowCase) => this.v31CommercialWorkflowCases.set(x.id, x));
+      this.v31PilotPrograms.clear();
+      data.v31PilotPrograms?.forEach((x: V31PilotProgram) => this.v31PilotPrograms.set(x.id, x));
+      this.v31PilotParticipants.clear();
+      data.v31PilotParticipants?.forEach((x: V31PilotParticipant) => this.v31PilotParticipants.set(x.id, x));
+      this.v31FieldValidationRecords.clear();
+      data.v31FieldValidationRecords?.forEach((x: V31FieldValidationRecord) => this.v31FieldValidationRecords.set(x.id, x));
+      this.v31PilotIncidents.clear();
+      data.v31PilotIncidents?.forEach((x: V31PilotIncident) => this.v31PilotIncidents.set(x.id, x));
+      this.v31SecurityIncidents.clear();
+      data.v31SecurityIncidents?.forEach((x: V31SecurityIncident) => this.v31SecurityIncidents.set(x.id, x));
+      this.v31DeploymentRecords.clear();
+      data.v31DeploymentRecords?.forEach((x: V31DeploymentRecord) => this.v31DeploymentRecords.set(x.id, x));
+      this.v31ReleaseVerificationRecords.clear();
+      data.v31ReleaseVerificationRecords?.forEach((x: V31ReleaseVerificationRecord) => this.v31ReleaseVerificationRecords.set(x.id, x));
+      this.v31ContinentalAnalyticsSnapshots.clear();
+      data.v31ContinentalAnalyticsSnapshots?.forEach((x: V31ContinentalAnalyticsSnapshot) => this.v31ContinentalAnalyticsSnapshots.set(x.id, x));
+
       // If V9 collections empty, seed V9 collections
       if (this.federations.size === 0) {
         this.seedV9Collections();
@@ -3864,7 +4088,73 @@ export class ArosDatabase {
         this.persistToDiskSync();
       }
 
-      console.log(`[ECONEX DB V28] Loaded schema v${this.schemaVersion}: ${this.users.size} users, ${this.v28ExecutionWorkflows.size} workflows, ${this.v28Contracts.size} contracts, ${this.v28InteroperabilityConnectors.size} connectors, ${this.v26RouteInventory.size} routes from ${DB_FILE}`);
+      // Recover or run idempotent Schema 26 -> 27 migration (ECONEX V30.0)
+      const pendingV30 = Array.from(this.v20MigrationCheckpoints.values()).find(
+        (m) => m.toSchemaVersion === 27 && m.status === 'IN_PROGRESS'
+      );
+      const hasCp27 = Array.from(this.v20MigrationCheckpoints.values()).some(
+        (m) => m.toSchemaVersion === 27 && (m.status === 'COMPLETED' || m.status === 'RECOVERED')
+      );
+      if (pendingV30) {
+        seedV30Collections(this);
+        pendingV30.status = 'RECOVERED';
+        pendingV30.completedAt = new Date().toISOString();
+        pendingV30.postCounts = this.getV27CollectionCountsSnapshot();
+        pendingV30.postFinancialTotals = this.getPreservedFinancialTotals();
+        pendingV30.financialTotalsPreserved = true;
+        this.v20MigrationCheckpoints.set(pendingV30.id, pendingV30);
+        this.schemaVersion = 27;
+        this.persistToDiskSync();
+        console.log('[ECONEX DB V30] Recovered interrupted Schema 27 migration cleanly.');
+      } else if (
+        loadedSchema < 27 ||
+        this.v30FinancialProviders.size < 13 ||
+        this.v30FinancialCorridors.size < 8 ||
+        this.v30RegulatoryRequirements.size < 8 ||
+        !hasCp27 ||
+        !fs.existsSync(path.join(DATA_DIR, 'aros_database.v29.backup.json'))
+      ) {
+        this.migrateV26ToV27(Math.max(loadedSchema, 26));
+      } else {
+        seedV30Collections(this);
+        this.schemaVersion = 27;
+        this.persistToDiskSync();
+      }
+
+      // Recover or run idempotent Schema 27 -> 28 migration (ECONEX V31.0)
+      const pendingV31 = Array.from(this.v20MigrationCheckpoints.values()).find(
+        (m) => m.toSchemaVersion === 28 && m.status === 'IN_PROGRESS'
+      );
+      const hasCp28 = Array.from(this.v20MigrationCheckpoints.values()).some(
+        (m) => m.toSchemaVersion === 28 && (m.status === 'COMPLETED' || m.status === 'RECOVERED')
+      );
+      if (pendingV31) {
+        seedV31Collections(this);
+        pendingV31.status = 'RECOVERED';
+        pendingV31.completedAt = new Date().toISOString();
+        pendingV31.postCounts = this.getV28CollectionCountsSnapshot();
+        pendingV31.postFinancialTotals = this.getPreservedFinancialTotals();
+        pendingV31.financialTotalsPreserved = true;
+        this.v20MigrationCheckpoints.set(pendingV31.id, pendingV31);
+        this.schemaVersion = 28;
+        this.persistToDiskSync();
+        console.log('[ECONEX DB V31] Recovered interrupted Schema 28 migration cleanly.');
+      } else if (
+        loadedSchema < 28 ||
+        this.v31CountryOperatingProfiles.size < 6 ||
+        this.v31ProviderCertificationRuns.size < 13 ||
+        this.v31PilotPrograms.size < 1 ||
+        !hasCp28 ||
+        !fs.existsSync(path.join(DATA_DIR, 'aros_database.v30.backup.json'))
+      ) {
+        this.migrateV27ToV28(Math.max(loadedSchema, 27));
+      } else {
+        seedV31Collections(this);
+        this.schemaVersion = 28;
+        this.persistToDiskSync();
+      }
+
+      console.log(`[ECONEX DB V31] Loaded schema v${this.schemaVersion}: ${this.users.size} users, ${this.v31CountryOperatingProfiles.size} countries, ${this.v31ProviderCertificationRuns.size} certifications, ${this.v30FinancialProviders.size} providers, ${this.v30PaymentInstructions.size} payments from ${DB_FILE}`);
     } catch (err) {
       console.error('[AROS DB] Failed to parse existing database, re-seeding:', err);
       this.seedDatabase();
@@ -4879,6 +5169,20 @@ export class ArosDatabase {
     }
     seedV28Collections(this);
     this.schemaVersion = 26;
+    this.persistToDiskSync();
+    const v29Backup = path.join(DATA_DIR, 'aros_database.v29.backup.json');
+    if (!fs.existsSync(v29Backup) && fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, v29Backup);
+    }
+    seedV30Collections(this);
+    this.schemaVersion = 27;
+    this.persistToDiskSync();
+    const v30Backup = path.join(DATA_DIR, 'aros_database.v30.backup.json');
+    if (!fs.existsSync(v30Backup) && fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, v30Backup);
+    }
+    seedV31Collections(this);
+    this.schemaVersion = 28;
   }
 
   seedV3Collections() {
@@ -14700,6 +15004,466 @@ export class ArosDatabase {
       integrity,
       v25Integrity,
       v26Counts: this.getV26CollectionCountsSnapshot(),
+    };
+  }
+
+  // ==========================================
+  // V30 MIGRATION, CANONICAL V29 BACKUP & SCHEMA 27 INTEGRITY
+  // ==========================================
+
+  getV27CollectionCountsSnapshot(): Record<string, number> {
+    return {
+      v30FinancialProviders: this.v30FinancialProviders.size,
+      v30ProviderCapabilities: this.v30ProviderCapabilities.size,
+      v30ProviderHealthEvents: this.v30ProviderHealthEvents.size,
+      v30PaymentRoutingPolicies: this.v30PaymentRoutingPolicies.size,
+      v30PaymentInstructions: this.v30PaymentInstructions.size,
+      v30PaymentAttempts: this.v30PaymentAttempts.size,
+      v30SettlementRecords: this.v30SettlementRecords.size,
+      v30ReconciliationCases: this.v30ReconciliationCases.size,
+      v30FinancialCorridors: this.v30FinancialCorridors.size,
+      v30AgentProfiles: this.v30AgentProfiles.size,
+      v30LiquidityReports: this.v30LiquidityReports.size,
+      v30FinancialDisputes: this.v30FinancialDisputes.size,
+      v30FraudRiskEvents: this.v30FraudRiskEvents.size,
+      v30RegulatoryRequirements: this.v30RegulatoryRequirements.size,
+      v30RegulatoryEvidence: this.v30RegulatoryEvidence.size,
+      v30WalletCardProfiles: this.v30WalletCardProfiles.size,
+      v30BusinessFinanceDocs: this.v30BusinessFinanceDocs.size,
+      v30OfflineUssdSessions: this.v30OfflineUssdSessions.size,
+      v30AiRequestMetrics: this.v30AiRequestMetrics.size,
+      v30RepairRegister: this.v30RepairRegister.size,
+      v30GitSyncEvents: this.v30GitSyncEvents.size,
+    };
+  }
+
+  migrateV26ToV27(fromVersion = 26): V20MigrationCheckpoint {
+    const existing = Array.from(this.v20MigrationCheckpoints.values()).find(
+      (c) => c.toSchemaVersion === 27 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+    );
+    if (
+      this.schemaVersion === 27 &&
+      existing &&
+      this.v30FinancialProviders.size >= 13 &&
+      this.v30FinancialCorridors.size >= 8 &&
+      this.v30RegulatoryRequirements.size >= 8 &&
+      fs.existsSync(path.join(DATA_DIR, 'aros_database.v29.backup.json'))
+    ) {
+      return existing;
+    }
+
+    const startedAt = new Date().toISOString();
+    const preCounts = this.getV26CollectionCountsSnapshot();
+    const preFin = this.getPreservedFinancialTotals();
+
+    const v29CanonicalBackup = path.join(DATA_DIR, 'aros_database.v29.backup.json');
+    const preMigBackup = path.join(BACKUP_DIR, `aros_pre_v27_migration_${Date.now()}.json`);
+    if (fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, preMigBackup);
+      this.pruneRollingBackups('aros_pre_v27_migration_', 1);
+      let existingV29BackupValid = false;
+      if (fs.existsSync(v29CanonicalBackup)) {
+        try {
+          const b = JSON.parse(fs.readFileSync(v29CanonicalBackup, 'utf8'));
+          existingV29BackupValid = Number(b.schemaVersion || 0) >= 26 && Array.isArray(b.users) && b.users.length > 0;
+        } catch {
+          existingV29BackupValid = false;
+        }
+      }
+      if (!existingV29BackupValid) {
+        fs.copyFileSync(DB_FILE, v29CanonicalBackup);
+        cachedV29BackupCheck = null;
+      }
+    }
+
+    const backupFileUsed = fs.existsSync(v29CanonicalBackup) ? v29CanonicalBackup : preMigBackup;
+    const backupBytes = fs.existsSync(backupFileUsed) ? fs.readFileSync(backupFileUsed) : Buffer.from('{}');
+    const backupChecksum = crypto.createHash('sha256').update(backupBytes).digest('hex');
+
+    const ddlPath = path.join(__dirname, 'postgres', 'schema_v27.sql');
+    const ddlBytes = fs.existsSync(ddlPath) ? fs.readFileSync(ddlPath) : Buffer.from('');
+    const migChecksum = crypto.createHash('sha256').update(ddlBytes).digest('hex');
+
+    const cp: V20MigrationCheckpoint = {
+      id: `MIG-V30-${Date.now().toString(36).toUpperCase()}`,
+      fromSchemaVersion: fromVersion,
+      toSchemaVersion: 27,
+      status: 'IN_PROGRESS',
+      v17BackupFilePath: backupFileUsed,
+      v17BackupChecksumSha256: backupChecksum,
+      migrationChecksumSha256: migChecksum,
+      preCounts,
+      postCounts: {},
+      preFinancialTotals: preFin,
+      postFinancialTotals: {},
+      financialTotalsPreserved: false,
+      startedAt,
+    };
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    seedV30Collections(this);
+    this.schemaVersion = 27;
+
+    const postCounts = this.getV27CollectionCountsSnapshot();
+    const postFin = this.getPreservedFinancialTotals();
+    const finBalanced =
+      postFin.journalDebitUgx === preFin.journalDebitUgx &&
+      postFin.journalCreditUgx === preFin.journalCreditUgx &&
+      postFin.finExecTotal === preFin.finExecTotal;
+
+    cp.financialTotalsPreserved = finBalanced;
+    cp.status =
+      finBalanced &&
+      this.v30FinancialProviders.size >= 13 &&
+      this.v30FinancialCorridors.size >= 8 &&
+      this.v30RegulatoryRequirements.size >= 8
+        ? 'COMPLETED'
+        : 'FAILED';
+    cp.completedAt = new Date().toISOString();
+    cp.postCounts = postCounts;
+    cp.postFinancialTotals = postFin;
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    this.migrationHistory.push({
+      fromVersion,
+      toVersion: 27,
+      migratedAt: cp.completedAt,
+      backupFile: backupFileUsed,
+      preservedRecordsCount:
+        this.users.size +
+        this.tenants.size +
+        this.v23Wallets.size +
+        this.v24Orders.size +
+        this.v25Organisations.size +
+        this.v26RouteInventory.size +
+        this.v27NetworkProfiles.size +
+        this.v28ExecutionWorkflows.size +
+        this.v30FinancialProviders.size +
+        this.v30PaymentInstructions.size +
+        this.universalJournal.size,
+    });
+
+    this.persistToDiskSync();
+    console.log(`[ECONEX DB V30] Migrated schema v${fromVersion} -> v27 (V29 backup SHA-256: ${backupChecksum.slice(0, 12)})`);
+    return cp;
+  }
+
+  verifyV29BackupAndRollbackReadiness() {
+    const v29Backup = path.join(DATA_DIR, 'aros_database.v29.backup.json');
+    if (!fs.existsSync(v29Backup)) {
+      cachedV29BackupCheck = null;
+      return {
+        v29BackupValid: false,
+        rollbackSupported: false,
+        filePath: v29Backup,
+        v29BackupSha256: '',
+        checksumSha256: '',
+        bytes: 0,
+      };
+    }
+    const stat = fs.statSync(v29Backup);
+    if (cachedV29BackupCheck && cachedV29BackupCheck.mtimeMs === stat.mtimeMs && cachedV29BackupCheck.size === stat.size) {
+      return cachedV29BackupCheck.value;
+    }
+    const raw = fs.readFileSync(v29Backup);
+    const parsed = JSON.parse(raw.toString('utf8'));
+    const checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+    const valid = Number(parsed.schemaVersion) >= 26 && Array.isArray(parsed.users) && parsed.users.length > 0;
+    const result = {
+      v29BackupValid: valid,
+      rollbackSupported: valid,
+      filePath: v29Backup,
+      v29BackupSha256: checksumSha256,
+      checksumSha256,
+      bytes: raw.length,
+    };
+    cachedV29BackupCheck = { mtimeMs: stat.mtimeMs, size: stat.size, value: result };
+    return result;
+  }
+
+  validateV27SchemaIntegrity() {
+    const issues: string[] = [];
+    if (this.schemaVersion < 27) issues.push(`Expected schemaVersion >= 27, got ${this.schemaVersion}`);
+    if (this.v30FinancialProviders.size < 13) issues.push(`Expected >= 13 V30 financial providers, got ${this.v30FinancialProviders.size}`);
+    if (this.v30FinancialCorridors.size < 8) issues.push(`Expected >= 8 V30 corridors, got ${this.v30FinancialCorridors.size}`);
+    if (this.v30AgentProfiles.size < 8) issues.push(`Expected >= 8 V30 agent profiles, got ${this.v30AgentProfiles.size}`);
+    if (this.v30RegulatoryRequirements.size < 8) issues.push(`Expected >= 8 V30 regulatory requirements, got ${this.v30RegulatoryRequirements.size}`);
+    if (this.v30RepairRegister.size < 5) issues.push(`Expected >= 5 V30 repair records, got ${this.v30RepairRegister.size}`);
+    const fin = this.getFinancialIntegrityReport();
+    if (!fin.journalBalanced) issues.push('Double-entry general ledger imbalance detected');
+    return {
+      valid: issues.length === 0,
+      schemaVersion: this.schemaVersion,
+      v30CollectionsInitialized: 21,
+      providersCount: this.v30FinancialProviders.size,
+      corridorsCount: this.v30FinancialCorridors.size,
+      agentsCount: this.v30AgentProfiles.size,
+      regulatoryCount: this.v30RegulatoryRequirements.size,
+      financialBalanced: fin.journalBalanced,
+      issues,
+    };
+  }
+
+  verifyV27MigrationCompleteness() {
+    const checkpoint =
+      Array.from(this.v20MigrationCheckpoints.values()).find(
+        (c) => c.toSchemaVersion === 27 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+      ) || null;
+    const rb = this.verifyV29BackupAndRollbackReadiness();
+    const integrity = this.validateV27SchemaIntegrity();
+    const v26Integrity = this.validateV26SchemaIntegrity();
+    const passed = Boolean(integrity.valid && v26Integrity.valid);
+    return {
+      complete: passed,
+      passed,
+      schemaVersion: this.schemaVersion,
+      rollback: {
+        v29BackupValid: rb.v29BackupValid,
+        v29BackupSha256: rb.checksumSha256,
+        rollbackSupported: rb.rollbackSupported,
+        filePath: rb.filePath,
+        bytes: rb.bytes,
+      },
+      migration: {
+        passed,
+        complete: passed,
+        schemaVersion: this.schemaVersion,
+        checkpoint,
+      },
+      integrity,
+      v26Integrity,
+      v27Counts: this.getV27CollectionCountsSnapshot(),
+    };
+  }
+
+  // ==========================================
+  // V31 MIGRATION, CANONICAL V30 BACKUP & SCHEMA 28 INTEGRITY
+  // ==========================================
+
+  getV28CollectionCountsSnapshot(): Record<string, number> {
+    return {
+      v31DatabaseMigrationRuns: this.v31DatabaseMigrationRuns.size,
+      v31DatabaseIntegrityChecks: this.v31DatabaseIntegrityChecks.size,
+      v31DatabaseBackupRecords: this.v31DatabaseBackupRecords.size,
+      v31CountryOperatingProfiles: this.v31CountryOperatingProfiles.size,
+      v31DataResidencyPolicies: this.v31DataResidencyPolicies.size,
+      v31ProviderCertificationRuns: this.v31ProviderCertificationRuns.size,
+      v31IntegrationCredentialsMetadata: this.v31IntegrationCredentialsMetadata.size,
+      v31IntegrationHealthHistory: this.v31IntegrationHealthHistory.size,
+      v31InstitutionalOrganizations: this.v31InstitutionalOrganizations.size,
+      v31OrganizationBranches: this.v31OrganizationBranches.size,
+      v31OrganizationDepartments: this.v31OrganizationDepartments.size,
+      v31EnterpriseApprovalPolicies: this.v31EnterpriseApprovalPolicies.size,
+      v31CommercialWorkflowCases: this.v31CommercialWorkflowCases.size,
+      v31PilotPrograms: this.v31PilotPrograms.size,
+      v31PilotParticipants: this.v31PilotParticipants.size,
+      v31FieldValidationRecords: this.v31FieldValidationRecords.size,
+      v31PilotIncidents: this.v31PilotIncidents.size,
+      v31SecurityIncidents: this.v31SecurityIncidents.size,
+      v31DeploymentRecords: this.v31DeploymentRecords.size,
+      v31ReleaseVerificationRecords: this.v31ReleaseVerificationRecords.size,
+      v31ContinentalAnalyticsSnapshots: this.v31ContinentalAnalyticsSnapshots.size,
+    };
+  }
+
+  migrateV27ToV28(fromVersion = 27): V20MigrationCheckpoint {
+    const existing = Array.from(this.v20MigrationCheckpoints.values()).find(
+      (c) => c.toSchemaVersion === 28 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+    );
+    if (
+      this.schemaVersion === 28 &&
+      existing &&
+      this.v31CountryOperatingProfiles.size >= 6 &&
+      this.v31ProviderCertificationRuns.size >= 13 &&
+      this.v31PilotPrograms.size >= 1 &&
+      fs.existsSync(path.join(DATA_DIR, 'aros_database.v30.backup.json'))
+    ) {
+      return existing;
+    }
+
+    const startedAt = new Date().toISOString();
+    const preCounts = this.getV27CollectionCountsSnapshot();
+    const preFin = this.getPreservedFinancialTotals();
+
+    const v30CanonicalBackup = path.join(DATA_DIR, 'aros_database.v30.backup.json');
+    const preMigBackup = path.join(BACKUP_DIR, `aros_pre_v28_migration_${Date.now()}.json`);
+    if (fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(DB_FILE, preMigBackup);
+      this.pruneRollingBackups('aros_pre_v28_migration_', 1);
+      let existingV30BackupValid = false;
+      if (fs.existsSync(v30CanonicalBackup)) {
+        try {
+          const b = JSON.parse(fs.readFileSync(v30CanonicalBackup, 'utf8'));
+          existingV30BackupValid = Number(b.schemaVersion || 0) >= 27 && Array.isArray(b.users) && b.users.length > 0;
+        } catch {
+          existingV30BackupValid = false;
+        }
+      }
+      if (!existingV30BackupValid) {
+        fs.copyFileSync(DB_FILE, v30CanonicalBackup);
+        cachedV30BackupCheck = null;
+      }
+    }
+
+    const backupFileUsed = fs.existsSync(v30CanonicalBackup) ? v30CanonicalBackup : preMigBackup;
+    const backupBytes = fs.existsSync(backupFileUsed) ? fs.readFileSync(backupFileUsed) : Buffer.from('{}');
+    const backupChecksum = crypto.createHash('sha256').update(backupBytes).digest('hex');
+
+    const ddlPath = path.join(__dirname, 'postgres', 'schema_v28.sql');
+    const ddlBytes = fs.existsSync(ddlPath) ? fs.readFileSync(ddlPath) : Buffer.from('');
+    const migChecksum = crypto.createHash('sha256').update(ddlBytes).digest('hex');
+
+    const cp: V20MigrationCheckpoint = {
+      id: `MIG-V31-${Date.now().toString(36).toUpperCase()}`,
+      fromSchemaVersion: fromVersion,
+      toSchemaVersion: 28,
+      status: 'IN_PROGRESS',
+      v17BackupFilePath: backupFileUsed,
+      v17BackupChecksumSha256: backupChecksum,
+      migrationChecksumSha256: migChecksum,
+      preCounts,
+      postCounts: {},
+      preFinancialTotals: preFin,
+      postFinancialTotals: {},
+      financialTotalsPreserved: false,
+      startedAt,
+    };
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    seedV31Collections(this);
+    this.schemaVersion = 28;
+
+    const postCounts = this.getV28CollectionCountsSnapshot();
+    const postFin = this.getPreservedFinancialTotals();
+    const finBalanced =
+      postFin.journalDebitUgx === preFin.journalDebitUgx &&
+      postFin.journalCreditUgx === preFin.journalCreditUgx &&
+      postFin.finExecTotal === preFin.finExecTotal;
+
+    cp.financialTotalsPreserved = finBalanced;
+    cp.status =
+      finBalanced &&
+      this.v31CountryOperatingProfiles.size >= 6 &&
+      this.v31ProviderCertificationRuns.size >= 13 &&
+      this.v31PilotPrograms.size >= 1
+        ? 'COMPLETED'
+        : 'FAILED';
+    cp.completedAt = new Date().toISOString();
+    cp.postCounts = postCounts;
+    cp.postFinancialTotals = postFin;
+    this.v20MigrationCheckpoints.set(cp.id, cp);
+
+    this.migrationHistory.push({
+      fromVersion,
+      toVersion: 28,
+      migratedAt: cp.completedAt,
+      backupFile: backupFileUsed,
+      preservedRecordsCount:
+        this.users.size +
+        this.tenants.size +
+        this.v23Wallets.size +
+        this.v24Orders.size +
+        this.v25Organisations.size +
+        this.v26RouteInventory.size +
+        this.v27NetworkProfiles.size +
+        this.v28ExecutionWorkflows.size +
+        this.v30FinancialProviders.size +
+        this.v30PaymentInstructions.size +
+        this.v31CountryOperatingProfiles.size +
+        this.v31ProviderCertificationRuns.size +
+        this.universalJournal.size,
+    });
+
+    this.persistToDiskSync();
+    console.log(`[ECONEX DB V31] Migrated schema v${fromVersion} -> v28 (V30 backup SHA-256: ${backupChecksum.slice(0, 12)})`);
+    return cp;
+  }
+
+  verifyV30BackupAndRollbackReadiness() {
+    const v30Backup = path.join(DATA_DIR, 'aros_database.v30.backup.json');
+    if (!fs.existsSync(v30Backup)) {
+      cachedV30BackupCheck = null;
+      return {
+        v30BackupValid: false,
+        rollbackSupported: false,
+        filePath: v30Backup,
+        v30BackupSha256: '',
+        checksumSha256: '',
+        bytes: 0,
+      };
+    }
+    const stat = fs.statSync(v30Backup);
+    if (cachedV30BackupCheck && cachedV30BackupCheck.mtimeMs === stat.mtimeMs && cachedV30BackupCheck.size === stat.size) {
+      return cachedV30BackupCheck.value;
+    }
+    const raw = fs.readFileSync(v30Backup);
+    const parsed = JSON.parse(raw.toString('utf8'));
+    const checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+    const valid = Number(parsed.schemaVersion) >= 27 && Array.isArray(parsed.users) && parsed.users.length > 0;
+    const result = {
+      v30BackupValid: valid,
+      rollbackSupported: valid,
+      filePath: v30Backup,
+      v30BackupSha256: checksumSha256,
+      checksumSha256,
+      bytes: raw.length,
+    };
+    cachedV30BackupCheck = { mtimeMs: stat.mtimeMs, size: stat.size, value: result };
+    return result;
+  }
+
+  validateV28SchemaIntegrity() {
+    const issues: string[] = [];
+    if (this.schemaVersion < 28) issues.push(`Expected schemaVersion >= 28, got ${this.schemaVersion}`);
+    if (this.v31CountryOperatingProfiles.size < 6) issues.push(`Expected >= 6 V31 country profiles, got ${this.v31CountryOperatingProfiles.size}`);
+    if (this.v31DataResidencyPolicies.size < 6) issues.push(`Expected >= 6 V31 residency policies, got ${this.v31DataResidencyPolicies.size}`);
+    if (this.v31ProviderCertificationRuns.size < 13) issues.push(`Expected >= 13 V31 provider certification runs, got ${this.v31ProviderCertificationRuns.size}`);
+    if (this.v31InstitutionalOrganizations.size < 4) issues.push(`Expected >= 4 V31 enterprise orgs, got ${this.v31InstitutionalOrganizations.size}`);
+    if (this.v31PilotPrograms.size < 1) issues.push(`Expected >= 1 V31 pilot program, got ${this.v31PilotPrograms.size}`);
+    const fin = this.getFinancialIntegrityReport();
+    if (!fin.journalBalanced) issues.push('Double-entry general ledger imbalance detected');
+    return {
+      valid: issues.length === 0,
+      schemaVersion: this.schemaVersion,
+      v31CollectionsInitialized: 21,
+      countriesCount: this.v31CountryOperatingProfiles.size,
+      certificationsCount: this.v31ProviderCertificationRuns.size,
+      organizationsCount: this.v31InstitutionalOrganizations.size,
+      pilotProgramsCount: this.v31PilotPrograms.size,
+      financialBalanced: fin.journalBalanced,
+      issues,
+    };
+  }
+
+  verifyV28MigrationCompleteness() {
+    const checkpoint =
+      Array.from(this.v20MigrationCheckpoints.values()).find(
+        (c) => c.toSchemaVersion === 28 && (c.status === 'COMPLETED' || c.status === 'RECOVERED')
+      ) || null;
+    const rb = this.verifyV30BackupAndRollbackReadiness();
+    const integrity = this.validateV28SchemaIntegrity();
+    const v27Integrity = this.validateV27SchemaIntegrity();
+    const passed = Boolean(integrity.valid && v27Integrity.valid);
+    return {
+      complete: passed,
+      passed,
+      schemaVersion: this.schemaVersion,
+      rollback: {
+        v30BackupValid: rb.v30BackupValid,
+        v30BackupSha256: rb.checksumSha256,
+        rollbackSupported: rb.rollbackSupported,
+        filePath: rb.filePath,
+        bytes: rb.bytes,
+      },
+      migration: {
+        passed,
+        complete: passed,
+        schemaVersion: this.schemaVersion,
+        checkpoint,
+      },
+      integrity,
+      v27Integrity,
+      v28Counts: this.getV28CollectionCountsSnapshot(),
     };
   }
 }

@@ -12318,6 +12318,776 @@ export interface V28ReadinessFlags {
   AI_STUDIO_GITHUB_BINDING_VERIFIED: boolean;
 }
 
+// ==========================================
+// ECONEX V30.0 — UNIVERSAL FINANCIAL INTEROPERABILITY, RESILIENCE & EXECUTION TYPES (SCHEMA 27)
+// ==========================================
+
+export type V30ProviderCategory =
+  | 'MOBILE_MONEY'
+  | 'COMMERCIAL_BANK'
+  | 'CENTRAL_BANK_RTGS'
+  | 'INSTANT_INTERBANK_SWITCH'
+  | 'PAYMENT_GATEWAY'
+  | 'REMITTANCE_RAIL'
+  | 'CARD_SCHEME_GATEWAY'
+  | 'SACCO_COOP_HUB'
+  | 'DIGITAL_ASSET_GATE';
+
+export type V30ProviderIntegrationStatus =
+  | 'SIMULATED'
+  | 'CREDENTIALS_REQUIRED'
+  | 'PARTNER_APPROVAL_REQUIRED'
+  | 'REGULATORY_APPROVAL_REQUIRED'
+  | 'SANDBOX_ACTIVE'
+  | 'LIVE';
+
+export type V30ProviderHealthStatus =
+  | 'HEALTHY'
+  | 'DEGRADED'
+  | 'DOWN'
+  | 'MAINTENANCE'
+  | 'CIRCUIT_OPEN';
+
+export type V30RoutingStrategy =
+  | 'LOWEST_COST'
+  | 'FASTEST_SETTLEMENT'
+  | 'HIGHEST_RELIABILITY'
+  | 'FALLBACK_RESILIENCE';
+
+export type V30PaymentLifecycleState =
+  | 'REQUESTED'
+  | 'VALIDATING'
+  | 'AUTHORIZED'
+  | 'SUBMITTED'
+  | 'PROCESSING'
+  | 'CONFIRMED'
+  | 'FAILED'
+  | 'PENDING_RECONCILIATION'
+  | 'RECONCILED'
+  | 'CLOSED'
+  | 'DISPUTED'
+  | 'REVERSED';
+
+export interface V30FinancialProvider {
+  id: string;
+  code: string;
+  name: string;
+  providerCategory: V30ProviderCategory;
+  countries: string[];
+  currencies: string[];
+  integrationStatus: V30ProviderIntegrationStatus;
+  healthStatus: V30ProviderHealthStatus;
+  feeBps: number;
+  flatFeeMinor: number;
+  fxMarkupBps: number;
+  typicalSettlementSeconds: number;
+  reliabilityScore: number;
+  supportsUssdOffline: boolean;
+  supportsWebhooksHmac: boolean;
+  sandboxOnly: boolean;
+  notes: string;
+  updatedAt: string;
+}
+
+export interface V30ProviderCapability {
+  id: string;
+  providerId: string;
+  railCode: string;
+  currency: string;
+  minAmountMinor: number;
+  maxAmountMinor: number;
+  supportsPayout: boolean;
+  supportsCollection: boolean;
+  supportsReversal: boolean;
+  avgLatencyMs: number;
+  createdAt: string;
+}
+
+export interface V30ProviderHealthEvent {
+  id: string;
+  providerId: string;
+  previousStatus: V30ProviderHealthStatus;
+  newStatus: V30ProviderHealthStatus;
+  reason: string;
+  latencyMs: number;
+  errorRateBps: number;
+  circuitBreakerState: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  actorUserId: string;
+  occurredAt: string;
+}
+
+export interface V30PaymentRoutingPolicy {
+  id: string;
+  policyName: string;
+  strategy: V30RoutingStrategy;
+  corridorCode: string;
+  maxFeeBps: number;
+  allowFailover: boolean;
+  requireSandboxDisclosure: boolean;
+  active: boolean;
+  updatedAt: string;
+}
+
+export interface V30PaymentInstruction {
+  id: string;
+  instructionRef: string;
+  idempotencyKey: string;
+  correlationId: string;
+  tenantId: string;
+  initiatorUserId: string;
+  organisationId: string;
+  recipientRef: string;
+  sourceCurrency: string;
+  targetCurrency: string;
+  principalMinor: number;
+  providerFeeMinor: number;
+  platformFeeMinor: number;
+  fxSpreadMinor: number;
+  totalDebitMinor: number;
+  fxRateDisplay: string;
+  selectedProviderId: string;
+  fallbackProviderId?: string;
+  routingStrategy: V30RoutingStrategy;
+  lifecycleState: V30PaymentLifecycleState;
+  linkedEntityType?: string;
+  linkedEntityId?: string;
+  sandboxOnly: boolean;
+  offlineQueued: boolean;
+  failureReason?: string;
+  feeBreakdownDisclosure: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V30PaymentAttempt {
+  id: string;
+  paymentInstructionId: string;
+  attemptNumber: number;
+  providerId: string;
+  status: 'INITIATED' | 'SUCCEEDED' | 'FAILED_RETRYABLE' | 'FAILED_TERMINAL' | 'SKIPPED_FAILOVER';
+  providerRef?: string;
+  latencyMs: number;
+  errorCode?: string;
+  attemptedAt: string;
+}
+
+export interface V30SettlementRecord {
+  id: string;
+  paymentInstructionId: string;
+  providerId: string;
+  settlementBatchRef: string;
+  currency: string;
+  grossMinor: number;
+  feeMinor: number;
+  netMinor: number;
+  journalEntryId?: string;
+  balanced: boolean;
+  status: 'STAGED' | 'RECONCILED' | 'EXCEPTION' | 'REVERSED';
+  settledAt: string;
+}
+
+export interface V30ReconciliationCase {
+  id: string;
+  paymentInstructionId: string;
+  expectedMinor: number;
+  reportedMinor: number;
+  varianceMinor: number;
+  currency: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  status: 'OPEN' | 'INVESTIGATING' | 'RESOLVED_MATCHED' | 'WRITTEN_OFF_APPROVED';
+  assignedToUserId?: string;
+  resolutionNote?: string;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+export interface V30FinancialCorridor {
+  id: string;
+  corridorCode: string;
+  originCountry: string;
+  destinationCountry: string;
+  originCurrency: string;
+  destinationCurrency: string;
+  indicativeFxRate: number;
+  econexFeeBps: number;
+  legacyRemittanceFeeBps: number;
+  settlementWindowLabel: string;
+  primaryProviderId: string;
+  regulatoryStatus: string;
+  supportedRails: string[];
+  updatedAt: string;
+}
+
+export interface V30AgentProfile {
+  id: string;
+  agentCode: string;
+  businessName: string;
+  countryCode: string;
+  district: string;
+  townOrMarket: string;
+  supportedProviders: string[];
+  services: ('CASH_IN' | 'CASH_OUT' | 'ESCROW_ASSIST' | 'OFFLINE_USSD_SUPPORT')[];
+  verificationTier: 'UNVERIFIED' | 'BASIC_VERIFIED' | 'COOPERATIVE_VERIFIED' | 'INSTITUTIONAL_VERIFIED';
+  reliabilityScore: number;
+  operatingHours: string;
+  ussdEnabled: boolean;
+  createdAt: string;
+}
+
+export interface V30LiquidityReport {
+  id: string;
+  agentId: string;
+  currency: string;
+  cashAvailableBand: 'HIGH' | 'MODERATE' | 'LOW' | 'DEPLETED';
+  floatAvailableBand: 'HIGH' | 'MODERATE' | 'LOW' | 'DEPLETED';
+  maxSinglePayoutMinor: number;
+  reportedByUserId: string;
+  reporterProvenance: string;
+  freshnessExpiresAt: string;
+  reportedAt: string;
+}
+
+export interface V30FinancialDispute {
+  id: string;
+  disputeRef: string;
+  paymentInstructionId?: string;
+  linkedOrderOrContractId?: string;
+  claimantUserId: string;
+  respondentOrgId: string;
+  amountInDisputeMinor: number;
+  currency: string;
+  category: 'NON_DELIVERY' | 'QUALITY_MISMATCH' | 'DUPLICATE_CHARGE' | 'FX_DISCREPANCY' | 'AGENT_FLOAT_ISSUE';
+  reason: string;
+  evidenceHashes: string[];
+  escrowHoldActive: boolean;
+  status: 'OPEN' | 'EVIDENCE_REVIEW' | 'ESCROW_HOLD' | 'MEDIATION' | 'RESOLVED_REFUND' | 'RESOLVED_RELEASE' | 'ESCALATED';
+  mediatorUserId?: string;
+  resolutionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V30FraudRiskEvent {
+  id: string;
+  paymentInstructionId?: string;
+  actorUserId: string;
+  organisationId: string;
+  ruleTriggered: string;
+  riskScore: number;
+  velocityCount: number;
+  humanReviewRequired: boolean;
+  status: 'OPEN_REVIEW' | 'CLEARED' | 'BLOCKED_CONFIRMED' | 'FALSE_POSITIVE';
+  reviewedByUserId?: string;
+  reviewNote?: string;
+  detectedAt: string;
+  reviewedAt?: string;
+}
+
+export interface V30RegulatoryRequirement {
+  id: string;
+  jurisdiction: string;
+  authority: string;
+  frameworkName: string;
+  requirementCode: string;
+  title: string;
+  classification: string;
+  status: 'DESIGN_READY' | 'SANDBOX_CONTROLLED' | 'DOCUMENTATION_IN_PROGRESS' | 'EXTERNAL_APPROVAL_REQUIRED' | 'RESTRICTED_PENDING_REGULATORY_APPROVAL';
+  evidenceCount: number;
+  honestyDisclosure: string;
+  updatedAt: string;
+}
+
+export interface V30RegulatoryEvidence {
+  id: string;
+  requirementId: string;
+  documentTitle: string;
+  checksumSha256: string;
+  submittedByUserId: string;
+  status: 'DRAFT' | 'INTERNAL_REVIEW' | 'VERIFIED_LOCAL';
+  submittedAt: string;
+}
+
+export interface V30WalletCardProfile {
+  id: string;
+  walletId: string;
+  tokenizedCardRef: string;
+  dailySpendLimitMinor: number;
+  monthlySpendLimitMinor: number;
+  internationalEnabled: boolean;
+  onlineEnabled: boolean;
+  frozen: boolean;
+  schemeCertified: false;
+  liveIssuanceEnabled: false;
+  allowedCategories: string[];
+  updatedAt: string;
+}
+
+export interface V30BusinessFinanceDoc {
+  id: string;
+  docRef: string;
+  docType: 'INVOICE' | 'PURCHASE_ORDER' | 'INSTALLMENT_PLAN' | 'BULK_PAYOUT_BATCH';
+  organisationId: string;
+  requesterUserId: string;
+  approverUserId?: string;
+  counterpartyName: string;
+  currency: string;
+  totalMinor: number;
+  taxMinor: number;
+  status: 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'PARTIALLY_PAID' | 'SETTLED' | 'REJECTED';
+  linkedPaymentInstructionId?: string;
+  scheduleItems: Array<{ label: string; amountMinor: number; dueDate: string; settled: boolean }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V30OfflineUssdSession {
+  id: string;
+  msisdn: string;
+  dialString: string;
+  menuStep: string;
+  actionIntent: string;
+  amountMinor: number;
+  currency: string;
+  queuedOffline: boolean;
+  adapterMode: 'SIMULATED_USSD_ADAPTER';
+  responseScreenText: string;
+  createdAt: string;
+}
+
+export interface V30AiRequestMetric {
+  id: string;
+  domainTask: string;
+  modelName: string;
+  outcome: 'LIVE_SUCCESS' | 'CACHE_HIT' | 'DEDUP_HIT' | 'COOLDOWN_FALLBACK' | 'QUOTA_429' | 'AUTH_ERROR' | 'UPSTREAM_5XX' | 'TIMEOUT' | 'BLOCKED_GUARDRAIL';
+  latencyMs: number;
+  retryCount: number;
+  cooldownActive: boolean;
+  promptInjectionBlocked: boolean;
+  createdAt: string;
+}
+
+export interface V30RepairRecord {
+  id: string;
+  area: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  symptom: string;
+  rootCause: string;
+  fixApplied: string;
+  verificationStatus: 'VERIFIED_FIXED' | 'OPEN' | 'MONITORED';
+  detectedAt: string;
+  verifiedAt?: string;
+}
+
+export interface V30GitSyncEvent {
+  id: string;
+  eventType: string;
+  branchName: string;
+  commitHash?: string;
+  localGitReady: boolean;
+  remoteConfigured: boolean;
+  authVerified: boolean;
+  pushVerified: boolean;
+  summary: string;
+  createdAt: string;
+}
+
+export interface V30CompetitiveAdvantageEntry {
+  id: string;
+  legacySystem: string;
+  limitationsObserved: string[];
+  econexCapabilityBuilt: string;
+  measurableAdvantage: string;
+  honestyStatus: string;
+}
+
+export interface V30ReadinessMatrixRow {
+  item: string;
+  status: 'COMPLETE' | 'PARTIAL' | 'BLOCKED' | 'NOT_STARTED' | 'SANDBOX_ONLY' | 'EXTERNAL_APPROVAL_REQUIRED';
+  evidence: string;
+}
+
+// ==========================================
+// ECONEX V31.0 — SOVEREIGN DATA INFRASTRUCTURE, FINANCIAL CONNECTIVITY & CONTINENTAL DEPLOYMENT TYPES (SCHEMA 28)
+// ==========================================
+
+export type V31ProviderCertificationStage =
+  | 'DISCOVERED'
+  | 'REGISTERED'
+  | 'DOCUMENTED'
+  | 'CONFIGURED'
+  | 'AUTHENTICATED'
+  | 'SANDBOX_TESTED'
+  | 'CERTIFICATION_REVIEW'
+  | 'APPROVED'
+  | 'LIVE_VERIFIED';
+
+export type V31DeploymentEnvironment = 'DEV' | 'TEST' | 'STAGING' | 'PROD';
+
+export interface V31MigrationStageRecord {
+  stageNumber: number;
+  stageCode: string;
+  description: string;
+  sourceRecords: number;
+  targetRecords: number;
+  checksumSha256: string;
+  parityMatched: boolean;
+  status: 'COMPLETED' | 'SKIPPED_IDEMPOTENT' | 'FAILED';
+  durationMs: number;
+}
+
+export interface V31DatabaseMigrationRun {
+  id: string;
+  schemaFrom: number;
+  schemaTo: number;
+  mode: 'DRY_RUN_REHEARSAL' | 'LIVE_POSTGRES_MIGRATION';
+  pgConfigured: boolean;
+  pgLiveConnected: boolean;
+  pgTargetRedacted: string;
+  activeAuthorityAfterRun: 'LOCAL_JSON_WAL_AUTHORITATIVE' | 'POSTGRESQL_16_AUTHORITATIVE';
+  migrationLockAcquired: boolean;
+  v30BackupChecksumSha256: string;
+  interruptedRecoveryTested: boolean;
+  stages: V31MigrationStageRecord[];
+  totalSourceRecords: number;
+  totalTargetRecords: number;
+  ledgerVarianceMinor: number;
+  parityVerified: boolean;
+  status: 'COMPLETED_DRY_RUN' | 'COMPLETED_LIVE_PG' | 'RECOVERED' | 'FAILED';
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface V31DatabaseIntegrityCheck {
+  id: string;
+  checkScope: 'SCHEMA_28_PARITY' | 'DOUBLE_ENTRY_BALANCE' | 'TENANT_ISOLATION' | 'REFERENTIAL_INTEGRITY' | 'ROLLBACK_READINESS';
+  schemaVersion: number;
+  expectedCount: number;
+  observedCount: number;
+  varianceMinor: number;
+  passed: boolean;
+  details: string;
+  checkedByUserId: string;
+  checkedAt: string;
+}
+
+export interface V31DatabaseBackupRecord {
+  id: string;
+  backupType: 'CANONICAL_V30_SNAPSHOT' | 'SCHEMA_28_WAL_SNAPSHOT' | 'POSTGRES_LOGICAL_DUMP_DRY_RUN';
+  filePath: string;
+  bytes: number;
+  checksumSha256: string;
+  restoreDrillExecuted: boolean;
+  measuredRestoreDurationMs: number;
+  verifiedIntegrity: boolean;
+  createdByUserId: string;
+  createdAt: string;
+}
+
+export interface V31CountryOperatingProfile {
+  id: string;
+  countryCode: string;
+  countryName: string;
+  regionBloc: 'EAC' | 'ECOWAS' | 'SADC' | 'COMESA' | 'AFCFTA';
+  defaultCurrency: string;
+  minorUnitScale: number;
+  vatStandardRatePct: number;
+  withholdingTaxPct: number;
+  mobileMoneyRails: string[];
+  bankSettlementRails: string[];
+  ussdShortCodePattern: string;
+  kycTierCount: number;
+  privacyLawReference: string;
+  regulatoryAuthority: string;
+  residencyPolicyId: string;
+  operatingMode: 'SANDBOX_READY' | 'CONTROLLED_PILOT_PREP' | 'EXPANSION_CONFIGURED' | 'EXTERNAL_APPROVAL_REQUIRED';
+  livePaymentsEnabled: boolean;
+  updatedAt: string;
+}
+
+export interface V31DataResidencyPolicy {
+  id: string;
+  countryCode: string;
+  jurisdictionName: string;
+  primaryStorageRegion: string;
+  residencyMode: 'LOCAL_PRIMARY_REQUIRED' | 'REGIONAL_MIRROR_ALLOWED' | 'CROSS_BORDER_CONSENT_ONLY';
+  piiExportBlockedByDefault: boolean;
+  encryptionAtRestStandard: 'AES-256-GCM';
+  retentionDaysFinancial: number;
+  retentionDaysAudit: number;
+  legalHoldOverrideBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V31CertificationTestCheck {
+  testCode: string;
+  testName: string;
+  passed: boolean;
+  measuredLatencyMs: number;
+  details: string;
+}
+
+export interface V31ProviderCertificationRun {
+  id: string;
+  providerId: string;
+  providerCode: string;
+  providerName: string;
+  currentStage: V31ProviderCertificationStage;
+  sandboxOnly: boolean;
+  credentialsConfigured: boolean;
+  partnerApproved: boolean;
+  regulatoryApproved: boolean;
+  liveVerified: boolean;
+  checks: V31CertificationTestCheck[];
+  passRatePct: number;
+  avgMeasuredLatencyMs: number;
+  lastErrorCode?: string;
+  auditedByUserId: string;
+  updatedAt: string;
+}
+
+export interface V31IntegrationCredentialMetadata {
+  id: string;
+  providerId: string;
+  providerCode: string;
+  environment: V31DeploymentEnvironment;
+  authScheme: 'OAUTH2_CLIENT_CREDENTIALS' | 'MTLS_X509' | 'HMAC_SHA256_API_KEY' | 'ISO20022_SIGNED';
+  secretReferenceKey: string;
+  redactedFingerprint: string;
+  rotationIntervalDays: number;
+  lastRotatedAt: string;
+  nextRotationDueAt: string;
+  presentInRuntimeEnv: boolean;
+  liveActivationPermitted: false;
+  updatedAt: string;
+}
+
+export interface V31IntegrationHealthHistory {
+  id: string;
+  providerId: string;
+  providerCode: string;
+  environment: 'SANDBOX_ADAPTER' | 'LIVE_EXTERNAL';
+  probeStatus: 'HEALTHY' | 'DEGRADED' | 'DOWN' | 'UNCONFIGURED';
+  measuredLatencyMs: number;
+  errorRateBps: number;
+  circuitBreakerState: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  measuredNote: string;
+  recordedAt: string;
+}
+
+export interface V31InstitutionalOrganization {
+  id: string;
+  orgCode: string;
+  legalName: string;
+  orgType: 'COOPERATIVE_FEDERATION' | 'ENTERPRISE_BUYER' | 'AGRO_PROCESSOR' | 'LOGISTICS_CARRIER' | 'SACCO_INSTITUTION' | 'PUBLIC_AGENCY';
+  countryCode: string;
+  registrationNumber: string;
+  taxIdNumber: string;
+  kybTier: 'TIER_1_BASIC' | 'TIER_2_REGISTERED' | 'TIER_3_INSTITUTIONAL';
+  activeBranchCount: number;
+  defaultCurrency: string;
+  status: 'ACTIVE_SANDBOX' | 'PENDING_REVIEW' | 'SUSPENDED';
+  createdAt: string;
+}
+
+export interface V31OrganizationBranch {
+  id: string;
+  organisationId: string;
+  branchCode: string;
+  branchName: string;
+  countryCode: string;
+  cityOrDistrict: string;
+  branchManagerUserId: string;
+  cashFloatLimitMinor: number;
+  currency: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface V31OrganizationDepartment {
+  id: string;
+  organisationId: string;
+  branchId: string;
+  departmentCode: string;
+  departmentName: string;
+  costCenterCode: string;
+  headUserId: string;
+  annualBudgetMinor: number;
+  currency: string;
+  createdAt: string;
+}
+
+export interface V31EnterpriseApprovalPolicy {
+  id: string;
+  organisationId: string;
+  policyName: string;
+  workflowDomain: 'PROCUREMENT' | 'TREASURY_PAYOUT' | 'CREDIT_FACILITY' | 'CROSS_BORDER_SETTLEMENT';
+  currency: string;
+  level1ThresholdMinor: number;
+  level2ThresholdMinor: number;
+  dualApprovalThresholdMinor: number;
+  requesterCannotApprove: true;
+  coiDisclosureRequired: boolean;
+  active: boolean;
+  updatedAt: string;
+}
+
+export interface V31CommercialWorkflowCase {
+  id: string;
+  caseRef: string;
+  organisationId: string;
+  branchId: string;
+  departmentId: string;
+  requesterUserId: string;
+  approver1UserId?: string;
+  approver2UserId?: string;
+  supplierName: string;
+  description: string;
+  currency: string;
+  amountMinor: number;
+  stage: 'PROCUREMENT_REQUEST' | 'LEVEL1_APPROVED' | 'DUAL_APPROVED' | 'GOODS_DELIVERED' | 'INVOICE_MATCHED' | 'PAYMENT_DISPATCHED_SANDBOX' | 'RECONCILED_CLOSED' | 'REJECTED';
+  linkedPaymentInstructionId?: string;
+  auditEvents: Array<{ timestamp: string; actorUserId: string; action: string; note: string }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V31PilotProgram {
+  id: string;
+  programCode: string;
+  title: string;
+  countryCode: string;
+  targetDistricts: string[];
+  currentStageNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  stageName: string;
+  pilotStatus: 'PREPARATION_SANDBOX_ONLY' | 'EXTERNAL_APPROVAL_REQUIRED' | 'SUPERVISED_PILOT_ACTIVE';
+  livePilotActive: false;
+  stageGates: Array<{
+    stageNumber: number;
+    code: string;
+    title: string;
+    status: 'READY_INTERNAL' | 'IN_PROGRESS' | 'PENDING_EXTERNAL_APPROVAL' | 'BLOCKED_UNTIL_FIELD_SIGNOFF';
+    acceptanceCriteria: string;
+    humanSignoffRequired: boolean;
+  }>;
+  updatedAt: string;
+}
+
+export interface V31PilotParticipant {
+  id: string;
+  pilotProgramId: string;
+  participantName: string;
+  roleCategory: 'FARMER' | 'SME_MERCHANT' | 'CASH_AGENT' | 'LOGISTICS_DRIVER' | 'COOPERATIVE_ADMIN';
+  district: string;
+  countryCode: string;
+  onboardingMode: 'SANDBOX_REHEARSAL' | 'PENDING_FIELD_VERIFICATION';
+  ussdOptIn: boolean;
+  kycLevel: string;
+  createdAt: string;
+}
+
+export interface V31FieldValidationRecord {
+  id: string;
+  pilotProgramId: string;
+  district: string;
+  validationType: 'FARMER_ONBOARDING' | 'USSD_FEATURE_PHONE' | 'LOW_CONNECTIVITY_SYNC' | 'AGENT_CASH_FLOAT' | 'DISPUTE_RESOLUTION_DRILL';
+  submittedByUserId: string;
+  evidenceSummary: string;
+  checksumSha256: string;
+  validationOutcome: 'SANDBOX_REHEARSAL_PASSED' | 'PENDING_HUMAN_FIELD_VALIDATION' | 'ISSUE_LOGGED';
+  humanFieldSignoffCompleted: boolean;
+  recordedAt: string;
+}
+
+export interface V31PilotIncident {
+  id: string;
+  pilotProgramId: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  category: 'CONNECTIVITY' | 'AGENT_LIQUIDITY' | 'USSD_TIMEOUT' | 'RECONCILIATION' | 'USER_USABILITY';
+  summary: string;
+  mitigationPlan: string;
+  status: 'OPEN' | 'MITIGATING' | 'RESOLVED_LOCAL';
+  reportedByUserId: string;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+export interface V31SecurityIncident {
+  id: string;
+  incidentRef: string;
+  category: 'SESSION_ANOMALY' | 'BRUTE_FORCE_BLOCKED' | 'CREDENTIAL_ROTATION_DUE' | 'TENANT_BOUNDARY_PROBE' | 'WEBHOOK_SIGNATURE_INVALID';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  targetResource: string;
+  status: 'DETECTED' | 'CONTAINED' | 'INVESTIGATING' | 'REMEDIATED' | 'CLOSED';
+  containmentAction: string;
+  detectedByUserId: string;
+  remediatedByUserId?: string;
+  detectedAt: string;
+  remediatedAt?: string;
+}
+
+export interface V31DeploymentRecord {
+  id: string;
+  environment: V31DeploymentEnvironment;
+  releaseTag: string;
+  schemaVersion: number;
+  targetHostDescription: string;
+  databaseAuthority: 'LOCAL_JSON_WAL_AUTHORITATIVE' | 'POSTGRESQL_16_AUTHORITATIVE';
+  status: 'ACTIVE_LOCAL' | 'VERIFIED_AUTOMATED' | 'DRY_RUN_CONFIGURED' | 'NOT_DEPLOYED';
+  deployedByUserId: string;
+  gitCommitShort?: string;
+  notes: string;
+  recordedAt: string;
+}
+
+export interface V31ReleaseVerificationRecord {
+  id: string;
+  releaseTag: string;
+  schemaVersion: number;
+  v31TestsPassed: number;
+  v31TestsTotal: number;
+  regressionPassed: number;
+  securityScanPassed: boolean;
+  buildChunkWarningCleared: boolean;
+  exportArchiveSha256?: string;
+  verifiedByUserId: string;
+  verifiedAt: string;
+}
+
+export interface V31ContinentalAnalyticsSnapshot {
+  id: string;
+  countryCode: string;
+  sectorCode: string;
+  corridorCode: string;
+  participantClusterCount: number;
+  kAnonymityEnforced: boolean;
+  indicativeVolumeMinor: number;
+  currency: string;
+  avgCorridorSettlementMinutes: number;
+  provenanceCategory: 'ACTUAL_RECORDED' | 'CALCULATED_INDICATOR' | 'SYNTHETIC_TEST_DATA';
+  limitationsNote: string;
+  capturedAt: string;
+}
+
+export interface V31HonestyFlags {
+  POSTGRESQL_CUTOVER_COMPLETE: boolean;
+  EXTERNAL_INTEGRATIONS_LIVE: boolean;
+  REAL_VALUE_WALLET_OPERATIONS_ENABLED: boolean;
+  CARD_SCHEME_CERTIFICATION_COMPLETE: boolean;
+  HUMAN_FIELD_VALIDATION_COMPLETE: boolean;
+  PILOT_ACTIVE: boolean;
+  PRODUCTION_DEPLOYED: boolean;
+  GITHUB_REMOTE_SYNC_VERIFIED: boolean;
+  AI_STUDIO_GITHUB_BINDING_VERIFIED: boolean;
+}
+
+export interface V31ReadinessMatrixRow {
+  item: string;
+  status: 'COMPLETE' | 'DRY_RUN_VERIFIED' | 'SANDBOX_ONLY' | 'EXTERNAL_APPROVAL_REQUIRED' | 'NOT_STARTED' | 'BLOCKED';
+  evidence: string;
+}
+
+
 
 
 

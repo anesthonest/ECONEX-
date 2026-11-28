@@ -220,7 +220,7 @@ export const AiEconomicEngineView: React.FC<AiEconomicEngineViewProps> = ({ curr
               <span className="font-semibold text-white">{current.label}:</span>
               <span className="text-[#A0A0A0]">{current.desc}</span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-500">ENGINE: gemini-3.8-flash</span>
+            <span className="text-[10px] font-mono text-zinc-500">ENGINE: gemini-4-hydrogen</span>
           </div>
         );
       })()}
@@ -343,7 +343,7 @@ export const AiEconomicEngineView: React.FC<AiEconomicEngineViewProps> = ({ curr
                     </h3>
                     <p className="text-[11px] text-[#A0A0A0]">
                       Confidence: {Math.round(agentResponse.confidence * 100)}% • Engine Model:{' '}
-                      <span className="font-mono text-zinc-300">gemini-3.8-flash</span>
+                      <span className="font-mono text-zinc-300">gemini-4-hydrogen</span>
                     </p>
                   </div>
                 </div>

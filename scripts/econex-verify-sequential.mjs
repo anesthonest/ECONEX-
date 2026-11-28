@@ -140,6 +140,20 @@ const BATCH_SPECS = [
       { id: 'V29', file: './src/components/modules/v29UiUxTests.ts', fn: 'runV29VerificationTests', passBase: true },
     ],
   },
+  {
+    batchId: 'BATCH_T_V30',
+    label: 'V30 Universal Financial Interoperability, Economic Resilience & Intelligent Execution (T8601–T9600)',
+    suites: [
+      { id: 'V30', file: './src/components/modules/v30FinancialResilienceTests.ts', fn: 'runV30VerificationTests', passBase: true },
+    ],
+  },
+  {
+    batchId: 'BATCH_U_V31',
+    label: 'V31 Sovereign Data Infrastructure, Connectivity Certification & Continental Deployment (T9601–T10700)',
+    suites: [
+      { id: 'V31', file: './src/components/modules/v31SovereignInfraTests.ts', fn: 'runV31VerificationTests', passBase: true },
+    ],
+  },
 ];
 
 function runSingleSuiteIsolated(suite) {
@@ -208,10 +222,10 @@ function runSingleSuiteIsolated(suite) {
 
 function parseRequestedBatches() {
   const arg = process.argv.find((a) => a.startsWith('--batch='));
-  const val = arg ? arg.split('=')[1].toUpperCase() : 'V29';
+  const val = arg ? arg.split('=')[1].toUpperCase() : 'V31';
   if (val === 'ALL') return BATCH_SPECS;
-  if (val === 'VERIFY') return BATCH_SPECS.filter((b) => ['BATCH_H_V18', 'BATCH_I_V19', 'BATCH_J_V20', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23', 'BATCH_N_V24', 'BATCH_O_V25', 'BATCH_P_V26', 'BATCH_Q_V27', 'BATCH_R_V28', 'BATCH_S_V29'].includes(b.batchId));
-  if (val === 'UNIT') return BATCH_SPECS.filter((b) => ['BATCH_E_V151_V159', 'BATCH_I_V19', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23', 'BATCH_N_V24', 'BATCH_O_V25', 'BATCH_P_V26', 'BATCH_Q_V27', 'BATCH_R_V28', 'BATCH_S_V29'].includes(b.batchId));
+  if (val === 'VERIFY') return BATCH_SPECS.filter((b) => ['BATCH_H_V18', 'BATCH_I_V19', 'BATCH_J_V20', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23', 'BATCH_N_V24', 'BATCH_O_V25', 'BATCH_P_V26', 'BATCH_Q_V27', 'BATCH_R_V28', 'BATCH_S_V29', 'BATCH_T_V30', 'BATCH_U_V31'].includes(b.batchId));
+  if (val === 'UNIT') return BATCH_SPECS.filter((b) => ['BATCH_E_V151_V159', 'BATCH_I_V19', 'BATCH_K_V21', 'BATCH_L_V22', 'BATCH_M_V23', 'BATCH_N_V24', 'BATCH_O_V25', 'BATCH_P_V26', 'BATCH_Q_V27', 'BATCH_R_V28', 'BATCH_S_V29', 'BATCH_T_V30', 'BATCH_U_V31'].includes(b.batchId));
 
   const tokens = val.split(',').map((t) => t.trim());
   const selected = [];
@@ -221,7 +235,7 @@ function parseRequestedBatches() {
       selected.push({ ...b, suites: filteredSuites });
     }
   }
-  return selected.length > 0 ? selected : BATCH_SPECS.filter((b) => b.batchId === 'BATCH_S_V29');
+  return selected.length > 0 ? selected : BATCH_SPECS.filter((b) => b.batchId === 'BATCH_U_V31');
 }
 
 async function main() {
@@ -257,7 +271,7 @@ async function main() {
   const totalFailed = suiteResults.reduce((acc, s) => acc + s.failed, 0);
 
   const report = {
-    release: 'V29.0-UNIVERSAL-UI-UX-TRANSFORMATION',
+    release: 'V31.0-SOVEREIGN-INFRASTRUCTURE-AND-DEPLOYMENT',
     baseUrl: BASE_URL,
     executedAt: startedAt,
     completedAt: new Date().toISOString(),

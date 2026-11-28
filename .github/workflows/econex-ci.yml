@@ -1,7 +1,7 @@
-# ECONEX V25.0 — Continental Infrastructure CI/CD Pipeline
+# ECONEX V31.0 — Sovereign Infrastructure, Connectivity & Continental Deployment CI/CD Pipeline
 # Developed under VINEXSAH TECHNOLOGIES. All rights reserved.
 
-name: ECONEX V25 CI
+name: ECONEX V31 CI
 
 on:
   push:
@@ -10,12 +10,12 @@ on:
     branches: [main, master]
 
 concurrency:
-  group: econex-v25-${{ github.ref }}
+  group: econex-v31-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify-build:
-    name: Typecheck, Secret Scan, Build & V25 Verification
+    name: Typecheck, Secret Scan, Schema 28 DDL Audit, Build & V31 Verification
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -36,6 +36,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Schema 28 PostgreSQL 16 DDL presence
+        run: |
+          test -f database/schema_v28.sql
+          test -f src/server/postgres/schema_v28.sql
+          diff -u database/schema_v28.sql src/server/postgres/schema_v28.sql
+
       - name: Run TypeScript check
         run: npm run typecheck
 
@@ -45,7 +51,7 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
-      - name: Start server & run V25 live integration suite
+      - name: Start server & run V31 live verification suite
         run: |
           npm run start &
           SERVER_PID=$!
@@ -55,9 +61,9 @@ jobs:
             fi
             sleep 2
           done
-          curl -sf http://127.0.0.1:3000/ready >/dev/null
-          npm run test:v25
+          curl -sf http://127.0.0.1:3000/ready | grep -q '"schema28IntegrityValid":true'
+          npm run test:v31
           kill $SERVER_PID || true
 
-      - name: Verify secret-free source ZIP export
+      - name: Verify secret-free V31 source ZIP export
         run: npm run export:zip && npm run export:check

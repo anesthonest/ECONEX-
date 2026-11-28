@@ -171,6 +171,33 @@ const V28ContinentalIntelligenceOpsView = lazy(() =>
 const V28FieldRepoEngineeringView = lazy(() =>
   import('./components/v28/V28FieldRepoEngineeringView.tsx').then((m) => ({ default: m.V28FieldRepoEngineeringView }))
 );
+const V30FinancialNetworkHub = lazy(() =>
+  import('./components/v30/V30FinancialNetworkHub.tsx').then((m) => ({ default: m.V30FinancialNetworkHub }))
+);
+const V30CorridorsAgentsLiquidityView = lazy(() =>
+  import('./components/v30/V30CorridorsAgentsLiquidityView.tsx').then((m) => ({ default: m.V30CorridorsAgentsLiquidityView }))
+);
+const V30BusinessDisputesComplianceView = lazy(() =>
+  import('./components/v30/V30BusinessDisputesComplianceView.tsx').then((m) => ({ default: m.V30BusinessDisputesComplianceView }))
+);
+const V30UniversalWalletAndCardsView = lazy(() =>
+  import('./components/v30/V30UniversalWalletAndCardsView.tsx').then((m) => ({ default: m.V30UniversalWalletAndCardsView }))
+);
+const V30DeveloperGitHubIntegrationsView = lazy(() =>
+  import('./components/v30/V30DeveloperGitHubIntegrationsView.tsx').then((m) => ({ default: m.V30DeveloperGitHubIntegrationsView }))
+);
+const V31SovereignInfrastructureHub = lazy(() =>
+  import('./components/v31/V31SovereignInfrastructureHub.tsx').then((m) => ({ default: m.V31SovereignInfrastructureHub }))
+);
+const V31ConnectivityCertificationView = lazy(() =>
+  import('./components/v31/V31ConnectivityCertificationView.tsx').then((m) => ({ default: m.V31ConnectivityCertificationView }))
+);
+const V31ContinentalEnterpriseView = lazy(() =>
+  import('./components/v31/V31ContinentalEnterpriseView.tsx').then((m) => ({ default: m.V31ContinentalEnterpriseView }))
+);
+const V31PilotSecurityIntelligenceView = lazy(() =>
+  import('./components/v31/V31PilotSecurityIntelligenceView.tsx').then((m) => ({ default: m.V31PilotSecurityIntelligenceView }))
+);
 const FarmerSimpleView = lazy(() =>
   import('./components/v151/FarmerSimpleView.tsx').then((m) => ({ default: m.FarmerSimpleView }))
 );
@@ -331,7 +358,7 @@ const V17NetworkControlCenter = lazy(() =>
   import('./components/V17NetworkControlCenter.tsx').then((m) => ({ default: m.V17NetworkControlCenter }))
 );
 
-const TOTAL_VERIFICATION_TESTS = 7700;
+const TOTAL_VERIFICATION_TESTS = 9800;
 
 function ModuleLoadingFallback() {
   return (
@@ -902,6 +929,77 @@ function MainAppShell() {
         return <V28FieldRepoEngineeringView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="SECURITY" />;
       case 'v28-repository-health':
         return <V28FieldRepoEngineeringView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="REPO_HEALTH" />;
+      case 'v30-financial-network':
+        return <V30FinancialNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="OVERVIEW" />;
+      case 'v30-providers':
+        return <V30FinancialNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="PROVIDERS" />;
+      case 'v30-interoperability':
+        return <V30FinancialNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INTEROP" />;
+      case 'v30-routing':
+        return <V30FinancialNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="ROUTING" />;
+      case 'v30-transactions':
+        return <V30FinancialNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="TRANSACTIONS" />;
+      case 'v30-reconciliation':
+        return <V30FinancialNetworkHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="RECONCILIATION" />;
+      case 'v30-corridors':
+        return <V30CorridorsAgentsLiquidityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CORRIDORS" />;
+      case 'v30-currency':
+        return <V30CorridorsAgentsLiquidityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CURRENCY" />;
+      case 'v30-agents':
+        return <V30CorridorsAgentsLiquidityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="AGENTS" />;
+      case 'v30-liquidity':
+        return <V30CorridorsAgentsLiquidityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="LIQUIDITY" />;
+      case 'v30-ussd':
+        return <V30CorridorsAgentsLiquidityView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="USSD" />;
+      case 'v30-business-finance':
+        return <V30BusinessDisputesComplianceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="BUSINESS_FINANCE" />;
+      case 'v30-disputes':
+        return <V30BusinessDisputesComplianceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="DISPUTES" />;
+      case 'v30-wallet-universal':
+        return <V30UniversalWalletAndCardsView onNavigate={(tab) => navigateToTab(tab)} />;
+      case 'v30-fraud-protection':
+        return <V30BusinessDisputesComplianceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="FRAUD" />;
+      case 'v30-regulatory-readiness':
+        return <V30BusinessDisputesComplianceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="REGULATORY" />;
+      case 'v30-ai-intelligence':
+        return <V30DeveloperGitHubIntegrationsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="AI" />;
+      case 'v30-resilience':
+        return <V30DeveloperGitHubIntegrationsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="RESILIENCE" />;
+      case 'v30-developer-github':
+        return <V30DeveloperGitHubIntegrationsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="GITHUB" />;
+      case 'v30-developer-integrations':
+        return <V30DeveloperGitHubIntegrationsView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INTEGRATIONS" />;
+      case 'v31-infrastructure-hub':
+        return <V31SovereignInfrastructureHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="OVERVIEW" />;
+      case 'v31-postgres-migration':
+      case 'v31-dr-continuity':
+        return <V31SovereignInfrastructureHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="POSTGRES" />;
+      case 'v31-data-residency':
+        return <V31SovereignInfrastructureHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="RESIDENCY" />;
+      case 'v31-github-cicd':
+        return <V31SovereignInfrastructureHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CICD" />;
+      case 'v31-readiness-openapi':
+        return <V31SovereignInfrastructureHub onNavigate={(tab) => navigateToTab(tab)} initialSubTab="READINESS" />;
+      case 'v31-provider-certification':
+        return <V31ConnectivityCertificationView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CERTIFICATION" />;
+      case 'v31-connectivity-telemetry':
+        return <V31ConnectivityCertificationView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="CREDENTIALS" />;
+      case 'v31-country-framework':
+        return <V31ContinentalEnterpriseView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="COUNTRIES" />;
+      case 'v31-enterprise-hierarchy':
+        return <V31ContinentalEnterpriseView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="ENTERPRISE" />;
+      case 'v31-commercial-workflows':
+        return <V31ContinentalEnterpriseView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="WORKFLOWS" />;
+      case 'v31-pilot-readiness':
+        return <V31PilotSecurityIntelligenceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="PILOT" />;
+      case 'v31-field-validation':
+        return <V31PilotSecurityIntelligenceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="FIELD" />;
+      case 'v31-security-sessions':
+        return <V31PilotSecurityIntelligenceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="SECURITY" />;
+      case 'v31-continental-intelligence':
+        return <V31PilotSecurityIntelligenceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="INTELLIGENCE" />;
+      case 'v31-ai-advisor':
+        return <V31PilotSecurityIntelligenceView onNavigate={(tab) => navigateToTab(tab)} initialSubTab="AI" />;
       case 'v18-control-center':
         return <V18SystemControlCenter onNavigateTab={(tab) => navigateToTab(tab)} />;
       case 'v19-diagnostics':
@@ -1181,7 +1279,7 @@ function MainAppShell() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="space-y-1 text-center md:text-left">
             <div className="font-display font-bold text-sm text-[#F5F5F5] tracking-wide">
-              ECONEX <span className="text-[#D4AF37] font-normal text-xs ml-1">V29.0</span>
+              ECONEX <span className="text-[#D4AF37] font-normal text-xs ml-1">V31.0</span>
             </div>
             <p className="text-xs text-[#A0A0A0]">Universal Economic Operating System</p>
             <p className="text-xs text-[#A0A0A0]">

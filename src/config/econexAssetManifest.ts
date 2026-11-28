@@ -14,7 +14,8 @@ export type EconexMediaCategory =
   | 'retail'
   | 'services'
   | 'technology'
-  | 'hospitality';
+  | 'hospitality'
+  | 'finance';
 
 export interface EconexAssetEntry {
   id: string;
@@ -33,6 +34,54 @@ export const ECONEX_ASSET_MANIFEST: Record<string, EconexAssetEntry> = {
     aspectRatio: '16:9',
     alt: 'Modern East African urban commercial district and active marketplace logistics hub at golden hour',
     caption: 'Continental Trade & Commercial Hub',
+  },
+  finance_enterprise_hub: {
+    id: 'finance_enterprise_hub',
+    path: '/assets/econex/finance/enterprise-finance-hub.jpg',
+    category: 'finance',
+    aspectRatio: '16:9',
+    alt: 'Modern East African financial and trade operations hub overlooking Kampala skyline at sunset',
+    caption: 'Universal Financial Interoperability Hub',
+  },
+  finance_corridor_border: {
+    id: 'finance_corridor_border',
+    path: '/assets/econex/finance/corridor-border-trade.jpg',
+    category: 'finance',
+    aspectRatio: '16:9',
+    alt: 'East African One-Stop Border Post trade corridor with commercial trucks queued for customs clearance',
+    caption: 'Cross-Border Payment & Trade Corridors',
+  },
+  finance_mobile_money_agent: {
+    id: 'finance_mobile_money_agent',
+    path: '/assets/econex/finance/mobile-money-agent.jpg',
+    category: 'finance',
+    aspectRatio: '4:3',
+    alt: 'East African mobile money and financial liquidity agent assisting a business owner in a market street',
+    caption: 'Agent & Liquidity Network',
+  },
+  finance_digital_treasury: {
+    id: 'finance_digital_treasury',
+    path: '/assets/econex/finance/digital-treasury.jpg',
+    category: 'finance',
+    aspectRatio: '4:3',
+    alt: 'East African finance managers reviewing business reconciliation and multi-rail settlement analytics',
+    caption: 'Business Finance & Reconciliation',
+  },
+  finance_merchant_qr: {
+    id: 'finance_merchant_qr',
+    path: '/assets/econex/finance/merchant-qr-counter.jpg',
+    category: 'finance',
+    aspectRatio: '4:3',
+    alt: 'East African wholesale merchant accepting a contactless mobile payment at a retail checkout counter',
+    caption: 'Merchant Wallet & QR Acceptance',
+  },
+  finance_rural_agro: {
+    id: 'finance_rural_agro',
+    path: '/assets/econex/finance/rural-agro-finance.jpg',
+    category: 'finance',
+    aspectRatio: '4:3',
+    alt: 'Cooperative warehouse quality inspector checking coffee moisture content before digital settlement',
+    caption: 'Rural Producer Settlement & Inventory',
   },
   agri_coffee: {
     id: 'agri_coffee',
@@ -126,6 +175,8 @@ export const ECONEX_ASSET_MANIFEST: Record<string, EconexAssetEntry> = {
 
 export const ECONEX_HERO_SLIDES: EconexAssetEntry[] = [
   ECONEX_ASSET_MANIFEST.hero_commerce,
+  ECONEX_ASSET_MANIFEST.finance_enterprise_hub,
+  ECONEX_ASSET_MANIFEST.finance_corridor_border,
   ECONEX_ASSET_MANIFEST.retail_showroom,
   ECONEX_ASSET_MANIFEST.manufacturing_plant,
   ECONEX_ASSET_MANIFEST.tech_solar,
@@ -134,6 +185,11 @@ export const ECONEX_HERO_SLIDES: EconexAssetEntry[] = [
 export function resolveSectorAsset(sectorCodeOrName?: string, categoryGroup?: string): EconexAssetEntry {
   const token = `${sectorCodeOrName || ''} ${categoryGroup || ''}`.toUpperCase();
 
+  if (/MOMO|MOBILE_MONEY|AGENT|LIQUIDITY|CASH_IN|CASH_OUT/.test(token)) return ECONEX_ASSET_MANIFEST.finance_mobile_money_agent;
+  if (/TREASURY|RECONCIL|INVOICE|ACCOUNTING|FINANCE_OPS|DISPUTE/.test(token)) return ECONEX_ASSET_MANIFEST.finance_digital_treasury;
+  if (/QR|WALLET|MERCHANT_PAY|CARD|POS/.test(token)) return ECONEX_ASSET_MANIFEST.finance_merchant_qr;
+  if (/BORDER|CORRIDOR_PAY|REMITTANCE|FX|CURRENCY|CROSS_BORDER/.test(token)) return ECONEX_ASSET_MANIFEST.finance_corridor_border;
+  if (/INTEROPERAB|FINANCIAL_NETWORK|ROUTING|REGULATORY/.test(token)) return ECONEX_ASSET_MANIFEST.finance_enterprise_hub;
   if (/COFFEE|COCOA|TEA/.test(token)) return ECONEX_ASSET_MANIFEST.agri_coffee;
   if (/MAIZE|GRAIN|CEREAL|LEGUME|PULSE|OILSEED/.test(token)) return ECONEX_ASSET_MANIFEST.agri_maize;
   if (/AGRI|CROP|HORTI|FRUIT|VEG|LIVESTOCK|FISHER|FOREST|DAIRY/.test(token)) return ECONEX_ASSET_MANIFEST.agri_produce;
